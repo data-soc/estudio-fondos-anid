@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.23">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="René Canales, Asistente de Investigación">
+
+<title>Data preparation</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="01-proc-data_files/libs/clipboard/clipboard.min.js"></script>
+<script src="01-proc-data_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="01-proc-data_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="01-proc-data_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="01-proc-data_files/libs/quarto-html/popper.min.js"></script>
+<script src="01-proc-data_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="01-proc-data_files/libs/quarto-html/anchor.min.js"></script>
+<link href="01-proc-data_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="01-proc-data_files/libs/quarto-html/quarto-syntax-highlighting-1fe81d0376b2c50856e68e651e390326.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="01-proc-data_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="01-proc-data_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="01-proc-data_files/libs/bootstrap/bootstrap-93216f84ad7ccfb553c7e13a3406b94b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="quarto-light">
+
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Data preparation</h1>
+            <p class="subtitle lead">Fondos ANID para Ciencias Sociales</p>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Autor/a</div>
+      <div class="quarto-title-meta-contents">
+               <p>René Canales, Asistente de Investigación </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Fecha de publicación</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">29 de abril de 2026</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="2">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#presentación" id="toc-presentación" class="nav-link active" data-scroll-target="#presentación"><span class="header-section-number">1</span> Presentación</a></li>
+  <li><a href="#librerías" id="toc-librerías" class="nav-link" data-scroll-target="#librerías"><span class="header-section-number">2</span> Librerías</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data"><span class="header-section-number">3</span> Data</a>
+  <ul class="collapse">
+  <li><a href="#bases-de-datos-fondecyt-2016-2025-postulaciones-y-adjudicaciones" id="toc-bases-de-datos-fondecyt-2016-2025-postulaciones-y-adjudicaciones" class="nav-link" data-scroll-target="#bases-de-datos-fondecyt-2016-2025-postulaciones-y-adjudicaciones"><span class="header-section-number">3.1</span> Bases de Datos Fondecyt (2016-2025): Postulaciones y Adjudicaciones</a></li>
+  <li><a href="#bases-de-datos-milenio-2016-2025-postulaciones-y-adjudicaciones" id="toc-bases-de-datos-milenio-2016-2025-postulaciones-y-adjudicaciones" class="nav-link" data-scroll-target="#bases-de-datos-milenio-2016-2025-postulaciones-y-adjudicaciones"><span class="header-section-number">3.2</span> Bases de Datos Milenio (2016-2025): Postulaciones y Adjudicaciones</a></li>
+  <li><a href="#resumen-de-las-transformaciones-aplicadas" id="toc-resumen-de-las-transformaciones-aplicadas" class="nav-link" data-scroll-target="#resumen-de-las-transformaciones-aplicadas"><span class="header-section-number">3.3</span> Resumen de las transformaciones aplicadas</a></li>
+  <li><a href="#guardar-datos-procesados" id="toc-guardar-datos-procesados" class="nav-link" data-scroll-target="#guardar-datos-procesados"><span class="header-section-number">3.4</span> Guardar datos procesados</a></li>
+  </ul></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Otros formatos</h2><ul><li><a href="..\01-proc-data.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<section id="presentación" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Presentación</h1>
+<p>Este documento muestra la preparación de los datos para el análisis de los proyectos financiados por ANID en el área de Ciencias Sociales. El proceso incluye la limpieza, transformación y organización de los datos para facilitar su análisis posterior.</p>
+</section>
+<section id="librerías" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Librerías</h1>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SciViews)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(naniar)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringi)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">scipen=</span><span class="dv">999</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="data" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Data</h1>
+<section id="bases-de-datos-fondecyt-2016-2025-postulaciones-y-adjudicaciones" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="bases-de-datos-fondecyt-2016-2025-postulaciones-y-adjudicaciones"><span class="header-section-number">3.1</span> Bases de Datos Fondecyt (2016-2025): Postulaciones y Adjudicaciones</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>postulaciones <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> <span class="fu">here</span>(<span class="st">"input"</span>, <span class="st">"data"</span>, <span class="st">"raw"</span>, <span class="st">"POSTULACIONES_2016_2025.csv"</span>), </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">sep =</span> <span class="st">";"</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">encoding =</span> <span class="st">"UTF-8"</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar estructura del data frame</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(postulaciones)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>adjudicacion <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> <span class="fu">here</span>(<span class="st">"input"</span>, <span class="st">"data"</span>, <span class="st">"raw"</span>, <span class="st">"BDH_HISTORICA.csv"</span>), </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">sep =</span> <span class="st">";"</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">encoding =</span> <span class="st">"UTF-8"</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar estructura del data frame</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(adjudicacion)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="procesamiento-y-limpieza-base-postulaciones-completa" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="procesamiento-y-limpieza-base-postulaciones-completa"><span class="header-section-number">3.1.1</span> Procesamiento y limpieza: Base postulaciones completa</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>postulaciones_limpia <span class="ot">&lt;-</span> postulaciones <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 1. Filtros para variables de interés</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a> <span class="fu">filter</span>(ESTADO_RESOLUCION_CONCURSO <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"ADJUDICADO"</span>, <span class="st">"NO ADJUDICADO"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(PROGRAMA <span class="sc">==</span> <span class="st">"FONDECYT"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(INSTRUMENTO <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"REGULAR"</span>, <span class="st">"INICIACION"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2. Eliminar columnas innecesarias (N)</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>N, <span class="sc">-</span>INSTRUMENTO_RECAT, <span class="sc">-</span>NOMBRE_CONCURSO, <span class="sc">-</span>TIPO_BENEFICIARIO, <span class="sc">-</span>TIPO_INSTITUCION) <span class="sc">%&gt;%</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3. Estandarización de textos </span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span><span class="fu">str_squish</span>(<span class="fu">str_to_upper</span>(.)))) <span class="sc">%&gt;%</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span><span class="fu">stri_trans_general</span>(., <span class="at">id =</span> <span class="st">"Latin-ASCII"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 4. Transformar variables categóricas a factores (excluyendo el ID único)</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character) <span class="sc">&amp;</span> <span class="sc">!</span>CODIGO_PROYECTO, as.factor))</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>postulaciones_limpia <span class="ot">&lt;-</span> postulaciones_limpia <span class="sc">%&gt;%</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">REGION_EJECUCION =</span> <span class="fu">as.character</span>(REGION_EJECUCION),</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">REGION_EJECUCION =</span> <span class="fu">str_replace</span>(REGION_EJECUCION, <span class="st">"REGION METROPOLITANA DE SANTIAGO"</span>, <span class="st">"RM"</span>),</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">REGION_EJECUCION =</span> <span class="fu">str_replace</span>(REGION_EJECUCION, <span class="st">"REGION DE |REGION DEL |REGION "</span>, <span class="st">""</span>),</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">REGION_EJECUCION =</span> <span class="fu">as.factor</span>(REGION_EJECUCION)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Para verificar que los vacíos desaparecieron y las regiones se acortaron:</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(postulaciones_limpia<span class="sc">$</span>REGION_EJECUCION)</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Revisar la estructura final</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(postulaciones_limpia)</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(postulaciones_limpia)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="procesamiento-y-limpieza-base-postulaciones-ciencias-sociales" class="level3" data-number="3.1.2">
+<h3 data-number="3.1.2" class="anchored" data-anchor-id="procesamiento-y-limpieza-base-postulaciones-ciencias-sociales"><span class="header-section-number">3.1.2</span> Procesamiento y limpieza: Base postulaciones Ciencias Sociales</h3>
+<p>Primero, se procesaron y limpiaron los datos de postulaciones Fondecyt, aplicando filtros para seleccionar solo proyectos en Ciencias Sociales entre 2016 y 2025, eliminando columnas innecesarias, estandarizando textos, y transformando variables categóricas a factores. Luego se realizó un cruce con la base de postulaciones para inyectar información adicional de las adjudicaciones a cada postulación.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>postulaciones_limpia_sociales <span class="ot">&lt;-</span> postulaciones <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 1. Filtros para variables de interés</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(DISCIPLINA_OECD <span class="sc">==</span> <span class="st">"CIENCIAS SOCIALES"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ESTADO_RESOLUCION_CONCURSO <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"ADJUDICADO"</span>, <span class="st">"NO ADJUDICADO"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(PROGRAMA <span class="sc">==</span> <span class="st">"FONDECYT"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(INSTRUMENTO <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"REGULAR"</span>, <span class="st">"INICIACION"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2. Eliminar columnas innecesarias (N)</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>N, <span class="sc">-</span>INSTRUMENTO_RECAT, <span class="sc">-</span>NOMBRE_CONCURSO, <span class="sc">-</span>TIPO_BENEFICIARIO, <span class="sc">-</span>TIPO_INSTITUCION) <span class="sc">%&gt;%</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3. Estandarización de textos </span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span><span class="fu">str_squish</span>(<span class="fu">str_to_upper</span>(.)))) <span class="sc">%&gt;%</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span><span class="fu">stri_trans_general</span>(., <span class="at">id =</span> <span class="st">"Latin-ASCII"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 4. Transformar variables categóricas a factores (excluyendo el ID único)</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character) <span class="sc">&amp;</span> <span class="sc">!</span>CODIGO_PROYECTO, as.factor))</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>postulaciones_limpia_sociales <span class="ot">&lt;-</span> postulaciones_limpia_sociales <span class="sc">%&gt;%</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">REGION_EJECUCION =</span> <span class="fu">as.character</span>(REGION_EJECUCION),</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">REGION_EJECUCION =</span> <span class="fu">str_replace</span>(REGION_EJECUCION, <span class="st">"REGION METROPOLITANA DE SANTIAGO"</span>, <span class="st">"RM"</span>),</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">REGION_EJECUCION =</span> <span class="fu">str_replace</span>(REGION_EJECUCION, <span class="st">"REGION DE |REGION DEL |REGION "</span>, <span class="st">""</span>),</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">REGION_EJECUCION =</span> <span class="fu">as.factor</span>(REGION_EJECUCION)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Para verificar que los vacíos desaparecieron y las regiones se acortaron:</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(postulaciones_limpia_sociales<span class="sc">$</span>REGION_EJECUCION)</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Revisar la estructura final</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(postulaciones_limpia_sociales)</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(postulaciones_limpia_sociales)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="descripción-bases-postulaciones_limpia-y-postulaciones_limpia_sociales" class="level3" data-number="3.1.3">
+<h3 data-number="3.1.3" class="anchored" data-anchor-id="descripción-bases-postulaciones_limpia-y-postulaciones_limpia_sociales"><span class="header-section-number">3.1.3</span> Descripción Bases: <code>postulaciones_limpia</code> y <code>postulaciones_limpia_sociales</code></h3>
+<p>La base de datos <strong>POSTULACIONES_2016_2025</strong> contiene información sobre las postulaciones realizadas a los distintos fondos y programas de becas de la Agencia Nacional de Investigación y Desarrollo (ANID, ex CONICYT) entre los años 2016 y 2025. Esta base de datos abarca el universo de postulaciones institucionales, sobre la cual se aplicaron dos filtros fundamentales: en primer lugar, se seleccionó únicamente la disciplina “Ciencias Sociales” según la clasificación de la OCDE para producir una base de datos específica únicamente con los datos para las disciplinas de las ciencias sociales; y en segundo lugar, se conservaron exclusivamente aquellas postulaciones cuyo proceso de evaluación finalizó en condición de “Adjudicado” o “No Adjudicado”, excluyendo postulaciones inadmisibles o fuera de bases. El tamaño final de la muestra comprende 30.373 registros únicos en la base <code>postulaciones_limpia</code> y 8603 registros en la base <code>postulaciones_limpia_sociales</code>, lo que representa el universo de postulaciones a proyectos Fondecyt en el área de Ciencias Sociales durante el período analizado.</p>
+<p>Entre las variables principales de esta base se encuentran identificadores únicos como <code>CODIGO_PROYECTO</code>, variables temporales como <code>AGNO_FALLO</code> que registra el año de resolución del concurso, y variables de clasificación institucional como <code>SUBDIRECCION</code>, <code>PROGRAMA</code> e <code>INSTRUMENTO</code>, que permiten categorizar el tipo de financiamiento (ej. Becas PFCHA, Proyectos FONDECYT, FONDEF, etc.). La variable <code>ESTADO_RESOLUCION_CONCURSO</code> indica el resultado final de la postulación. Además, la base incluye variables geográficas como <code>REGION_EJECUCION</code> y <code>MACROZONA_MINCIENCIA</code>, así como variables demográficas e institucionales del postulante, como <code>SEXO</code>. Otras variables como <code>TIPO_BENEFICIARIO</code> y <code>TIPO_INSTITUCION</code> fueron eliminadas posteriormente por contener información redundante, ya que en ambas variables el 99% de los casos correspondían a “PERSONA NATURAL” respectivamente, lo que no aportaba variabilidad significativa para el análisis.</p>
+<p>El proceso de depuración aplicado a esta base incluyó la eliminación de columnas redundantes, la estandarización de cadenas de texto (eliminación de tildes, espacios en blanco y conversión a mayúsculas), y la transformación de variables textuales a formato de factor (<em>factor</em>) para optimizar el uso de memoria y facilitar los modelos estadísticos y análisis longitudinales posteriores.</p>
+</section>
+<section id="procesamiento-y-limpieza-base-adjudicaciones-completa" class="level3" data-number="3.1.4">
+<h3 data-number="3.1.4" class="anchored" data-anchor-id="procesamiento-y-limpieza-base-adjudicaciones-completa"><span class="header-section-number">3.1.4</span> Procesamiento y limpieza: Base adjudicaciones completa</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>adjudicacion_limpia <span class="ot">&lt;-</span> adjudicacion <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 1. Filtros para variables de interés</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(PROGRAMA <span class="sc">==</span> <span class="st">"FONDECYT"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(AGNO_FALLO <span class="sc">&gt;=</span> <span class="dv">2016</span>) <span class="sc">%&gt;%</span> <span class="co"># Para que calce con tu base de postulaciones</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2. Eliminar columnas innecesarias (N y notas vacías)</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>N, <span class="sc">-</span>NOTA_MONTO, <span class="sc">-</span>NOMBRE_CONCURSO, <span class="sc">-</span>PALABRAS_CLAVES, <span class="sc">-</span>MONEDA) <span class="sc">%&gt;%</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3. Arreglar el MONTO_ADJUDICADO</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">MONTO_ADJUDICADO =</span> <span class="fu">str_remove_all</span>(MONTO_ADJUDICADO, <span class="st">"</span><span class="sc">\\</span><span class="st">.|,"</span>), <span class="co"># Quita separadores de miles</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">MONTO_ADJUDICADO =</span> <span class="fu">as.numeric</span>(MONTO_ADJUDICADO)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 4. Estandarización de textos </span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span><span class="fu">str_squish</span>(<span class="fu">str_to_upper</span>(.)))) <span class="sc">%&gt;%</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span><span class="fu">stri_trans_general</span>(., <span class="at">id =</span> <span class="st">"Latin-ASCII"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 5. Transformar a factores las variables categóricas</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(SUBDIRECCION, PROGRAMA, INSTRUMENTO, AREA_OCDE, </span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>                  DISCIPLINA_DETALLE, GRUPO_DE_EVALUACION, SEXO, </span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>                  INSTITUCION_PRINCIPAL, MACROZONA_MINCIENCIA, REGION_EJECUCION), as.factor))</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Revisar la estructura final</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(adjudicacion_limpia)</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(adjudicacion_limpia<span class="sc">$</span>MONTO_ADJUDICADO) <span class="co"># Para verificar que calculó bien los números</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>adjudicacion_limpia <span class="ot">&lt;-</span> adjudicacion_limpia <span class="sc">%&gt;%</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Aplicar la misma limpieza de regiones que hicimos en postulaciones</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">REGION_EJECUCION =</span> <span class="fu">as.character</span>(REGION_EJECUCION),</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">REGION_EJECUCION =</span> <span class="fu">str_replace</span>(REGION_EJECUCION, <span class="st">"REGION DE METROPOLITANA"</span>, <span class="st">"RM"</span>),</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">REGION_EJECUCION =</span> <span class="fu">str_replace</span>(REGION_EJECUCION, <span class="st">"REGION DE |REGION DEL |REGION "</span>, <span class="st">""</span>),</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">REGION_EJECUCION =</span> <span class="fu">as.factor</span>(REGION_EJECUCION),</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Arreglar el error de tipeo oficial ("CIENICAS")</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">DISCIPLINA_DETALLE =</span> <span class="fu">as.character</span>(DISCIPLINA_DETALLE),</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">DISCIPLINA_DETALLE =</span> <span class="fu">str_replace</span>(DISCIPLINA_DETALLE, <span class="st">"CIENICAS"</span>, <span class="st">"CIENCIAS"</span>),</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">DISCIPLINA_DETALLE =</span> <span class="fu">as.factor</span>(DISCIPLINA_DETALLE)</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Seleccionar solo las columnas "nuevas" que queremos inyectar a postulaciones</span></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>adjudicaciones_para_cruce <span class="ot">&lt;-</span> adjudicacion_limpia <span class="sc">%&gt;%</span></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>    CODIGO_PROYECTO,</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>    NOMBRE_PROYECTO,</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>    GRUPO_DE_EVALUACION,</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>    DISCIPLINA_DETALLE,</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>    DURACION_MESES,</span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>    NOMBRE_RESPONSABLE,</span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>    INSTITUCION_PRINCIPAL,</span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>    MONTO_ADJUDICADO</span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a><span class="co"># Left Join</span></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>base_final_completa <span class="ot">&lt;-</span> postulaciones_limpia <span class="sc">%&gt;%</span></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(adjudicaciones_para_cruce, <span class="at">by =</span> <span class="st">"CODIGO_PROYECTO"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="procesamiento-y-limpieza-base-adjudicaciones-ciencias-sociales" class="level3" data-number="3.1.5">
+<h3 data-number="3.1.5" class="anchored" data-anchor-id="procesamiento-y-limpieza-base-adjudicaciones-ciencias-sociales"><span class="header-section-number">3.1.5</span> Procesamiento y limpieza: Base adjudicaciones ciencias sociales</h3>
+<p>Luego, replicando lo hecho con la base de postulaciones, se procesaron y limpiaron los datos de adjudicaciones Fondecyt, aplicando filtros para seleccionar solo proyectos en Ciencias Sociales entre 2016 y 2025, eliminando columnas innecesarias, estandarizando textos, y transformando variables categóricas a factores. Luego se realizó un cruce con la base de postulaciones para inyectar información adicional de las adjudicaciones a cada postulación.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>adjudicacion_limpia_sociales <span class="ot">&lt;-</span> adjudicacion <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 1. Filtros para variables de interés</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(AREA_OCDE <span class="sc">==</span> <span class="st">"CIENCIAS SOCIALES"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(PROGRAMA <span class="sc">==</span> <span class="st">"FONDECYT"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(AGNO_FALLO <span class="sc">&gt;=</span> <span class="dv">2016</span>) <span class="sc">%&gt;%</span> <span class="co"># Para que calce con tu base de postulaciones</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2. Eliminar columnas innecesarias (N y notas vacías)</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>N, <span class="sc">-</span>NOTA_MONTO, <span class="sc">-</span>NOMBRE_CONCURSO, <span class="sc">-</span>PALABRAS_CLAVES, <span class="sc">-</span>MONEDA) <span class="sc">%&gt;%</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3. Arreglar el MONTO_ADJUDICADO</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">MONTO_ADJUDICADO =</span> <span class="fu">str_remove_all</span>(MONTO_ADJUDICADO, <span class="st">"</span><span class="sc">\\</span><span class="st">.|,"</span>), <span class="co"># Quita separadores de miles</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">MONTO_ADJUDICADO =</span> <span class="fu">as.numeric</span>(MONTO_ADJUDICADO)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 4. Estandarización de textos </span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span><span class="fu">str_squish</span>(<span class="fu">str_to_upper</span>(.)))) <span class="sc">%&gt;%</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span><span class="fu">stri_trans_general</span>(., <span class="at">id =</span> <span class="st">"Latin-ASCII"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 5. Transformar a factores las variables categóricas</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(SUBDIRECCION, PROGRAMA, INSTRUMENTO, AREA_OCDE, </span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>                  DISCIPLINA_DETALLE, GRUPO_DE_EVALUACION, SEXO, </span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>                  INSTITUCION_PRINCIPAL, MACROZONA_MINCIENCIA, REGION_EJECUCION), as.factor))</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Seleccionar columnas "nuevas" que se busca incorporar a postulaciones</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>adjudicaciones_para_cruce_sociales <span class="ot">&lt;-</span> adjudicacion_limpia_sociales <span class="sc">%&gt;%</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    CODIGO_PROYECTO,</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    NOMBRE_PROYECTO,</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>    GRUPO_DE_EVALUACION,</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    DISCIPLINA_DETALLE,</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    DURACION_MESES,</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>    NOMBRE_RESPONSABLE,</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    INSTITUCION_PRINCIPAL,</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>    MONTO_ADJUDICADO</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Left Join para juntar ambas bases</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>base_final_sociales <span class="ot">&lt;-</span> postulaciones_limpia_sociales <span class="sc">%&gt;%</span></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(adjudicaciones_para_cruce_sociales, <span class="at">by =</span> <span class="st">"CODIGO_PROYECTO"</span>)</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a><span class="co"># Revisar la estructura final</span></span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(adjudicacion_limpia_sociales)</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(adjudicacion_limpia_sociales<span class="sc">$</span>MONTO_ADJUDICADO) <span class="co"># Para verificar que calculó bien los números</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Considerando que tanto la base de postulaciones contiene también a los proyectos adjudicados, se realizó un cruce (left join) entre ambas bases utilizando <code>CODIGO_PROYECTO</code> como clave, con el objetivo de inyectar la información de adjudicaciones a cada postulación. Este proceso permitió enriquecer la base de postulaciones con variables adicionales provenientes de las adjudicaciones, como el nombre del proyecto, grupo de evaluación, disciplina detallada, duración, monto adjudicado, entre otros. De todas formas, la base de adjudicaciones cuenta con mayor granularidad que la base de postulaciones, por lo que hay ciertos casos que en tanto no estén adjudicados no cuentan con la información de adjudicación, lo que se refleja en valores NA en las variables provenientes de adjudicaciones para los proyectos no adjudicados. Sin embargo, esta estructura permite realizar análisis comparativos entre postulaciones y adjudicaciones, así como análisis longitudinales para comprender la evolución de los proyectos a lo largo del tiempo.</p>
+<p>Al mismo tiempo, la variable de grupo de estudio no se encontraba bien equilibrada, por lo que se realizó un proceso de agrupamiento de las disciplinas detalladas en grupos de estudio más generales como detalla ANID para cada categoría, con el objetivo de facilitar el análisis posterior. Este proceso implicó revisar cada una de las disciplinas detalladas presentes en la base de adjudicaciones, y asignarlas a grupos de estudio más amplios que representaran áreas temáticas coherentes dentro de las ciencias sociales. Por ejemplo, disciplinas como “Antropología” y “Arqueología” que figuraban por separado, fueron agrupadas bajo el grupo de estudio “Antropología y Arqueología”. Este proceso se realizó para todas las disciplinas detalladas, resultando en un conjunto final de grupos de estudio que permiten analizar los proyectos adjudicados desde una perspectiva temática más generalizada, facilitando así la interpretación y comparación entre diferentes áreas dentro de las ciencias sociales.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>base_final_sociales <span class="ot">&lt;-</span> base_final_sociales <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">GRUPO_ESTUDIO =</span> <span class="fu">case_when</span>(</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>      <span class="co"># ── ANTROPOLOGÍA Y ARQUEOLOGÍA ──────────────────────────</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>      GRUPO_DE_EVALUACION <span class="sc">%in%</span> <span class="fu">c</span>(</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ANTROP. Y ARQUE"</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ANTROPOLOGIA CULTURAL Y SOCIAL"</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ANTROPOLOGIA FISICA"</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ANTROPOLOGIA Y ARQUEOLOGIA"</span>,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ARQUEOLOGIA"</span>,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"OTRAS ESPECIALIDADES DE LA ANTROPOLOGIA"</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">~</span> <span class="st">"Antropología y Arqueología"</span>,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>      <span class="co"># ── ARTES Y ARQUITECTURA ────────────────────────────────</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>      GRUPO_DE_EVALUACION <span class="sc">%in%</span> <span class="fu">c</span>(</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ARTES Y ARQUITECTURA"</span>,</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">"DISENO"</span>,</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">"HISTORIA DE LA ARQUITECTURA Y LA CIUDAD"</span>,</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">"HISTORIA DEL ARTE"</span>,</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">"MUSICA"</span>,</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">"PROYECTO ARQUITECTONICO Y URBANO"</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">~</span> <span class="st">"Artes y Arquitectura"</span>,</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>      <span class="co"># ── SOCIOLOGÍA, TRABAJO SOCIAL Y CS. DE LA COMUNICACIÓN ─</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>      GRUPO_DE_EVALUACION <span class="sc">%in%</span> <span class="fu">c</span>(</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SOCIOLOGIA"</span>,</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SOCIOLOGIA CS I"</span>,</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>        <span class="st">"CAMBIO SOCIAL Y DESARROLLO"</span>,</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SOCIOLOGIA DE LAS ORGANIZACIONES FORMALE"</span>,</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SOCIOLOGIA URBANA Y RURAL"</span>,</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>        <span class="st">"TEORIA SOCIO-CULTURAL"</span>,</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SOCIOLOGIA DEL TRABAJO"</span>,</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>        <span class="st">"OTRAS SOCIOLOGIAS"</span>,</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>        <span class="st">"CS. DE LA COMUNICACION E INFORMACION"</span>,</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>        <span class="st">"POLITICA CIENTIFICA Y TECNOLOGICA"</span>,</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>        <span class="st">"TRABAJO SOCIAL (EST. FAMILIA, TEMAS SOCI)"</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">~</span> <span class="st">"Sociología, Trabajo Social y Cs. de la Comunicación"</span>,</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>      <span class="co"># ── GEOGRAFÍA Y URBANISMO ────────────────────────────────</span></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>      GRUPO_DE_EVALUACION <span class="sc">%in%</span> <span class="fu">c</span>(</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>        <span class="st">"GEOGRAFIA Y URBANISM"</span>,</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>        <span class="st">"GEOGRAFIA HUMANA Y CULTURAL"</span>,</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>        <span class="st">"DISENO URBANO"</span>,</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ESTUDIOS URBANOS"</span>,</span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>        <span class="st">"HABITAT RESIDENCIAL Y COMUNIDADES"</span>,</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>        <span class="st">"PLANIFICACION TERRITORIAL"</span>,</span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>        <span class="st">"RIESGOS SOCIO-NATURALES Y SUSTENTABILIDA"</span>,</span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SUSTENTABILIDAD URBANA"</span></span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">~</span> <span class="st">"Geografía y Urbanismo"</span>,</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>      <span class="co"># ── PSICOLOGÍA ───────────────────────────────────────────</span></span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>      GRUPO_DE_EVALUACION <span class="sc">%in%</span> <span class="fu">c</span>(</span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>        <span class="st">"PSICOLOGIA"</span>,</span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SICOLOGIA"</span>,</span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>        <span class="st">"PSICOLOGIA CLINICA"</span>,</span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>        <span class="st">"PSICOLOGIA DE LA EDUCACION Y COGNITIVA"</span>,</span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>        <span class="st">"PSICOLOGIA EXPERIMENTAL"</span>,</span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>        <span class="st">"PSICOLOGIA SOCIAL"</span>,</span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>        <span class="st">"PSICOBIOLOGIA"</span>,</span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>        <span class="st">"OTRAS PSICOLOGIAS"</span></span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">~</span> <span class="st">"Psicología"</span>,</span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>      <span class="co"># ── CIENCIAS ECONÓMICAS Y ADMINISTRATIVAS ───────────────</span></span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>      GRUPO_DE_EVALUACION <span class="sc">%in%</span> <span class="fu">c</span>(</span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>        <span class="st">"CS. ECONOM/ADMI"</span>,</span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>        <span class="st">"DESARROLLO ECONOMICO"</span>,</span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ECONOMETRIA"</span>,</span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ECONOMIA DE LA ENERGIA, AMBIENTAL Y DE L"</span>,</span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ECONOMIA DE SECTORES SOCIALES (ANALISIS"</span>,</span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ECONOMIA EXPERIMENTAL Y CONDUCTUAL"</span>,</span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ECONOMIA LABORAL Y DE LA POBLACION"</span>,</span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ECONOMIA POLITICA"</span>,</span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ECONOMIA REGIONAL Y ECONOMIA URBANA"</span>,</span>
+<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ESTRATEGIA Y TEORIA DE LAS ORGANIZACIONE"</span>,</span>
+<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a>        <span class="st">"FINANZAS"</span>,</span>
+<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a>        <span class="st">"INNOVACION Y EMPRENDIMIENTO"</span>,</span>
+<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a>        <span class="st">"MARCROECONOMIA, ECONOMIA INTERNACIONAL Y"</span>,</span>
+<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ORGANIZACION INDUSTRIAL"</span>,</span>
+<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a>        <span class="st">"TEORIA ECONOMICA"</span></span>
+<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">~</span> <span class="st">"Ciencias Económicas y Administrativas"</span>,</span>
+<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a>      <span class="co"># ── CIENCIAS JURÍDICAS Y POLÍTICAS ──────────────────────</span></span>
+<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a>      GRUPO_DE_EVALUACION <span class="sc">%in%</span> <span class="fu">c</span>(</span>
+<span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a>        <span class="st">"CIENCIAS JURIDICAS Y POLITICAS"</span>,</span>
+<span id="cb8-86"><a href="#cb8-86" aria-hidden="true" tabindex="-1"></a>        <span class="st">"CS. JURIDICAS Y POL."</span>,</span>
+<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a>        <span class="st">"CIENCIA POLITICA (INC. LEGISLACION )"</span>,</span>
+<span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a>        <span class="st">"CRIMINOLOGIA"</span>,</span>
+<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a>        <span class="st">"DERECHO COMERCIAL, INDUSTRIAL Y MINERO"</span>,</span>
+<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a>        <span class="st">"DERECHO DEL AMBIENTE"</span>,</span>
+<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a>        <span class="st">"DERECHO ECONOMICO"</span>,</span>
+<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a>        <span class="st">"DERECHO INTERNACIONAL PUBLICO Y PRIVADO"</span>,</span>
+<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a>        <span class="st">"DERECHO PENAL"</span>,</span>
+<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a>        <span class="st">"DERECHO PRIVADO"</span>,</span>
+<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a>        <span class="st">"DERECHO PROCESAL"</span>,</span>
+<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a>        <span class="st">"DERECHO PUBLICO"</span>,</span>
+<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a>        <span class="st">"DERECHO ROMANO"</span>,</span>
+<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ESTUDIOS INTERNACIONALES Y COOP.INTERNAL"</span>,</span>
+<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a>        <span class="st">"HISTORIA Y FILOSOFIA DEL DERECHO"</span>,</span>
+<span id="cb8-100"><a href="#cb8-100" aria-hidden="true" tabindex="-1"></a>        <span class="st">"OTRAS ESPECIALIDADES DEL DERECHO"</span></span>
+<span id="cb8-101"><a href="#cb8-101" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">~</span> <span class="st">"Ciencias Jurídicas y Políticas"</span>,</span>
+<span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a>      <span class="co"># ── EDUCACIÓN ────────────────────────────────────────────</span></span>
+<span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a>      GRUPO_DE_EVALUACION <span class="sc">%in%</span> <span class="fu">c</span>(</span>
+<span id="cb8-105"><a href="#cb8-105" aria-hidden="true" tabindex="-1"></a>        <span class="st">"EDUCACION"</span>,</span>
+<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a>        <span class="st">"EDUCACION SUPERIOR"</span>,</span>
+<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a>        <span class="st">"EDUCACION INICIAL-ESCOLAR"</span>,</span>
+<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a>        <span class="st">"EDUC INICIAL-ESCOLAR"</span>,</span>
+<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ACADEMIA"</span>,</span>
+<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a>        <span class="st">"APRENDIZAJE, DESARROLLO Y DESEMPENO"</span>,</span>
+<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a>        <span class="st">"CALIDAD Y SISTEMA"</span>,</span>
+<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a>        <span class="st">"CONVIVENCIA, VIOLENCIA Y FORMACION"</span>,</span>
+<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a>        <span class="st">"DIDACTICA ESPECIFICA"</span>,</span>
+<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a>        <span class="st">"DIVERSIDAD"</span>,</span>
+<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a>        <span class="st">"DOCENTES"</span>,</span>
+<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a>        <span class="st">"EDUCACION INTERCULTURAL"</span>,</span>
+<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a>        <span class="st">"EDUCACION RURAL"</span>,</span>
+<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a>        <span class="st">"EDUCACION TECNICA"</span>,</span>
+<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ENSENANZA Y APRENDIZAJE"</span>,</span>
+<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a>        <span class="st">"FORMACION INICIAL"</span>,</span>
+<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a>        <span class="st">"HISTORIA DE LA EDUCACION"</span>,</span>
+<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a>        <span class="st">"LIDERAZGO Y GESTION"</span>,</span>
+<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a>        <span class="st">"MEDICION EDUCACIONAL"</span>,</span>
+<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a>        <span class="st">"POLITICA EDUCATIVA"</span>,</span>
+<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a>        <span class="st">"TECNOLOGIA Y APRENDIZAJE"</span></span>
+<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">~</span> <span class="st">"Educación"</span>,</span>
+<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a>      <span class="co"># ── INVESTIGACIÓN INTERDISCIPLINARIA ─────────────────────</span></span>
+<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a>      GRUPO_DE_EVALUACION <span class="sc">%in%</span> <span class="fu">c</span>(</span>
+<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a>        <span class="st">"INTER-TRANS DISCIPLI"</span>,</span>
+<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a>        <span class="st">"INVESTIGACION INTER-TRANS DISCIPLINARIA"</span>,</span>
+<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a>        <span class="st">"TRANS-INTER DISCIPLI"</span>,</span>
+<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a>        <span class="st">"LINGUISTICALITERATU"</span>,</span>
+<span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a>        <span class="st">"LITERATURA CHILENA"</span>,</span>
+<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a>        <span class="st">"HISTORIA"</span>,</span>
+<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SOCIOLOGIA CS I"</span>       <span class="co"># revisar si no va mejor en Sociología</span></span>
+<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">~</span> <span class="st">"Investigación Interdisciplinaria"</span>,</span>
+<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a>      <span class="co"># ── VACÍOS Y NA ──────────────────────────────────────────</span></span>
+<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.na</span>(GRUPO_DE_EVALUACION) <span class="sc">|</span> GRUPO_DE_EVALUACION <span class="sc">==</span> <span class="st">""</span> <span class="sc">~</span> <span class="cn">NA_character_</span>,</span>
+<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"Sin clasificar"</span></span>
+<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a>    <span class="at">GRUPO_ESTUDIO =</span> <span class="fu">factor</span>(GRUPO_ESTUDIO, <span class="at">levels =</span> <span class="fu">c</span>(</span>
+<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Antropología y Arqueología"</span>,</span>
+<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Artes y Arquitectura"</span>,</span>
+<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Sociología, Trabajo Social y Cs. de la Comunicación"</span>,</span>
+<span id="cb8-148"><a href="#cb8-148" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Geografía y Urbanismo"</span>,</span>
+<span id="cb8-149"><a href="#cb8-149" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Psicología"</span>,</span>
+<span id="cb8-150"><a href="#cb8-150" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Ciencias Económicas y Administrativas"</span>,</span>
+<span id="cb8-151"><a href="#cb8-151" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Ciencias Jurídicas y Políticas"</span>,</span>
+<span id="cb8-152"><a href="#cb8-152" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Educación"</span>,</span>
+<span id="cb8-153"><a href="#cb8-153" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Investigación Interdisciplinaria"</span></span>
+<span id="cb8-154"><a href="#cb8-154" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb8-155"><a href="#cb8-155" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-156"><a href="#cb8-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-157"><a href="#cb8-157" aria-hidden="true" tabindex="-1"></a>base_final_sociales <span class="sc">%&gt;%</span></span>
+<span id="cb8-158"><a href="#cb8-158" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(GRUPO_ESTUDIO <span class="sc">==</span> <span class="st">"Sin clasificar"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-159"><a href="#cb8-159" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(GRUPO_DE_EVALUACION, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-160"><a href="#cb8-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-161"><a href="#cb8-161" aria-hidden="true" tabindex="-1"></a>  base_final_sociales <span class="sc">%&gt;%</span></span>
+<span id="cb8-162"><a href="#cb8-162" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(GRUPO_ESTUDIO, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="descripción-de-la-base-de-adjudicaciones-fondecyt" class="level3" data-number="3.1.6">
+<h3 data-number="3.1.6" class="anchored" data-anchor-id="descripción-de-la-base-de-adjudicaciones-fondecyt"><span class="header-section-number">3.1.6</span> Descripción de la base de adjudicaciones Fondecyt</h3>
+<p>La base de datos <strong>BDH_HISTORICA</strong> contiene el registro histórico completo de las adjudicaciones de fondos Fondecyt desde 1982 hasta 2025. Si bien el período temporal original de esta base abarca más de cuatro décadas de financiamiento científico, para efectos de este análisis se aplicó un filtro temporal que selecciona únicamente los años 2016 a 2025, con el propósito de mantener consistencia con la base de postulaciones. El universo de análisis corresponde a todos los proyectos adjudicados en concursos Fondecyt, sobre los cuales se aplicaron dos filtros principales: selección de la disciplina “Ciencias Sociales” según la clasificación de la OCDE y restricción al período 2016-2025.</p>
+<p>Esta fue fusionada con la base de postulaciones anteriormente expuesta para aunarlas y dejar una base de datos final que contiene tanto a los proyectos adjudicados como a los no adjudicados, con el objetivo de enriquecer la información disponible para cada postulación con variables provenientes de las adjudicaciones. Quedando con dos productos finales: una base de datos completa con todas las postulaciones y adjudicaciones fondecyt (base_final_completa), y una base de datos específica para Ciencias Sociales con todas las postulaciones y adjudicaciones en esta área (base_final_sociales).</p>
+<p>Las variables principales incluyen identificadores de proyecto como CODIGO_PROYECTO, variables temporales como AGNO_CONCURSO y AGNO_FALLO —que permiten distinguir entre el año de convocatoria y el año de resolución—, y variables de financiamiento como DURACION_MESES, que registra la extensión temporal del proyecto. El volumen de los recursos asignados se captura en la variable MONTO_ADJUDICADO, expresado en miles de pesos chilenos. La clasificación institucional se registra mediante las variables SUBDIRECCION, PROGRAMA e INSTRUMENTO, mientras que la clasificación disciplinaria se detalla en AREA_OCDE y GRUPO_DE_EVALUACION. Esta última variable es particularmente relevante para el análisis, ya que identifica el panel evaluador al que fue asignado cada proyecto, operando como un proxy de la subdisciplina de pertenencia dentro de las Ciencias Sociales.</p>
+<p>Sin embargo, dado que GRUPO_DE_EVALUACION contiene categorías de granularidad variable —algunas muy específicas y otras agregadas, con inconsistencias de nomenclatura producto de distintas versiones del sistema de registro— fue necesario construir una variable derivada, GRUPO_ESTUDIO, que agrupa las 101 categorías originales en nueve áreas disciplinares comparables: Antropología y Arqueología; Artes y Arquitectura; Sociología, Trabajo Social y Ciencias de la Comunicación; Geografía y Urbanismo; Psicología; Ciencias Económicas y Administrativas; Ciencias Jurídicas y Políticas; Educación; e Investigación Interdisciplinaria. La clasificación se realizó mediante correspondencia directa entre los valores observados en la base y las categorías de destino, priorizando la coherencia disciplinar por sobre la agrupación administrativa original. Todos los casos fueron clasificados satisfactoriamente, sin observaciones residuales.</p>
+<p>Adicionalmente, se incluyen variables geográficas como REGION_EJECUCION y MACROZONA_MINCIENCIA, y variables sobre las características de los beneficiarios e instituciones albergantes como SEXO, TIPO_BENEFICIARIO, NOMBRE_RESPONSABLE e INSTITUCION_PRINCIPAL.</p>
+<p>El proceso de depuración aplicado contempló la conversión de variables numéricas relacionadas con montos y años a los tipos de datos apropiados (<em>numeric</em> e <em>integer</em>), la transformación de variables categóricas a factores, y la estandarización de cadenas de texto (incluyendo la corrección de errores tipográficos de origen en los registros oficiales). Finalmente, se aplicó un doble filtrado por disciplina y período temporal, ordenando los registros para facilitar los análisis longitudinales y comparativos posteriores. Es importante destacar que esta base de adjudicaciones, al contener solo proyectos financiados, se utilizó para enriquecer la base de postulaciones mediante un cruce que permitió inyectar información adicional de los proyectos adjudicados a cada postulación correspondiente, facilitando así un análisis integral del proceso competitivo en el programa Fondecyt.</p>
+</section>
+</section>
+<section id="bases-de-datos-milenio-2016-2025-postulaciones-y-adjudicaciones" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="bases-de-datos-milenio-2016-2025-postulaciones-y-adjudicaciones"><span class="header-section-number">3.2</span> Bases de Datos Milenio (2016-2025): Postulaciones y Adjudicaciones</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>postulacion_milenio <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> <span class="fu">here</span>(<span class="st">"input"</span>, <span class="st">"data"</span>, <span class="st">"raw"</span>, <span class="st">"POSTULACIONES_MILENIO.csv"</span>), </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">sep =</span> <span class="st">";"</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">encoding =</span> <span class="st">"UTF-8"</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar estructura del data frame</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(postulacion_milenio)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>adjudicacion_milenio <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> <span class="fu">here</span>(<span class="st">"input"</span>, <span class="st">"data"</span>, <span class="st">"raw"</span>, <span class="st">"BDH_PROYECTOS_MILENIO.csv"</span>), </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">sep =</span> <span class="st">";"</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">encoding =</span> <span class="st">"UTF-8"</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar estructura del data frame</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(adjudicacion_milenio)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(adjudicacion_milenio)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="procesamiento-y-limpieza-base-adjudicación-completa" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="procesamiento-y-limpieza-base-adjudicación-completa"><span class="header-section-number">3.2.1</span> Procesamiento y limpieza: Base adjudicación completa</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>adjudicacion_milenio_limpia_sociales <span class="ot">&lt;-</span> adjudicacion_milenio <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2. Filtros metodológicos</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(AGNO_FALLO <span class="sc">&gt;=</span> <span class="dv">2016</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3. Eliminar columnas innecesarias</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>N, <span class="sc">-</span>MONTO_ADJUDICADO..M.., <span class="sc">-</span>NOTA_MONTO) <span class="sc">%&gt;%</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 4. Estandarización de textos (mayúsculas, sin espacios, sin tildes)</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span><span class="fu">str_squish</span>(<span class="fu">str_to_upper</span>(.)))) <span class="sc">%&gt;%</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span><span class="fu">stri_trans_general</span>(., <span class="at">id =</span> <span class="st">"Latin-ASCII"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 5. Homologar los nombres de las regiones</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">REGION_EJECUCION =</span> <span class="fu">str_replace</span>(REGION_EJECUCION, <span class="st">"REGION METROPOLITANA"</span>, <span class="st">"RM"</span>),</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">REGION_EJECUCION =</span> <span class="fu">str_replace</span>(REGION_EJECUCION, <span class="st">"REGION DE |REGION DEL |REGION "</span>, <span class="st">""</span>)</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 6. Transformar variables categóricas a factores</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(SUBDIRECCION, PROGRAMA, INSTRUMENTO, AREA_OCDE, </span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>                  DISCIPLINA_DETALLE, GRUPO_DE_EVALUACION, SEXO, </span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>                  INSTITUCION_PRINCIPAL, MACROZONA_MINCIENCIA, REGION_EJECUCION), as.factor))</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar que el monto sobrevivió</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(adjudicacion_milenio_limpia_sociales)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="descripción-de-la-base-de-adjudicaciones-proyectos-milenio" class="level3" data-number="3.2.2">
+<h3 data-number="3.2.2" class="anchored" data-anchor-id="descripción-de-la-base-de-adjudicaciones-proyectos-milenio"><span class="header-section-number">3.2.2</span> Descripción de la base de adjudicaciones Proyectos Milenio</h3>
+<p>La base de datos <strong>BDH_PROYECTOS_MILENIO</strong> contiene el registro de las adjudicaciones de los Proyectos de Investigación del programa Milenio, que representa una línea de financiamiento de excelencia en investigación científica en Chile. Este programa se distingue por otorgar fondos de mayor envergadura y duración que los Fondecyt tradicionales, incluyendo diferentes modalidades como Núcleos Milenio, Institutos Milenio, entre otros instrumentos de financiamiento para investigación de excelencia. Para este análisis se consideró el período temporal 2016-2025, aplicando filtros para seleccionar únicamente proyectos adjudicados en el área de “Ciencias Sociales” según la clasificación OECD.</p>
+<p>El conjunto de variables principales incluye identificadores como <code>CODIGO_PROYECTO</code> que distingue de manera única cada proyecto Milenio, variables temporales como <code>AGNO_CONCURSO</code> y <code>AGNO_FALLO</code> que registran el año de convocatoria y resolución respectivamente, y <code>DURACION_MESES</code> que especifica la duración del proyecto. Una característica distintiva de esta base es la variable <code>MONTO_ADJUDICADO..M..</code> que registra los montos adjudicados expresados en millones de pesos chilenos, sin embargo ha habido que eliminarla porque varios de los valores no estaban presentes en la base de datos para el caso de las ciencias sociales. Las variables <code>SUBDIRECCION</code>, <code>PROGRAMA</code> e <code>INSTRUMENTO</code> permiten clasificar el tipo de programa y modalidad específica (Núcleo, Instituto, etc.), mientras que <code>AREA_OCDE</code> y <code>DISCIPLINA_DETALLE</code> proporcionan la clasificación disciplinaria y sub-disciplinaria. La variable <code>GRUPO_DE_EVALUACION</code> identifica el panel evaluador, y se incluyen también variables geográficas como <code>REGION_EJECUCION</code> y <code>MACROZONA_MINCIENCIA</code>, así como características de los beneficiarios mediante <code>SEXO</code>, <code>TIPO_BENEFICIARIO</code> y <code>TIPO_INSTITUCION</code>.</p>
+<p>El proceso de depuración consistió en la conversión de variables numéricas a los tipos de datos apropiados, la transformación de variables categóricas a factores para optimizar el análisis, la aplicación de filtros por área disciplinaria y período temporal, y el ordenamiento temporal de los registros. Es importante destacar que la expresión de montos en millones de pesos chilenos facilita la comparación entre proyectos de gran envergadura y refleja la escala significativamente mayor de estos instrumentos de financiamiento comparados con los Fondecyt regulares.</p>
+</section>
+<section id="procesamiento-y-limpieza-postulaciones-milenio" class="level3" data-number="3.2.3">
+<h3 data-number="3.2.3" class="anchored" data-anchor-id="procesamiento-y-limpieza-postulaciones-milenio"><span class="header-section-number">3.2.3</span> Procesamiento y limpieza postulaciones Milenio</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reemplaza 'postulaciones_milenio_bruta' por el nombre real de tu base</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>postulacion_milenio_limpia <span class="ot">&lt;-</span> postulacion_milenio <span class="sc">%&gt;%</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 1. Renombrar columnas </span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">DISCIPLINA_OECD =</span> DISCIPLINA.OECD,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">MACROZONA_MINCIENCIA =</span> MACRO.ZONA,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">AGNO_FALLO =</span> ANO_FALLO</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2. Filtros de población objetivo y ventana temporal</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(AGNO_FALLO <span class="sc">&gt;=</span> <span class="dv">2016</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ESTADO_DE_ADJUDICACION <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"ADJUDICADO"</span>, <span class="st">"NO ADJUDICADO"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3. Eliminar la columna N</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>N, <span class="sc">-</span>TIPO_BENEFICIARIO, <span class="sc">-</span>TIPO.DE.INSTITUCION) <span class="sc">%&gt;%</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 4. Estandarización de textos (mayúsculas, sin espacios extra y sin tildes)</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span><span class="fu">str_squish</span>(<span class="fu">str_to_upper</span>(.)))) <span class="sc">%&gt;%</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span><span class="fu">stri_trans_general</span>(., <span class="at">id =</span> <span class="st">"Latin-ASCII"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 5. Homologar nombres de regiones</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">REGION_EJECUCION =</span> <span class="fu">str_replace</span>(REGION_EJECUCION, <span class="st">"REGION METROPOLITANA"</span>, <span class="st">"RM"</span>),</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">REGION_EJECUCION =</span> <span class="fu">str_replace</span>(REGION_EJECUCION, <span class="st">"REGION DE |REGION DEL |REGION "</span>, <span class="st">""</span>)</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 6. Transformar a variables categóricas (factores)</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character) <span class="sc">&amp;</span> <span class="sc">!</span>CODIGO_PROYECTO, as.factor))</span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Revisar cómo quedó</span></span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(postulacion_milenio_limpia)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="descripción-de-la-base-de-postulaciones-proyectos-milenio" class="level3" data-number="3.2.4">
+<h3 data-number="3.2.4" class="anchored" data-anchor-id="descripción-de-la-base-de-postulaciones-proyectos-milenio"><span class="header-section-number">3.2.4</span> Descripción de la base de postulaciones Proyectos Milenio</h3>
+<p>La base de datos <strong>POSTULACIONES_MILENIO</strong> contiene el registro de las propuestas presentadas al Programa Iniciativa Científica Milenio (actualmente bajo la Agencia Nacional de Investigación y Desarrollo, ANID). Si bien la base original abarca el historial de postulaciones a Institutos y Núcleos Milenio desde 1999, para efectos de esta investigación se aplicó un filtro temporal que restringe la muestra al período 2016-2025, garantizando la comparabilidad longitudinal con la base de postulaciones Fondecyt. Asimismo, el universo de análisis se delimitó exclusivamente a los centros de investigación de la disciplina “Ciencias Sociales” (según la clasificación de la OCDE), conservando únicamente aquellas propuestas cuyo proceso de evaluación culminó en condición de “Adjudicado” o “No Adjudicado”.</p>
+<p>Entre las variables principales se encuentran el <code>CODIGO_PROYECTO</code> como identificador único, variables de clasificación institucional como <code>SUBDIRECCION</code>, <code>PROGRAMA</code> e <code>INSTRUMENTO</code> (que especifican si se trata de un Instituto o un Núcleo Milenio), y variables temporales como <code>AGNO_FALLO</code>. El resultado del concurso se captura en la variable <code>ESTADO_DE_ADJUDICACION</code>. La base también incluye caracterizaciones geográficas (<code>REGION_EJECUCION</code> y <code>MACROZONA_MINCIENCIA</code>), así como variables sociodemográficas e institucionales vinculadas a la dirección del centro propuesto, tales como <code>SEXO</code>, <code>TIPO_BENEFICIARIO</code> y <code>TIPO_INSTITUCION</code>.</p>
+<p>Una limitación relevante de esta fuente refiere a la cobertura temporal de los datos de postulaciones. Si bien la base POSTULACIONES_MILENIO contempla en principio el historial de propuestas presentadas al programa, los registros disponibles para el período de análisis se restringen al año 2017, lo que impide construir series longitudinales de tasas de postulación y adjudicación comparables a las disponibles para Fondecyt. En consecuencia, los datos de postulaciones Milenio se utilizan de manera acotada como referencia ilustrativa para ese año, sin extender su uso a análisis de tendencias temporales.</p>
+<p>Para el análisis longitudinal del programa Milenio en el período 2016-2025, el estudio se apoya exclusivamente en la base de proyectos adjudicados, que sí cuenta con cobertura completa del período. Esto implica que, a diferencia de Fondecyt —donde es posible calcular tasas de éxito y caracterizar el universo de postulantes—, el análisis de Milenio se concentra en describir el perfil y la distribución de los centros financiados, sin poder dar cuenta del conjunto de propuestas que no lograron adjudicación en cada concurso.</p>
+<p>El proceso de depuración aplicado a esta matriz contempló una primera fase de homologación estructural, donde se renombraron variables clave (eliminando separadores de punto y unificando nomenclaturas) para hacerlas estrictamente consistentes con la estructura de la base Fondecyt. Posteriormente, se eliminaron columnas redundantes, se estandarizaron las cadenas de texto (eliminación de tildes, espacios en blanco y conversión a mayúsculas, incluyendo la limpieza de prefijos regionales), y se transformaron las variables textuales a formato de factor (<em>factor</em>) para optimizar los modelos estadísticos y el cálculo de tasas de adjudicación en investigación asociativa.</p>
+</section>
+</section>
+<section id="resumen-de-las-transformaciones-aplicadas" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="resumen-de-las-transformaciones-aplicadas"><span class="header-section-number">3.3</span> Resumen de las transformaciones aplicadas</h2>
+<p>El proceso de preparación de datos aplicado sistemáticamente a todas las bases contempló múltiples etapas de transformación y estandarización. En primer lugar, se realizó una estandarización de tipos de datos donde las variables numéricas relacionadas con años, montos y duraciones fueron convertidas a los tipos <code>integer</code> o <code>numeric</code> según correspondiera, mientras que las variables categóricas se transformaron a tipo <code>factor</code> para optimizar tanto el uso de memoria como los análisis estadísticos posteriores. Adicionalmente, se llevó a cabo el renombramiento de variables que contenían caracteres especiales como puntos o espacios, reemplazándolos por guiones bajos para mantener consistencia con las convenciones de nomenclatura en R y evitar problemas de sintaxis.</p>
+<p>En segundo lugar, se aplicaron filtros uniformes a todas las bases de datos. El filtro disciplinario seleccionó únicamente proyectos clasificados como “Ciencias Sociales” según la taxonomía OECD, asegurando la homogeneidad del objeto de estudio. El filtro temporal, aplicado especialmente a las bases históricas que contenían datos previos a 2016, restringió el análisis al período 2016-2025, permitiendo mantener consistencia temporal entre todas las bases y concentrarse en la década más reciente de financiamiento científico en Ciencias Sociales.</p>
+<p>En tercer lugar, todas las bases fueron ordenadas sistemáticamente por <code>AGNO_FALLO</code> y <code>CODIGO_PROYECTO</code>, facilitando los análisis temporales, longitudinales y la identificación de patrones a lo largo del tiempo. Este ordenamiento resulta fundamental para rastrear trayectorias de investigadores e instituciones, así como para analizar tendencias en el financiamiento.</p>
+<p>Finalmente, es importante destacar que todas las bases comparten un conjunto común de variables clave que permiten su comparación y eventual integración. Entre estas variables se encuentran identificadores únicos como <code>CODIGO_PROYECTO</code> y <code>N</code>, variables temporales como <code>AGNO_FALLO</code> y <code>AGNO_CONCURSO</code> (cuando aplica), variables de clasificación institucional como <code>SUBDIRECCION</code>, <code>PROGRAMA</code> e <code>INSTRUMENTO</code>, variables geográficas como <code>REGION_EJECUCION</code> y <code>MACROZONA_MINCIENCIA</code>, variables demográficas e institucionales como <code>SEXO</code>, <code>TIPO_BENEFICIARIO</code> y <code>TIPO_INSTITUCION</code>, y variables disciplinarias como <code>DISCIPLINA_OECD</code> (o <code>AREA_OCDE</code>) y <code>DISCIPLINA_DETALLE</code>. Esta estructura común garantiza la comparabilidad y la posibilidad de realizar análisis integrados entre diferentes instrumentos de financiamiento.</p>
+</section>
+<section id="guardar-datos-procesados" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="guardar-datos-procesados"><span class="header-section-number">3.4</span> Guardar datos procesados</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Guardar como RData</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(postulaciones_limpia_sociales, <span class="at">file =</span> <span class="fu">here</span>(<span class="st">"input"</span>, <span class="st">"data"</span>, <span class="st">"proc"</span>, <span class="st">"postulaciones_limpia.RData"</span>))</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(adjudicacion_limpia, <span class="at">file =</span> <span class="fu">here</span>(<span class="st">"input"</span>, <span class="st">"data"</span>, <span class="st">"proc"</span>, <span class="st">"adjudicacion_limpia.RData"</span>))</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(base_final_completa, <span class="at">file =</span> <span class="fu">here</span>(<span class="st">"input"</span>, <span class="st">"data"</span>, <span class="st">"proc"</span>, <span class="st">"base_fondecyt_completa.RData"</span>))</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(base_final_sociales, <span class="at">file =</span> <span class="fu">here</span>(<span class="st">"input"</span>, <span class="st">"data"</span>, <span class="st">"proc"</span>, <span class="st">"base_fondecyt_sociales.RData"</span>))</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(adjudicacion_milenio_limpia_sociales, <span class="at">file =</span> <span class="fu">here</span>(<span class="st">"input"</span>, <span class="st">"data"</span>, <span class="st">"proc"</span>, <span class="st">"adjudicacion_milenio_limpia_sociales.RData"</span>))</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(postulacion_milenio_limpia, <span class="at">file =</span> <span class="fu">here</span>(<span class="st">"input"</span>, <span class="st">"data"</span>, <span class="st">"proc"</span>, <span class="st">"postulacion_milenio_limpia.RData"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.23">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="René Canales, Asistente de Investigación">
+
+<title>Pre-análisis: diagnóstico y toma de decisiones</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="03-preanalisis_files/libs/clipboard/clipboard.min.js"></script>
+<script src="03-preanalisis_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="03-preanalisis_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="03-preanalisis_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="03-preanalisis_files/libs/quarto-html/popper.min.js"></script>
+<script src="03-preanalisis_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="03-preanalisis_files/libs/quarto-html/anchor.min.js"></script>
+<link href="03-preanalisis_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="03-preanalisis_files/libs/quarto-html/quarto-syntax-highlighting-1fe81d0376b2c50856e68e651e390326.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="03-preanalisis_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="03-preanalisis_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="03-preanalisis_files/libs/bootstrap/bootstrap-93216f84ad7ccfb553c7e13a3406b94b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="03-preanalisis_files/libs/kePrint-0.0.1/kePrint.js"></script>
+
+<link href="03-preanalisis_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+<link href="03-preanalisis_files/libs/bsTable-3.3.7/bootstrapTable.min.css" rel="stylesheet">
+
+<script src="03-preanalisis_files/libs/bsTable-3.3.7/bootstrapTable.js"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="quarto-light">
+
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Pre-análisis: diagnóstico y toma de decisiones</h1>
+            <p class="subtitle lead">Fondos ANID para Ciencias Sociales</p>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Autor/a</div>
+      <div class="quarto-title-meta-contents">
+               <p>René Canales, Asistente de Investigación </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Fecha de publicación</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">2 de abril de 2026</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="2">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#configuración-y-librerías" id="toc-configuración-y-librerías" class="nav-link active" data-scroll-target="#configuración-y-librerías"><span class="header-section-number">1</span> Configuración y librerías</a></li>
+  <li><a href="#carga-de-datos" id="toc-carga-de-datos" class="nav-link" data-scroll-target="#carga-de-datos"><span class="header-section-number">2</span> Carga de datos</a></li>
+  <li><a href="#diagnóstico-general-de-las-bases" id="toc-diagnóstico-general-de-las-bases" class="nav-link" data-scroll-target="#diagnóstico-general-de-las-bases"><span class="header-section-number">3</span> Diagnóstico general de las bases</a></li>
+  <li><a href="#construcción-de-la-tasa-de-adjudicación" id="toc-construcción-de-la-tasa-de-adjudicación" class="nav-link" data-scroll-target="#construcción-de-la-tasa-de-adjudicación"><span class="header-section-number">4</span> Construcción de la tasa de adjudicación</a></li>
+  <li><a href="#tasas-de-adjudicación-por-variable" id="toc-tasas-de-adjudicación-por-variable" class="nav-link" data-scroll-target="#tasas-de-adjudicación-por-variable"><span class="header-section-number">5</span> Tasas de adjudicación por variable</a></li>
+  <li><a href="#comparación-entre-instrumentos" id="toc-comparación-entre-instrumentos" class="nav-link" data-scroll-target="#comparación-entre-instrumentos"><span class="header-section-number">6</span> Comparación entre instrumentos</a></li>
+  <li><a href="#tabla-resumen-de-tasas" id="toc-tabla-resumen-de-tasas" class="nav-link" data-scroll-target="#tabla-resumen-de-tasas"><span class="header-section-number">7</span> Tabla resumen de tasas</a></li>
+  <li><a href="#plano-de-análisis" id="toc-plano-de-análisis" class="nav-link" data-scroll-target="#plano-de-análisis"><span class="header-section-number">8</span> Plano de análisis</a></li>
+  <li><a href="#diagnóstico-y-propuestas" id="toc-diagnóstico-y-propuestas" class="nav-link" data-scroll-target="#diagnóstico-y-propuestas"><span class="header-section-number">9</span> Diagnóstico y propuestas</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Otros formatos</h2><ul><li><a href="..\03-preanalisis.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>En este apartado se documentan las decisiones metodológicas adoptadas para el análisis de las bases de datos de financiamiento ANID en Ciencias Sociales, con foco en el cálculo y la interpretación de las tasas de adjudicación. Se trabajará con cuatro bases procesadas: la base de postulaciones Fondecyt con el merge de adjudicaciones (<code>base_final</code>), la base de adjudicaciones históricas Fondecyt (<code>adjudicacion_limpia</code>), las postulaciones Milenio (<code>postulacion_milenio_limpia</code>) y las adjudicaciones Milenio (<code>milenio_limpia</code>). A partir de esto, se construirán tasas de adjudicación desagregadas por sexo, región e institución, documentando los criterios de cálculo y las decisiones metodológicas que afectan su interpretación <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
+<section id="configuración-y-librerías" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="configuración-y-librerías"><span class="header-section-number">1</span> Configuración y librerías</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(naniar)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">scipen =</span> <span class="dv">999</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="carga-de-datos" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="carga-de-datos"><span class="header-section-number">2</span> Carga de datos</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">here</span>(<span class="st">"input"</span>, <span class="st">"data"</span>, <span class="st">"proc"</span>, <span class="st">"base_fondecyt_merge.RData"</span>))</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">here</span>(<span class="st">"input"</span>, <span class="st">"data"</span>, <span class="st">"proc"</span>, <span class="st">"adjudicacion_limpia.RData"</span>))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">here</span>(<span class="st">"input"</span>, <span class="st">"data"</span>, <span class="st">"proc"</span>, <span class="st">"postulacion_milenio_limpia.RData"</span>))</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">here</span>(<span class="st">"input"</span>, <span class="st">"data"</span>, <span class="st">"proc"</span>, <span class="st">"milenio_limpia.RData"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="diagnóstico-general-de-las-bases" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="diagnóstico-general-de-las-bases"><span class="header-section-number">3</span> Diagnóstico general de las bases</h2>
+<p>Antes de construir los indicadores de adjudicación, se realiza un diagnóstico de la estructura de cada base para identificar posibles inconsistencias, valores faltantes o categorías problemáticas en las variables de interés. Las bases primarias han sido extraídas del repositorio de ANID <a href="https://github.com/ANID-GITHUB">https://github.com/ANID-GITHUB</a> y procesadas siguiendo un protocolo de limpieza y estandarización documentado en <code>processing/01-proc-data.qmd</code>.</p>
+<section id="base-de-postulaciones-fondecyt-base_final" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="base-de-postulaciones-fondecyt-base_final"><span class="header-section-number">3.1</span> Base de postulaciones Fondecyt (<code>base_final</code>)</h3>
+<p>La base <code>base_final</code> es el resultado del merge entre las postulaciones Fondecyt y las adjudicaciones históricas. Contiene tanto proyectos adjudicados como no adjudicados, por lo que constituye el insumo principal para calcular las tasas de adjudicación a nivel de postulación. Esto se debe a que la base de postulaciones contiene el universo completo de postulaciones y su resultado para el período 2016–2024, incluyendo tanto las adjudicadas como las no adjudicadas. Por su parte, la base de adjudicaciones incluye todos los proyectos adjudicados desde 1982 hasta la fecha y contiene información adicional no disponible en la base de postulaciones. Por ello, su utilidad principal está en complementar y enriquecer la información mediante la fusión con la base de postulaciones.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estructura general</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(base_final)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Distribución del resultado del concurso</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(base_final<span class="sc">$</span>ESTADO_RESOLUCION_CONCURSO)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Revisión de NAs en variables clave</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>base_final <span class="sc">%&gt;%</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(SEXO, REGION_EJECUCION, TIPO_INSTITUCION, </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>         INSTRUMENTO, ESTADO_RESOLUCION_CONCURSO) <span class="sc">%&gt;%</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">miss_var_summary</span>()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Al realizar el merge entre la base de postulaciones y la de adjudicaciones, las variables provenientes de la segunda base (<code>NOMBRE_PROYECTO</code>, <code>GRUPO_DE_EVALUACION</code>, <code>DISCIPLINA_DETALLE</code>, <code>DURACION_MESES</code>, <code>NOMBRE_RESPONSABLE</code>, <code>INSTITUCION_PRINCIPAL</code>, <code>MONTO_ADJUDICADO</code>) quedan con valores <code>NA</code> para todos los registros cuyo <code>ESTADO_RESOLUCION_CONCURSO</code> es “NO ADJUDICADO”. Esto es un comportamiento esperado y no constituye un problema de calidad de datos, sino una consecuencia lógica del diseño de la base <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar que los NAs en variables de adjudicación corresponden a "NO ADJUDICADO"</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>base_final <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ESTADO_RESOLUCION_CONCURSO) <span class="sc">%&gt;%</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>(),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">na_monto =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(MONTO_ADJUDICADO)),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">na_grupo =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(GRUPO_DE_EVALUACION))</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="base-de-postulaciones-milenio-postulacion_milenio_limpia" class="level3" data-number="3.2">
+<h3 data-number="3.2" class="anchored" data-anchor-id="base-de-postulaciones-milenio-postulacion_milenio_limpia"><span class="header-section-number">3.2</span> Base de postulaciones Milenio (<code>postulacion_milenio_limpia</code>)</h3>
+<p>La base de postulaciones Milenio replica la lógica de la base Fondecyt, pero corresponde a un instrumento de financiamiento diferente, con una estructura competitiva distinta (menor número de convocatorias, proyectos de mayor envergadura). Se verifica que las categorías de las variables clave sean comparables con las de Fondecyt.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(postulacion_milenio_limpia)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Distribución del resultado del concurso</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(postulacion_milenio_limpia<span class="sc">$</span>ESTADO_RESOLUCION_CONCURSO)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Revisión de NAs en variables clave</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>postulacion_milenio_limpia <span class="sc">%&gt;%</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(SEXO, REGION_EJECUCION, TIPO_INSTITUCION, </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>         INSTRUMENTO, ESTADO_RESOLUCION_CONCURSO) <span class="sc">%&gt;%</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">miss_var_summary</span>()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="construcción-de-la-tasa-de-adjudicación" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="construcción-de-la-tasa-de-adjudicación"><span class="header-section-number">4</span> Construcción de la tasa de adjudicación</h2>
+<section id="definición-operacional" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="definición-operacional"><span class="header-section-number">4.1</span> Definición operacional</h3>
+<p>La <strong>tasa de adjudicación</strong> se define como la proporción de postulaciones que resultaron adjudicadas sobre el total de postulaciones evaluadas (adjudicadas + no adjudicadas) en un grupo determinado. Formalmente:</p>
+<p><span class="math display">\[\text{Tasa de adjudicación} = \frac{N_{\text{adjudicado}}}{N_{\text{adjudicado}} + N_{\text{no adjudicado}}} \times 100\]</span></p>
+<p>Esta definición excluye por construcción las postulaciones inadmisibles o fuera de bases, que fueron eliminadas durante el procesamiento inicial. El denominador corresponde, por tanto, al universo de postulaciones que efectivamente entraron al proceso de evaluación.</p>
+</section>
+<section id="decisión-sobre-la-unidad-de-análisis" class="level3" data-number="4.2">
+<h3 data-number="4.2" class="anchored" data-anchor-id="decisión-sobre-la-unidad-de-análisis"><span class="header-section-number">4.2</span> Decisión sobre la unidad de análisis</h3>
+<p>Una decisión metodológica central es si la tasa se calcula a nivel de <strong>postulación</strong> (cada registro en la base) o a nivel de <strong>proyecto único</strong> (<code>CODIGO_PROYECTO</code>). Dado que el interés es caracterizar el proceso competitivo tal como lo experimentan los/as postulantes —incluyendo las repostulaciones—, se optó por calcular la tasa a nivel de postulación. Esto implica que un mismo investigador/a puede contribuir con múltiples observaciones al denominador si postuló en distintos años o instrumentos.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tasa global de adjudicación - Fondecyt</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>tasa_global_fondecyt <span class="ot">&lt;-</span> base_final <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(ESTADO_RESOLUCION_CONCURSO) <span class="sc">%&gt;%</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">tasa =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>tasa_global_fondecyt</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Tasa global de adjudicación - Milenio</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>tasa_global_milenio <span class="ot">&lt;-</span> postulacion_milenio_limpia <span class="sc">%&gt;%</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(ESTADO_RESOLUCION_CONCURSO) <span class="sc">%&gt;%</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">tasa =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>tasa_global_milenio</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="tasas-de-adjudicación-por-variable" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="tasas-de-adjudicación-por-variable"><span class="header-section-number">5</span> Tasas de adjudicación por variable</h2>
+<section id="por-sexo" class="level3" data-number="5.1">
+<h3 data-number="5.1" class="anchored" data-anchor-id="por-sexo"><span class="header-section-number">5.1</span> Por sexo</h3>
+<p>El análisis de la tasa de adjudicación según el sexo del/la postulante permite identificar brechas de género en el acceso al financiamiento. La variable <code>SEXO</code> está disponible en todas las bases y fue estandarizada durante el procesamiento.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fondecyt: tasa de adjudicación por sexo e instrumento</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>tasa_sexo_fondecyt <span class="ot">&lt;-</span> base_final <span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(SEXO, INSTRUMENTO, ESTADO_RESOLUCION_CONCURSO) <span class="sc">%&gt;%</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(SEXO, INSTRUMENTO) <span class="sc">%&gt;%</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">total =</span> <span class="fu">sum</span>(n),</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">tasa =</span> n <span class="sc">/</span> total <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ESTADO_RESOLUCION_CONCURSO <span class="sc">==</span> <span class="st">"ADJUDICADO"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(SEXO, INSTRUMENTO, <span class="at">n_adjudicado =</span> n, total, tasa)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>tasa_sexo_fondecyt</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 5
+# Groups:   SEXO, INSTRUMENTO [4]
+  SEXO   INSTRUMENTO n_adjudicado total  tasa
+  &lt;fct&gt;  &lt;fct&gt;              &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
+1 HOMBRE INICIACION           606  2151  28.2
+2 HOMBRE REGULAR              948  2937  32.3
+3 MUJER  INICIACION           507  1828  27.7
+4 MUJER  REGULAR              481  1681  28.6</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Milenio: tasa de adjudicación por sexo</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>tasa_sexo_milenio <span class="ot">&lt;-</span> postulacion_milenio_limpia <span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(SEXO, ESTADO_RESOLUCION_CONCURSO) <span class="sc">%&gt;%</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(SEXO) <span class="sc">%&gt;%</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">total =</span> <span class="fu">sum</span>(n),</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">tasa =</span> n <span class="sc">/</span> total <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ESTADO_RESOLUCION_CONCURSO <span class="sc">==</span> <span class="st">"ADJUDICADO"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(SEXO, <span class="at">n_adjudicado =</span> n, total, tasa)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>tasa_sexo_milenio</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 4
+# Groups:   SEXO [2]
+  SEXO   n_adjudicado total  tasa
+  &lt;fct&gt;         &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
+1 HOMBRE            2    42  4.76
+2 MUJER             4    33 12.1 </code></pre>
+</div>
+</div>
+<p><strong>Nota metodológica:</strong> Se verificó que la variable <code>SEXO</code> no contiene categorías distintas de “FEMENINO” y “MASCULINO” (o equivalentes) tras la estandarización. Si existieran categorías residuales (por ejemplo, registros vacíos o “SIN INFORMACION”), deben ser reportadas y excluidas del cálculo de tasas con explicitación del criterio.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar categorías disponibles en SEXO</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(base_final<span class="sc">$</span>SEXO)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "HOMBRE"          "MUJER"           "SIN INFORMACION"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(postulacion_milenio_limpia<span class="sc">$</span>SEXO)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "HOMBRE" "MUJER" </code></pre>
+</div>
+</div>
+</section>
+<section id="por-región-de-ejecución" class="level3" data-number="5.2">
+<h3 data-number="5.2" class="anchored" data-anchor-id="por-región-de-ejecución"><span class="header-section-number">5.2</span> Por región de ejecución</h3>
+<p>El análisis regional permite detectar concentraciones del financiamiento y brechas territoriales. Se trabaja con la variable <code>REGION_EJECUCION</code>, que fue abreviada durante el procesamiento para facilitar la lectura.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fondecyt: tasa de adjudicación por región</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>tasa_region_fondecyt <span class="ot">&lt;-</span> base_final <span class="sc">%&gt;%</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(REGION_EJECUCION, ESTADO_RESOLUCION_CONCURSO) <span class="sc">%&gt;%</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(REGION_EJECUCION) <span class="sc">%&gt;%</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">total =</span> <span class="fu">sum</span>(n),</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">tasa =</span> n <span class="sc">/</span> total <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ESTADO_RESOLUCION_CONCURSO <span class="sc">==</span> <span class="st">"ADJUDICADO"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(REGION_EJECUCION, <span class="at">n_adjudicado =</span> n, total, tasa) <span class="sc">%&gt;%</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(tasa))</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>tasa_region_fondecyt</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 15 × 4
+# Groups:   REGION_EJECUCION [15]
+   REGION_EJECUCION                          n_adjudicado total  tasa
+   &lt;fct&gt;                                            &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
+ 1 LIBERTADOR GENERAL BERNARDO O'HIGGINS               30    67  44.8
+ 2 ARICA Y PARINACOTA                                  71   208  34.1
+ 3 TARAPACA                                            22    67  32.8
+ 4 AYSEN DEL GENERAL CARLOS IBANEZ DEL CAMPO            8    25  32  
+ 5 RM                                                1518  4924  30.8
+ 6 LOS RIOS                                           106   358  29.6
+ 7 LA ARAUCANIA                                       167   568  29.4
+ 8 MAULE                                              115   394  29.2
+ 9 VALPARAISO                                         218   748  29.1
+10 MAGALLANES Y DE LA ANTARTICA CHILENA                11    42  26.2
+11 BIOBIO                                             169   652  25.9
+12 LOS LAGOS                                           43   180  23.9
+13 ATACAMA                                             10    47  21.3
+14 ANTOFAGASTA                                         48   226  21.2
+15 COQUIMBO                                             6    44  13.6</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Milenio: tasa de adjudicación por región</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>tasa_region_milenio <span class="ot">&lt;-</span> postulacion_milenio_limpia <span class="sc">%&gt;%</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(REGION_EJECUCION, ESTADO_RESOLUCION_CONCURSO) <span class="sc">%&gt;%</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(REGION_EJECUCION) <span class="sc">%&gt;%</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">total =</span> <span class="fu">sum</span>(n),</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">tasa =</span> n <span class="sc">/</span> total <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ESTADO_RESOLUCION_CONCURSO <span class="sc">==</span> <span class="st">"ADJUDICADO"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(REGION_EJECUCION, <span class="at">n_adjudicado =</span> n, total, tasa) <span class="sc">%&gt;%</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(tasa))</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>tasa_region_milenio</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 4
+# Groups:   REGION_EJECUCION [1]
+  REGION_EJECUCION n_adjudicado total  tasa
+  &lt;fct&gt;                   &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
+1 RM                          6    48  12.5</code></pre>
+</div>
+</div>
+<p><strong>Nota metodológica:</strong> Algunas regiones pueden tener un número muy bajo de postulaciones, lo que genera tasas de adjudicación con alta variabilidad muestral. Se recomienda reportar el N total por región junto a la tasa, y considerar la agrupación por macrozona (<code>MACROZONA_MINCIENCIA</code>) cuando el N regional sea menor a 10 postulaciones en el período analizado.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Identificar regiones con bajo N en Fondecyt</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>base_final <span class="sc">%&gt;%</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(REGION_EJECUCION) <span class="sc">%&gt;%</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">&lt;</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(n)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="por-tipo-de-institución" class="level3" data-number="5.3">
+<h3 data-number="5.3" class="anchored" data-anchor-id="por-tipo-de-institución"><span class="header-section-number">5.3</span> Por tipo de institución</h3>
+<p>El tipo de institución albergante del proyecto permite analizar la distribución del financiamiento entre universidades del CRUCH, universidades privadas, centros de investigación y otras entidades. La variable <code>TIPO_INSTITUCION</code> fue recodificada durante el procesamiento para asignar “SIN INFORMACION” a los registros vacíos.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fondecyt: tasa de adjudicación por tipo de institución e instrumento</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>tasa_inst_fondecyt <span class="ot">&lt;-</span> base_final <span class="sc">%&gt;%</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(TIPO_INSTITUCION, INSTRUMENTO, ESTADO_RESOLUCION_CONCURSO) <span class="sc">%&gt;%</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(TIPO_INSTITUCION, INSTRUMENTO) <span class="sc">%&gt;%</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">total =</span> <span class="fu">sum</span>(n),</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">tasa =</span> n <span class="sc">/</span> total <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ESTADO_RESOLUCION_CONCURSO <span class="sc">==</span> <span class="st">"ADJUDICADO"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(TIPO_INSTITUCION, INSTRUMENTO, <span class="at">n_adjudicado =</span> n, total, tasa) <span class="sc">%&gt;%</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(INSTRUMENTO, <span class="fu">desc</span>(tasa))</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>tasa_inst_fondecyt</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 5
+# Groups:   TIPO_INSTITUCION, INSTRUMENTO [2]
+  TIPO_INSTITUCION INSTRUMENTO n_adjudicado total  tasa
+  &lt;fct&gt;            &lt;fct&gt;              &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
+1 PERSONA NATURAL  INICIACION          1113  3982  28.0
+2 PERSONA NATURAL  REGULAR             1429  4621  30.9</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Milenio: tasa de adjudicación por tipo de institución</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>tasa_inst_milenio <span class="ot">&lt;-</span> postulacion_milenio_limpia <span class="sc">%&gt;%</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(TIPO_INSTITUCION, ESTADO_RESOLUCION_CONCURSO) <span class="sc">%&gt;%</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(TIPO_INSTITUCION) <span class="sc">%&gt;%</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">total =</span> <span class="fu">sum</span>(n),</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">tasa =</span> n <span class="sc">/</span> total <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ESTADO_RESOLUCION_CONCURSO <span class="sc">==</span> <span class="st">"ADJUDICADO"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(TIPO_INSTITUCION, <span class="at">n_adjudicado =</span> n, total, tasa) <span class="sc">%&gt;%</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(tasa))</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>tasa_inst_milenio</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 4
+# Groups:   TIPO_INSTITUCION [1]
+  TIPO_INSTITUCION n_adjudicado total  tasa
+  &lt;fct&gt;                   &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
+1 NO APLICA                   6    75     8</code></pre>
+</div>
+</div>
+<p><strong>Nota metodológica:</strong> Los registros con <code>TIPO_INSTITUCION == "SIN INFORMACION"</code> deben ser reportados pero excluidos de los análisis comparativos entre tipos institucionales, ya que su inclusión distorsionaría las tasas. Se recomienda verificar si estos registros presentan algún patrón sistemático (por ejemplo, si se concentran en un instrumento, año o resultado particular) antes de descartarlos.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar magnitud y distribución de "SIN INFORMACION"</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>base_final <span class="sc">%&gt;%</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(TIPO_INSTITUCION <span class="sc">==</span> <span class="st">"SIN INFORMACION"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(INSTRUMENTO, ESTADO_RESOLUCION_CONCURSO) <span class="sc">%&gt;%</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(INSTRUMENTO)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="comparación-entre-instrumentos" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="comparación-entre-instrumentos"><span class="header-section-number">6</span> Comparación entre instrumentos</h2>
+<p>La base <code>base_final</code> contiene dos instrumentos Fondecyt (Regular e Iniciación), mientras que las bases Milenio corresponden a un programa distinto. Dado que los instrumentos tienen diferentes reglas de postulación, tasas esperadas y perfiles de postulantes, las tasas de adjudicación no son directamente comparables entre ellos sin considerar estas diferencias estructurales.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tasa de adjudicación por instrumento - Fondecyt</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>tasa_instrumento <span class="ot">&lt;-</span> base_final <span class="sc">%&gt;%</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(INSTRUMENTO, ESTADO_RESOLUCION_CONCURSO) <span class="sc">%&gt;%</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(INSTRUMENTO) <span class="sc">%&gt;%</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">total =</span> <span class="fu">sum</span>(n),</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">tasa =</span> n <span class="sc">/</span> total <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ESTADO_RESOLUCION_CONCURSO <span class="sc">==</span> <span class="st">"ADJUDICADO"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(INSTRUMENTO, <span class="at">n_adjudicado =</span> n, total, tasa)</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>tasa_instrumento</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 4
+# Groups:   INSTRUMENTO [2]
+  INSTRUMENTO n_adjudicado total  tasa
+  &lt;fct&gt;              &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
+1 INICIACION          1113  3982  28.0
+2 REGULAR             1429  4621  30.9</code></pre>
+</div>
+</div>
+<p>Al comparar los resultados entre Regular e Iniciación, se espera encontrar diferencias en las tasas globales dado que los concursos tienen distinto volumen de cupos y perfiles de postulantes. Por ello, los análisis desagregados por sexo, región e institución se presentarán siempre con distinción por instrumento cuando la base lo permita.</p>
+</section>
+<section id="tabla-resumen-de-tasas" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="tabla-resumen-de-tasas"><span class="header-section-number">7</span> Tabla resumen de tasas</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Construir tabla resumen con las tasas globales de todas las bases</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>tabla_resumen <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  base_final <span class="sc">%&gt;%</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(INSTRUMENTO) <span class="sc">%&gt;%</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">N_total =</span> <span class="fu">n</span>(),</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">N_adjudicado =</span> <span class="fu">sum</span>(ESTADO_RESOLUCION_CONCURSO <span class="sc">==</span> <span class="st">"ADJUDICADO"</span>),</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">Tasa =</span> N_adjudicado <span class="sc">/</span> N_total <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Programa =</span> <span class="st">"Fondecyt"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">Instrumento =</span> INSTRUMENTO),</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>  postulacion_milenio_limpia <span class="sc">%&gt;%</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(INSTRUMENTO) <span class="sc">%&gt;%</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">N_total =</span> <span class="fu">n</span>(),</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">N_adjudicado =</span> <span class="fu">sum</span>(ESTADO_RESOLUCION_CONCURSO <span class="sc">==</span> <span class="st">"ADJUDICADO"</span>),</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">Tasa =</span> N_adjudicado <span class="sc">/</span> N_total <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>      <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Programa =</span> <span class="st">"Milenio"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">Instrumento =</span> INSTRUMENTO)</span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(Programa, Instrumento)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-tbl-cap-location="top">
+<div id="tbl-resumen" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-tbl-cap-location="top">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-resumen-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;1: Tasas globales de adjudicación por programa e instrumento (2016-2025)
+</figcaption>
+<div aria-describedby="tbl-resumen-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-condensed do-not-create-environment cell caption-top table-sm small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Programa</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Instrumento</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">N total</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">N adjudicado</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Tasa (%)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Fondecyt</td>
+<td style="text-align: left;">INICIACION</td>
+<td style="text-align: right;">3982</td>
+<td style="text-align: right;">1113</td>
+<td style="text-align: right;">28.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fondecyt</td>
+<td style="text-align: left;">REGULAR</td>
+<td style="text-align: right;">4621</td>
+<td style="text-align: right;">1429</td>
+<td style="text-align: right;">30.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Milenio</td>
+<td style="text-align: left;">NUCLEO MILENIO EN CIENCIAS SOCIALES</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">8.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+</section>
+<section id="plano-de-análisis" class="level2" data-number="8">
+<h2 data-number="8" class="anchored" data-anchor-id="plano-de-análisis"><span class="header-section-number">8</span> Plano de análisis</h2>
+<p>El plano de análisis organiza las variables y cruces que se trabajarán en la etapa descriptiva, especificando para cada análisis la variable dependiente, las variables de desagregación, el tipo de visualización y la base de datos de origen. La variable dependiente en todos los casos es la <strong>tasa de adjudicación</strong> (proporción de postulaciones adjudicadas sobre el total evaluado), calculada según la definición operacional establecida en la sección anterior.</p>
+<section id="variables-y-cruces-contemplados" class="level3" data-number="8.1">
+<h3 data-number="8.1" class="anchored" data-anchor-id="variables-y-cruces-contemplados"><span class="header-section-number">8.1</span> Variables y cruces contemplados</h3>
+<p>La <a href="#tbl-plano" class="quarto-xref">Tabla&nbsp;2</a> sintetiza el conjunto de análisis descriptivos planificados. Cada fila corresponde a un cruce específico entre la tasa de adjudicación y una variable de desagregación, indicando el programa al que aplica y el tipo de visualización recomendada.</p>
+<div class="cell" data-tbl-cap-location="top">
+<div id="tbl-plano" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-tbl-cap-location="top">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-plano-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;2: Plano de análisis descriptivo
+</figcaption>
+<div aria-describedby="tbl-plano-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-condensed do-not-create-environment cell caption-top table-sm small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Variable dependiente</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Desagregación</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Programa</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Visualización</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold;">Tasa adjudicación</td>
+<td style="text-align: left;">Sexo</td>
+<td style="text-align: left;">Fondecyt (Regular + Iniciación)</td>
+<td style="text-align: left;">Gráfico de barras agrupado + tabla</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold;">Tasa adjudicación</td>
+<td style="text-align: left;">Sexo</td>
+<td style="text-align: left;">Milenio</td>
+<td style="text-align: left;">Gráfico de barras + tabla</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold;">Tasa adjudicación</td>
+<td style="text-align: left;">Sexo × Instrumento</td>
+<td style="text-align: left;">Fondecyt</td>
+<td style="text-align: left;">Gráfico de barras agrupado</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold;">Tasa adjudicación</td>
+<td style="text-align: left;">Año (AGNO_FALLO)</td>
+<td style="text-align: left;">Fondecyt (Regular + Iniciación)</td>
+<td style="text-align: left;">Gráfico de líneas</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold;">Tasa adjudicación</td>
+<td style="text-align: left;">Año (AGNO_FALLO)</td>
+<td style="text-align: left;">Milenio</td>
+<td style="text-align: left;">Gráfico de líneas</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold;">Tasa adjudicación</td>
+<td style="text-align: left;">Año × Sexo</td>
+<td style="text-align: left;">Fondecyt</td>
+<td style="text-align: left;">Gráfico de líneas por grupo</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold;">Tasa adjudicación</td>
+<td style="text-align: left;">Región de ejecución</td>
+<td style="text-align: left;">Fondecyt</td>
+<td style="text-align: left;">Tabla ordenada + mapa opcional</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold;">Tasa adjudicación</td>
+<td style="text-align: left;">Región × Instrumento</td>
+<td style="text-align: left;">Fondecyt</td>
+<td style="text-align: left;">Tabla cruzada</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold;">Tasa adjudicación</td>
+<td style="text-align: left;">Instrumento</td>
+<td style="text-align: left;">Fondecyt</td>
+<td style="text-align: left;">Tabla + gráfico de barras</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold;">Tasa adjudicación</td>
+<td style="text-align: left;">Disciplina detallada</td>
+<td style="text-align: left;">Fondecyt</td>
+<td style="text-align: left;">Tabla ordenada</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold;">Tasa adjudicación</td>
+<td style="text-align: left;">Disciplina × Sexo</td>
+<td style="text-align: left;">Fondecyt</td>
+<td style="text-align: left;">Tabla cruzada</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold;">Tasa adjudicación</td>
+<td style="text-align: left;">Disciplina × Año</td>
+<td style="text-align: left;">Fondecyt</td>
+<td style="text-align: left;">Gráfico de líneas por disciplina</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; font-weight: bold;">N postulaciones</td>
+<td style="text-align: left;">Año × Instrumento</td>
+<td style="text-align: left;">Fondecyt</td>
+<td style="text-align: left;">Gráfico de líneas</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; font-weight: bold;">N postulaciones</td>
+<td style="text-align: left;">Año × Sexo</td>
+<td style="text-align: left;">Fondecyt + Milenio</td>
+<td style="text-align: left;">Gráfico de líneas por grupo</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+</section>
+<section id="secuencia-de-análisis" class="level3" data-number="8.2">
+<h3 data-number="8.2" class="anchored" data-anchor-id="secuencia-de-análisis"><span class="header-section-number">8.2</span> Secuencia de análisis</h3>
+<p>El análisis descriptivo se desarrollará en tres etapas secuenciales. En primer lugar, se presentará un panorama general con las tasas globales de adjudicación por programa e instrumento para el período 2016-2025, estableciendo la línea base desde la cual se interpretarán los cruces posteriores. En segundo lugar, se analizará la dimensión de género, examinando si existen brechas en la tasa de adjudicación según sexo del/la postulante, tanto de forma global como desagregada por instrumento y por año. La evolución temporal de estas brechas es de particular interés para identificar si las diferencias se han reducido o ampliado en el período analizado.</p>
+<p>En tercer lugar, se abordará la dimensión territorial mediante el análisis de las tasas por región de ejecución, con especial atención a la posible concentración del financiamiento en la Región Metropolitana. Finalmente, se incorporará la dimensión disciplinar a través de la variable <code>DISCIPLINA_DETALLE</code>, que permite identificar qué subdisciplinas dentro de las Ciencias Sociales concentran mayor proporción de adjudicaciones y si existen patrones diferenciados por sexo o a lo largo del tiempo.</p>
+</section>
+<section id="decisiones-de-visualización" class="level3" data-number="8.3">
+<h3 data-number="8.3" class="anchored" data-anchor-id="decisiones-de-visualización"><span class="header-section-number">8.3</span> Decisiones de visualización</h3>
+<p>Para los análisis de evolución temporal se utilizarán gráficos de líneas con <code>AGNO_FALLO</code> en el eje x y la tasa de adjudicación en el eje y, distinguiendo grupos mediante color cuando corresponda (por ejemplo, sexo o instrumento). Para las comparaciones entre categorías discretas (sexo, instrumento, disciplina) se emplearán gráficos de barras horizontales ordenados de mayor a menor tasa, acompañados de tablas que reporten el N total y el N adjudicado para facilitar la interpretación. Todos los gráficos incluirán etiquetas con los valores de la tasa para favorecer la lectura directa sin necesidad de recurrir al eje.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tema base para todos los gráficos del análisis</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>tema_anid <span class="ot">&lt;-</span> <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title    =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">13</span>),</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"grey40"</span>, <span class="at">size =</span> <span class="dv">11</span>),</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title    =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">11</span>),</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Paleta para sexo</span></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>colores_sexo <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"FEMENINO"</span> <span class="ot">=</span> <span class="st">"#c0392b"</span>, <span class="st">"MASCULINO"</span> <span class="ot">=</span> <span class="st">"#2471a3"</span>)</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Paleta para instrumento</span></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>colores_instrumento <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"REGULAR"</span> <span class="ot">=</span> <span class="st">"#1a5276"</span>, <span class="st">"INICIACION"</span> <span class="ot">=</span> <span class="st">"#d4ac0d"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="diagnóstico-y-propuestas" class="level2" data-number="9">
+<h2 data-number="9" class="anchored" data-anchor-id="diagnóstico-y-propuestas"><span class="header-section-number">9</span> Diagnóstico y propuestas</h2>
+<p>Considerando el análisis realizado, hay tres decisiones metodológicas centrales que deben quedar explícitas para la etapa de análisis:</p>
+<p><strong>Unidad de análisis.</strong> Se trabajará con la postulación como unidad de análisis y no con el proyecto único. Esto permite capturar el proceso competitivo tal como lo viven los postulantes, incluyendo las repostulaciones, y es consistente con la estructura de las bases disponibles.</p>
+<p><strong>Cálculo de la tasa de adjudicación.</strong> La tasa se calculará siempre sobre el total de postulaciones evaluadas (adjudicadas + no adjudicadas), excluyendo por definición los casos inadmisibles que fueron eliminados durante el procesamiento. Los registros con categorías problemáticas en variables clave (por ejemplo, “SIN INFORMACION” en <code>TIPO_INSTITUCION</code> o regiones con N &lt; 10) serán reportados pero excluidos de los análisis comparativos, explicitando el criterio en cada caso.</p>
+<p><strong>Separación por instrumento.</strong> Todos los análisis desagregados por sexo, región e institución se presentarán con distinción por instrumento (Regular / Iniciación en Fondecyt; tipo en Milenio). La comparación entre programas (Fondecyt vs.&nbsp;Milenio) se realizará solo de manera descriptiva y con las cautelas necesarias, dado que sus estructuras competitivas son estructuralmente distintas.</p>
+<p>Para proseguir con el análisis, se propone lo siguiente: primero, construir las tablas y gráficos descriptivos de las tasas desagregadas a partir del código de este documento; segundo, verificar los supuestos de los análisis estadísticos inferenciales (tamaño muestral por celda, distribución de las tasas) antes de aplicar pruebas de significancia; y tercero, considerar el uso de la variable <code>AGNO_FALLO</code> para análisis longitudinales que permitan evaluar si las brechas observadas se han ampliado o reducido en el período 2016-2025.</p>
+<p><strong>Datos no disponibles y solicitudes de acceso a la información</strong>. Las bases públicas de ANID no contienen toda la información necesaria para un análisis exhaustivo del proceso competitivo. Por ello, se realizaron solicitudes de acceso a la información al amparo de la Ley N° 20.285, dirigidas a ANID a través del Portal de Transparencia del Estado. Las solicitudes cubren cuatro dimensiones no disponibles en las bases actuales: (1) puntajes de evaluación por proyecto para el período 2016-2025, incluyendo puntaje total, puntaje asignado al CV del investigador principal, puntaje desagregado por criterio y puntaje de corte de adjudicación; (2) caracterización de investigador/a principal y co-investigadores, incluyendo género, institución patrocinante, grado académico y disciplina, con el objetivo de construir trayectorias de investigación; (3) identificador único por investigador/a asociado a cada proyecto, para distinguir entre postulantes nuevos y recurrentes y analizar el efecto de adjudicaciones previas sobre el éxito en concursos posteriores; y (4) montos solicitados y adjudicados por proyecto para examinar la evolución del financiamiento en el período. En caso de recibir respuesta favorable, estas variables permitirán enriquecer sustancialmente los análisis descriptivos e incorporar dimensiones que las bases públicas actuales no permiten abordar.</p>
+<p><strong>Datos postulaciones FACSO</strong>. Se realizó una solicitud de acceso a la información a la Facultad de Ciencias Sociales de la Universidad de Chile para obtener la base de datos de postulaciones a fondos internos FACSO desde 2016, con el objetivo de comparar las tasas de adjudicación internas con las tasas de adjudicación externas (ANID) para los investigadores/as afiliados a esa institución. Esta comparación permitirá identificar posibles brechas entre el financiamiento interno y externo, así como analizar si los patrones observados en ANID se replican o difieren en el contexto institucional específico de FACSO. En caso de recibir respuesta favorable, se integrará esta base al análisis descriptivo y se calcularán las tasas de adjudicación internas por sexo, región e institución para los investigadores/as de FACSO, comparándolas con las tasas externas correspondientes. Esto independientemente de la respuesta a la solicitud de datos de ANID, dado que el análisis de las tasas internas de FACSO es un aporte relevante por sí mismo para comprender el panorama del financiamiento en esa institución.</p>
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Notas</h2>
+
+<ol>
+<li id="fn1"><p>Las bases ya se encuentran procesadas y se cargan directamente desde el directorio <code>input/data/proc</code>. El objetivo de este documento no es procesar los datos, sino diagnosticar su estructura y construir los indicadores de análisis de manera transparente y reproducible.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Para el cálculo de tasas de adjudicación se utilizará exclusivamente la base de postulaciones Fondecyt (<code>base_final</code>), pues contiene el universo completo de postulaciones con su resultado. La base de adjudicaciones históricas se empleará solo para análisis específicos de montos y duración de proyectos adjudicados.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

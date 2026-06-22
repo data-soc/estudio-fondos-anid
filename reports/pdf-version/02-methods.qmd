@@ -1,0 +1,248 @@
+---
+bibliography: "refs/refs.bib"
+csl: "refs/apa.csl"
+---
+
+```{r}
+#| echo: false
+#| label: library-1
+#| message: false
+
+library(tidyverse)
+library(here)
+library(kableExtra)
+```
+
+Este apartado se divide en tres secciones. Primero, se presentan los datos con los cuales se realiza el informe, detallando las bases de datos 
+disponibles, las decisiones metodológicas adoptadas para su procesamiento y la construcción de los indicadores de análisis. En segundo lugar, se describen las variables disponibles del estudio, junto con su definición operacional y los criterios de procesamiento aplicados. Por último, se define la estrategia analítica utilizada para elaborar los resultados. 
+
+Todos los códigos asociados al procesamiento y análisis de los datos se encuentran disponibles en el [repositorio GitHub asociado al estudio](https://github.com/renejcanales/fondos-css).^[Se realizaron solicitudes de acceso a la información al amparo de la Ley N° 20.285, dirigidas a ANID a través del Portal de Transparencia del Estado, con el objetivo de obtener mayor granularidad en los datos —incluyendo puntajes de  evaluación, montos solicitados y caracterización de investigadores/as. Sin embargo, la demora del organismo en ordenar y gestionar las bases solicitadas imposibilitó avanzar en su espera, por lo que se procedió a trabajar con los datos públicos disponibles en el repositorio GitHub de ANID, complementados con la información agregada publicada en los documentos oficiales de resultados de los concursos FONDECYT.]
+
+## Datos
+
+Al comienzo de este estudio se utilizaron cuatro bases de datos extraídas del [repositorio público de ANID](https://github.com/ANID-GITHUB) y procesadas siguiendo un protocolo de limpieza y estandarización documentado en `processing/01-proc-data.qmd`. Las bases disponibles eran 
+`BDH_HISTORICA`, que incluye el registro histórico de todos los proyectos adjudicados en ANID desde 1982; `POSTULACIONES_2016_2025`, que contiene el registro de todas las postulaciones a Fondecyt entre 2016 y 2025; `BDH_PROYECTOS_MILENIO`, que registra las adjudicaciones del programa Milenio entre 2016 y 2025; y `POSTULACIONES_MILENIO`, que incluye el registro histórico de postulaciones Milenio desde su creación en 2006.
+
+A partir de estas bases, se construyeron tres bases de análisis para este estudio: la base de postulaciones FONDECYT con un merge de la base de 
+adjudicaciones (`base_fondecyt_completa`), una base que considera exclusivamente las postulaciones y adjudicaciones en Ciencias Sociales con 
+información ampliada sobre montos solicitados y adjudicados por grupo de estudio (`base_fondecyt_sociales_merge_monto`), y las adjudicaciones 
+Milenio en Ciencias Sociales (`adjudicacion_milenio_limpia_sociales`).
+
+Las bases `base_fondecyt_completa` y `base_fondecyt_sociales_merge_monto` son los insumos principales del análisis. Fueron construidas a partir de un *left join* entre la base de postulaciones FONDECYT (2016–2025) y la base de adjudicaciones históricas, utilizando `CODIGO_PROYECTO` como llave de unión. Esta decisión permitió contar en un solo dataframe tanto el universo completo de postulaciones evaluadas —adjudicadas y no 
+adjudicadas— como la información adicional disponible solo para los proyectos que obtuvieron financiamiento, como nombre del proyecto, grupo 
+de evaluación, disciplina detallada, duración, monto adjudicado e institución principal. Como consecuencia del diseño del merge, las 
+variables provenientes de la base de adjudicaciones quedan con valores `NA` para todos los registros cuyo `ESTADO_RESOLUCION_CONCURSO` es "NO 
+ADJUDICADO", lo que constituye un comportamiento esperado y no un problema de calidad de datos. Esto implica una restricción metodológica importante: los análisis a nivel de institución, monto adjudicado y grupo de estudio solo pueden realizarse sobre el universo de proyectos 
+adjudicados, no sobre el total de postulaciones.
+
+### Reconstrucción de los montos por grupo de estudio
+
+La base original publicada por ANID presenta información incompleta sobre los montos promedio adjudicados y solicitados por grupo de estudio. 
+Específicamente, los valores disponibles a nivel de grupo-año solo cubrían los años 2016-2019 para FONDECYT Iniciación y 2016-2022 para FONDECYT Regular, con valores imputados o ausentes para los años más recientes. 
+
+Para subsanar esta limitación, se realizó una reconstrucción manual de los montos promedio por grupo de estudio y año a partir de los documentos oficiales publicados por ANID al cierre de cada concurso ("Proyectos y Recursos Totales por Grupo de Evaluación"), extrayendo los 
+totales de recursos solicitados y adjudicados por grupo, así como el número de proyectos concursados y aprobados. A partir de estos datos se calcularon dos indicadores agregados por grupo-año-instrumento:
+
+$$\text{Monto promedio solicitado} = \frac{\text{Recursos Totales Solicitados (miles CLP)} \times 1000}{N^{\circ} \text{ proyectos concursados}}$$
+
+$$\text{Monto promedio adjudicado} = \frac{\text{Recursos Totales Adjudicados (miles CLP)} \times 1000}{N^{\circ} \text{ proyectos aprobados}}$$
+
+Esta reconstrucción permitió completar la serie 2016-2025 con valores reales y comparables entre años, eliminando los valores imputados con 
+promedios generales. En los años donde ANID presentaba agrupaciones distintas a las actuales —por ejemplo, en 2016 los grupos "Arquitectura, 
+Urbanismo, Geografía y Artes" aparecían combinados— se optó por dejar como `NA` aquellas celdas que no eran separables, evitando imputaciones que distorsionaran las comparaciones temporales. La trazabilidad completa de los reemplazos está documentada en los archivos de log generados durante el procesamiento.
+
+### Bases Milenio
+
+Las bases Milenio siguen una lógica análoga, aunque corresponden a un instrumento de financiamiento estructuralmente distinto: convocatorias menos frecuentes, proyectos de mayor envergadura y un perfil de postulantes orientado a centros de investigación asociativa (Núcleos e Institutos Milenio). La base Milenio disponible presenta limitaciones sustantivas que restringen el alcance del análisis: las variables de 
+institución patrocinante, grupo de evaluación, disciplina detallada y montos adjudicados no están disponibles para este instrumento; además, la 
+cobertura temporal es discontinua, con datos disponibles solo para los concursos 2016, 2017, 2020, 2021 y 2022. Por estas razones, los indicadores calculados para Milenio son comparables solo de manera descriptiva con FONDECYT, y las tasas de adjudicación de ambos programas 
+no son directamente comparables sin considerar estas diferencias estructurales.
+
+### Universo de análisis
+
+El universo de análisis fue delimitado aplicando dos filtros fundamentales: en primer lugar, se seleccionaron únicamente postulaciones 
+clasificadas como "Ciencias Sociales" según la taxonomía OCDE; en segundo lugar, se conservaron exclusivamente aquellas cuyo proceso de evaluación finalizó en condición de "Adjudicado" o "No Adjudicado", excluyendo postulaciones inadmisibles o fuera de bases. El período temporal abarca los años 2016 a 2025, garantizando la consistencia longitudinal entre todas las bases. Para los análisis comparativos entre tipos de 
+institución, se excluyeron centros de investigación, fundaciones, museos e instituciones extranjeras presentes en la base, manteniendo únicamente universidades chilenas. El listado completo de instituciones y su clasificación se presenta en la sección de resultados (ver @tbl-clasificacion-instituciones y @tbl-clasificacion-publica-privada).
+
+```{r}
+#| echo: false
+#| label: tbl-bbdd
+#| tbl-cap: Bases de datos disponibles
+#| tbl-cap-location: top
+
+load(here("input", "data", "proc", "base_fondecyt_completa.RData"))
+load(here("input", "data", "proc", "base_fondecyt_sociales_merge_monto.RData"))
+load(here("input", "data", "proc", "adjudicacion_milenio_limpia_sociales.RData"))
+
+bbdd <- tibble::tibble(
+  `Base de datos` = c(
+    "base_fondecyt_completa",
+    "base_fondecyt_sociales_merge_monto",
+    "adjudicacion_milenio_limpia_sociales"
+  ),
+  `Origen` = c(
+    "Merge postulaciones + adjudicaciones FONDECYT",
+    "Postulaciones + adjudicaciones FONDECYT Ciencias Sociales + reconstrucción de montos desde PDFs ANID",
+    "Adjudicaciones Milenio en Ciencias Sociales"
+  ),
+  `Periodo` = c(
+    "2016–2025",
+    "2016–2025",
+    "2016, 2017, 2020, 2021, 2022"
+  ),
+  `Unidad de análisis` = c(
+    "Postulación FONDECYT (todas las áreas)",
+    "Postulación FONDECYT en Ciencias Sociales",
+    "Adjudicación Núcleo/Instituto Milenio"
+  ),
+  `N° observaciones` = c(
+    "Por confirmar con tu base",
+    "8.603 postulaciones",
+    "59 adjudicaciones (26 en CS Sociales)"
+  )
+)
+
+kable(bbdd, align = "l", booktabs = TRUE) %>%
+  kable_styling(
+    latex_options = c("striped", "scale_down"),
+    font_size  = 9,
+    full_width = FALSE
+  )
+```
+
+## Variables
+
+```{r}
+#| echo: false
+#| label: tbl-var
+#| tbl-cap: Variables disponibles
+#| tbl-cap-location: top
+
+codebook <- tibble::tibble(
+  `Variable` = c(
+    "ESTADO_RESOLUCION_CONCURSO",
+    "SEXO",
+    "REGION_EJECUCION",
+    "MACROZONA_MINCIENCIA",
+    "INSTRUMENTO",
+    "DISCIPLINA_OECD",
+    "GRUPO_ESTUDIO",
+    "INSTITUCION_PRINCIPAL",
+    "MONTO_ADJUDICADO",
+    "MONTO_PROM_GRUPO_ANIO (reconstruida)",
+    "MONTO_SOLIC_PROM_GRUPO_ANIO (creada)",
+    "AGNO_FALLO"
+  ),
+  `Naturaleza` = c(
+    "Categórica", "Categórica", "Categórica", "Categórica",
+    "Categórica", "Categórica", "Categórica", "Categórica",
+    "Numérica continua", "Numérica continua", "Numérica continua",
+    "Numérica discreta"
+  ),
+  `Disponibilidad` = c(
+    "Todas las postulaciones",
+    "Todas las postulaciones",
+    "Solo adjudicadas",
+    "Solo adjudicadas",
+    "Todas las postulaciones",
+    "Todas las postulaciones",
+    "Solo adjudicadas",
+    "Solo adjudicadas",
+    "Solo adjudicadas",
+    "Por grupo-año-instrumento",
+    "Por grupo-año-instrumento",
+    "Todas las postulaciones"
+  ),
+  `Descripción` = c(
+    "Resultado del concurso: ADJUDICADO / NO ADJUDICADO",
+    "Sexo del/la investigador/a principal: HOMBRE / MUJER / SIN INFORMACIÓN",
+    "Región de ejecución del proyecto",
+    "Macrozona Minciencia de ejecución (Norte / Centro / RM / Centro Sur / Sur / Austral)",
+    "Instrumento FONDECYT: REGULAR / INICIACION",
+    "Área disciplinar según clasificación OCDE (Ciencias Sociales, Humanidades, Ciencias Naturales, etc.)",
+    "Grupo de evaluación al que postuló el proyecto (clasificación ANID)",
+    "Universidad o entidad patrocinante del proyecto",
+    "Monto en pesos chilenos efectivamente adjudicado al proyecto",
+    "Monto promedio adjudicado por grupo-año-instrumento, reconstruido desde PDFs ANID",
+    "Monto promedio solicitado por grupo-año-instrumento, calculado desde PDFs ANID",
+    "Año de resolución del concurso"
+  )
+)
+
+kable(codebook, align = c("l", "l", "l", "l"), booktabs = TRUE) %>%
+  kable_styling(
+    latex_options = c("striped", "scale_down"),
+    font_size  = 9,
+    full_width = FALSE
+  ) %>%
+  column_spec(1, width = "4.5cm") %>%
+  column_spec(4, width = "6cm")
+```
+
+### Indicadores derivados
+
+A partir de las variables originales y reconstruidas, el análisis utiliza los siguientes indicadores:
+
+**Tasa de adjudicación**: proporción de postulaciones que resultaron adjudicadas sobre el total de postulaciones evaluadas en un grupo 
+determinado. Formalmente:
+
+$$\text{Tasa de adjudicación} = \frac{N_{\text{adjudicado}}}{N_{\text{adjudicado}} + N_{\text{no adjudicado}}}$$
+
+Esta definición excluye por construcción las postulaciones inadmisibles o fuera de bases, que fueron eliminadas durante el procesamiento inicial. El denominador corresponde, por tanto, al universo de postulaciones que efectivamente entraron al proceso de evaluación.
+
+**Composición porcentual por género dentro de grupos de estudio**: 
+proporción de adjudicaciones de hombres y mujeres en cada combinación de grupo de estudio y año, calculada como:
+
+$$\text{Composición}_{ij} = \frac{N_{\text{adjudicadas}_{ij}}}{N_{\text{adjudicadas total grupo}_{i}}} \times 100$$
+
+donde $i$ corresponde al grupo-año y $j$ al género.
+
+Monto promedio solicitado y adjudicado por grupo: los promedios por grupo-año-instrumento se calculan a partir de los totales agregados 
+publicados por ANID, dividiendo recursos totales (en miles de pesos) por el número de proyectos concursados (para solicitado) o aprobados (para 
+adjudicado).
+
+### Decisión metodológica sobre la unidad de análisis
+
+Una decisión metodológica central fue calcular la tasa de adjudicación a nivel de postulación y no a nivel de proyecto único. Dado que el 
+interés es caracterizar el proceso competitivo tal como lo experimentan los/as postulantes —incluyendo las repostulaciones—, se optó por esta 
+unidad de análisis. Esto implica que un mismo investigador/a puede contribuir con múltiples observaciones al denominador si postuló en 
+distintos años o instrumentos.
+
+### Procesamiento de variables
+
+Respecto al procesamiento de variables, se aplicaron las siguientes decisiones: los nombres de las regiones fueron abreviados para mejorar la 
+legibilidad (e.g., "REGION METROPOLITANA DE SANTIAGO" → "RM"); se corrigió un error tipográfico de origen en la variable `DISCIPLINA_DETALLE` de la base oficial ("CIENICAS" → "CIENCIAS"); y se unificó un error en el nombre "PONTIFICA UNIVERSIDAD CATOLICA DE VALPARAISO" (sin la "I") con su nombre oficial. Todas las variables categóricas fueron transformadas a tipo `factor` para optimizar el uso de memoria y facilitar los análisis estadísticos posteriores. Los registros con categorías problemáticas en variables clave —como "SIN INFORMACION" en `SEXO` o `MACROZONA_MINCIENCIA`— fueron excluidos de los análisis comparativos respectivos, explicitando el criterio en cada caso.
+
+Para los análisis comparativos por tipo de institución, se definieron dos clasificaciones complementarias construidas al vuelo desde la variable `INSTITUCION_PRINCIPAL`:
+
+- **CRUCH vs No CRUCH**: las 30 universidades pertenecientes al Consejo de Rectores de las Universidades Chilenas vs. universidades privadas no 
+tradicionales. Las universidades incorporadas tardíamente al CRUCH (Alberto Hurtado, Diego Portales y de los Andes, que ingresaron en 2018-2019) se clasifican como CRUCH para toda la serie 2016-2025 por criterio sustantivo de trayectoria investigativa, decisión explicitada 
+en las notas al pie de los gráficos correspondientes.
+
+- **Pública vs Privada**: las 18 universidades estatales chilenas vs. el resto de universidades privadas (incluyendo G9, UAH, UDP, U. de los Andes y privadas no tradicionales). En ambas clasificaciones se excluyeron centros de investigación, fundaciones, museos e instituciones extranjeras.
+
+## Métodos
+
+El análisis se desarrolla en tres secciones temáticas, organizadas por instrumento FONDECYT (Iniciación y Regular) y complementadas con un 
+apartado sobre el programa Milenio. En cada sección se sigue una estructura analítica común que va de lo más general a lo más específico.
+
+En primer lugar, se presenta una **perspectiva comparada** que sitúa a las Ciencias Sociales frente a las demás áreas OCDE, calculando volúmenes absolutos de postulación, adjudicación y tasas relativas de éxito. Esta línea base permite contextualizar la posición relativa de la disciplina en el sistema FONDECYT y establecer un punto de referencia para las desagregaciones posteriores.
+
+En segundo lugar, se analiza el **interior de la disciplina** mediante tres dimensiones de desagregación: género (variable `SEXO`), grupo de 
+estudio (`GRUPO_ESTUDIO`) e institución patrocinante (`INSTITUCION_PRINCIPAL`, junto con las clasificaciones derivadas CRUCH/No 
+CRUCH y Pública/Privada). Para cada dimensión se examinan tanto los volúmenes absolutos como las tasas relativas y la evolución temporal de 
+las brechas. En el caso de los grupos de estudio se incorpora adicionalmente el análisis de montos —solicitado y adjudicado— por grupo 
+y año, aprovechando la información reconstruida desde los PDFs ANID.
+
+En tercer lugar, se presenta la **distribución territorial** del financiamiento a nivel de macrozonas, permitiendo identificar la 
+concentración o descentralización de los recursos a lo largo del territorio nacional. Esta dimensión se analiza tanto a través de mapas 
+coropléticos como mediante la evolución temporal de las adjudicaciones por macrozona.
+
+Para el caso del programa Milenio, dadas las limitaciones de la base disponible, el análisis se restringe a tres dimensiones factibles 
+—comparación con otras áreas OCDE, distribución por género y distribución territorial—, complementadas con un listado descriptivo del universo 
+completo de proyectos en Ciencias Sociales.
+
+Todos los gráficos del análisis siguen un tema visual homogéneo (`tema_anid`) y utilizan paletas de color diferenciadas y consistentes por 
+variable de desagregación (género en azul/rojo, instrumentos en granate, naturaleza jurídica en azul/rojo), incluyendo etiquetas con los valores para facilitar la lectura directa. Para los gráficos interactivos se utiliza la librería `plotly` con tooltips informativos que muestran el nombre completo de la categoría, año y valor exacto al pasar el cursor. 
+
+La comparación entre programas (FONDECYT vs. Milenio) se realiza solo de manera descriptiva y con las cautelas necesarias, dado que sus estructuras competitivas son estructuralmente distintas en términos de escala, frecuencia de convocatoria y perfiles institucionales de los postulantes.

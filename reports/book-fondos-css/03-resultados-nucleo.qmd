@@ -1,0 +1,292 @@
+---
+title: "Resultados: Nucleos Milenio"
+---
+
+```{r}
+#| label: librerias
+#| echo: false
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(here)
+library(kableExtra)
+library(sjPlot)
+library(forcats)
+library(chilemapas)
+library(patchwork)
+
+rm(list = ls())
+
+here::i_am("reports/book-fondos-css/03-resultados-nucleo.qmd")
+```
+
+```{r}
+#| label: data-milenio
+#| echo: false
+#| message: false
+#| warning: false
+
+# Cargar datos
+load(here("input", "data", "proc", "adjudicacion_milenio_limpia.RData"))
+load(here("input", "data", "proc", "adjudicacion_milenio_limpia_sociales.RData"))
+
+# Tema base
+tema_anid <- theme_minimal(base_size = 12) +
+  theme(
+    plot.title    = element_text(face = "bold", size = 13),
+    plot.subtitle = element_text(color = "grey40", size = 11),
+    axis.title    = element_text(size = 11),
+    legend.position = "bottom",
+    panel.grid.minor = element_blank()
+  )
+```
+
+## Núcleos e Institutos Milenio
+
+Esta sección presenta un análisis complementario sobre el instrumento de investigación asociativa Milenio en Ciencias Sociales. A diferencia del tratamiento dado a FONDECYT —que constituye el foco principal del estudio—, el análisis de Milenio se aborda aquí con un alcance más limitado, tanto por las características del instrumento (concursos menos frecuentes y proyectos de mayor envergadura), como por las importantes restricciones de la base de datos disponible. En particular, las 
+variables de institución patrocinante, grupo de evaluación, disciplina detallada y montos adjudicados no están disponibles para este instrumento. Además, la cobertura temporal es discontinua: solo se cuenta con información de los concursos 2016, 2017, 2020, 2021 y 2022, sin datos para 2018, 2019 ni el período 2023-2025.
+
+Por estas razones, esta sección debe leerse como una mirada exploratoria que aporta contexto al análisis principal, más que como un diagnóstico sistemático equivalente. El análisis se limita a tres dimensiones factibles —comparación con otras áreas OCDE, distribución por género y distribución territorial—, complementadas con un listado descriptivo del universo completo de proyectos en Ciencias Sociales. Todas las observaciones que se desprenden deben interpretarse con la debida cautela dada la baja N del subuniverso analizado: solo 24 proyectos en Ciencias Sociales durante el período cubierto.
+
+### Milenio en perspectiva comparada
+
+```{r}
+#| label: fig-milenio-area
+#| echo: false
+#| fig-cap: "Adjudicaciones Núcleos e Institutos Milenio por área OCDE (2016–2022)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+adjudicacion_milenio_limpia_sociales %>%
+  filter(AREA_OCDE != "SIN INFORMACION") %>%
+  mutate(
+    AREA_OCDE = str_to_title(as.character(AREA_OCDE)),
+    DESTACADO = if_else(AREA_OCDE == "Ciencias Sociales", 
+                        "Ciencias Sociales", "Otras áreas")
+  ) %>%
+  count(AGNO_FALLO, AREA_OCDE, DESTACADO, name = "adjudicados") %>%
+  ggplot(aes(x = factor(AGNO_FALLO), y = adjudicados, fill = DESTACADO)) +
+  geom_col(position = "stack") +
+  geom_text(aes(label = adjudicados),
+            position = position_stack(vjust = 0.5),
+            color = "white", fontface = "bold", size = 3) +
+  facet_wrap(~ AREA_OCDE, ncol = 3) +
+  scale_fill_manual(values = c("Ciencias Sociales" = "#6e0c0c",
+                                "Otras áreas"      = "#c77972")) +
+  labs(
+    x       = NULL,
+    y       = "N° adjudicaciones",
+    fill    = NULL,
+    caption = "Fuente: ANID 2016-2022, elaboración propia.\n*No hay datos disponibles para 2018, 2019 ni 2023-2025."
+  ) +
+  tema_anid +
+  theme(
+    legend.position = "none",
+    axis.text.x     = element_text(angle = 45, hjust = 1, size = 8),
+    strip.text      = element_text(size = 9, face = "bold"),
+    plot.caption    = element_text(
+      hjust = 0, size = 8, color = "gray40",
+      face = "italic", margin = margin(t = 10)
+    )
+  )
+```
+
+La @fig-milenio-area presenta la distribución de adjudicaciones de Núcleos e Institutos Milenio por área OCDE durante el período 2016-2022. En el agregado, Ciencias Naturales lidera con 26 proyectos adjudicados, seguido muy de cerca por Ciencias Sociales con 24 proyectos. El resto de las áreas mantiene una presencia marginal: Ingeniería y Tecnología y Medicina y Ciencias de la Salud con 3 proyectos cada una, Multidisciplinario con 2 y Humanidades con apenas 1 proyecto en todo el período.
+
+Esta posición relativa de las Ciencias Sociales contrasta con lo observado en FONDECYT, donde el área se ubica como uno de los principales volúmenes del sistema. En Milenio, la disciplina mantiene una posición competitiva pero a una escala notoriamente más acotada: hablamos de decenas de proyectos en casi una década, no de cientos por año como ocurre en FONDECYT. Esta diferencia de escala es coherente con el diseño del instrumento, orientado a la conformación de centros de excelencia 
+con financiamiento de mayor envergadura y duración, lo que naturalmente restringe el número de proyectos adjudicables por concurso.
+
+## Detalle de proyectos adjudicados en Ciencias Sociales
+
+```{r}
+#| label: tbl-milenio-detalle
+#| echo: false
+#| tbl-cap: "Listado completo de Núcleos e Institutos Milenio adjudicados en Ciencias Sociales (2016–2022)"
+#| tbl-cap-location: top
+
+tabla_milenio_detalle <- adjudicacion_milenio_limpia_sociales %>%
+  filter(AREA_OCDE == "CIENCIAS SOCIALES") %>%
+  mutate(
+    TIPO = if_else(str_detect(NOMBRE_CONCURSO, "INSTITUTO"),
+                   "Instituto", "Núcleo"),
+    NOMBRE_PROYECTO = str_to_title(NOMBRE_PROYECTO),
+    NOMBRE_RESPONSABLE = str_to_title(NOMBRE_RESPONSABLE),
+    SEXO = str_to_title(as.character(SEXO))
+  ) %>%
+  select(AGNO_FALLO, TIPO, NOMBRE_PROYECTO,
+         NOMBRE_RESPONSABLE, SEXO, MACROZONA_MINCIENCIA) %>%
+  arrange(AGNO_FALLO, NOMBRE_PROYECTO)
+
+if (knitr::is_latex_output()) {
+  kbl(tabla_milenio_detalle,
+    col.names = c("Año", "Tipo", "Nombre del proyecto",
+                  "Responsable", "Sexo", "Macrozona"),
+    align = c("c", "c", "l", "l", "c", "c"),
+    booktabs = TRUE,
+    format = "latex",
+    longtable = TRUE
+  ) %>%
+  kable_styling(
+    latex_options = c("striped", "repeat_header"),
+    font_size = 9,
+    full_width = FALSE
+  ) %>%
+  column_spec(1, width = "1cm") %>%
+  column_spec(2, width = "1.5cm") %>%
+  column_spec(3, width = "4.5cm") %>%
+  column_spec(4, width = "3cm") %>%
+  column_spec(5, width = "1cm") %>%
+  column_spec(6, width = "2cm") %>%
+  footnote(
+    general = "Fuente: ANID 2016-2022, elaboración propia.",
+    general_title = "",
+    footnote_as_chunk = TRUE
+  )
+} else {
+  kbl(tabla_milenio_detalle,
+    col.names = c("Año", "Tipo", "Nombre del proyecto",
+                  "Responsable", "Sexo", "Macrozona"),
+    align = c("c", "c", "l", "l", "c", "c"),
+    booktabs = TRUE
+  ) %>%
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed"),
+    font_size = 11,
+    full_width = TRUE
+  ) %>%
+  column_spec(3, width = "30em") %>%
+  footnote(
+    general = "Fuente: ANID 2016-2022, elaboración propia.",
+    general_title = "",
+    footnote_as_chunk = TRUE
+  )
+}
+```
+
+La @tbl-milenio-detalle presenta el listado completo del universo analizado: los 24 Núcleos e Institutos Milenio adjudicados en Ciencias Sociales entre 2016 y 2022. La tabla incluye el año de adjudicación, el tipo de centro (Núcleo o Instituto), nombre del proyecto, responsable principal, sexo del responsable y macrozona de ubicación. Dado el tamaño acotado del universo, resulta posible y pertinente mostrar el listado exhaustivo, lo que permite al lector acceder directamente a la diversidad temática de los proyectos y observar de manera transparente la composición que sustenta los análisis agregados de las secciones 
+siguientes.
+
+### Diferencias por género
+
+```{r}
+#| label: fig-milenio-genero
+#| echo: false
+#| fig-cap: "Adjudicaciones Núcleos e Institutos Milenio en Ciencias Sociales por género (2016–2022)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 5
+
+adjudicacion_milenio_limpia_sociales %>%
+  filter(AREA_OCDE == "CIENCIAS SOCIALES",
+         SEXO != "SIN INFORMACION") %>%
+  group_by(AGNO_FALLO, SEXO) %>%
+  summarise(adjudicado = n(), .groups = "drop") %>%
+  group_by(AGNO_FALLO) %>%
+  mutate(pct = round(adjudicado / sum(adjudicado) * 100, 1)) %>%
+  ungroup() %>%
+  ggplot(aes(x = factor(AGNO_FALLO), y = adjudicado, fill = SEXO)) +
+  geom_col(position = "stack") +
+  geom_text(aes(label = paste0(adjudicado, "\n(", pct, "%)")),
+            position = position_stack(vjust = 0.5),
+            size = 3, fontface = "bold", color = "white") +
+  scale_fill_manual(values = c("HOMBRE" = "#1a5276", "MUJER" = "#c0392b")) +
+  labs(
+    x       = NULL,
+    y       = "N° adjudicaciones",
+    fill    = NULL,
+    caption = "Fuente: ANID 2016-2022, elaboración propia.\n*No hay datos para 2018, 2019 ni 2023-2025."
+  ) +
+  tema_anid +
+  theme(
+    legend.position = "top",
+    axis.text.x     = element_text(angle = 45, hjust = 1),
+    plot.caption    = element_text(
+      hjust = 0, size = 8, color = "gray40",
+      face = "italic", margin = margin(t = 10)
+    )
+  )
+```
+
+La @fig-milenio-genero presenta la distribución por género de los Núcleos e Institutos Milenio adjudicados en Ciencias Sociales. En el agregado del período se observa una distribución relativamente balanceada: del total de 24 adjudicaciones, 13 corresponden a investigadores hombres (54%) y 11 a investigadoras mujeres (46%), mostrando una composición más equitativa que la observada en FONDECYT Regular —donde las mujeres concentran aproximadamente el 38% de las postulaciones—. Si bien esta lectura es sugerente, debe tomarse con extrema cautela dada la baja N del universo analizado.
+
+La interpretación año a año ilustra precisamente los límites de este ejercicio. En 2020, por ejemplo, se adjudicaron solo 2 proyectos —ambos dirigidos por mujeres—, lo que arroja un 100% de participación femenina que evidentemente no constituye una tendencia sino un artefacto del tamaño reducido del concurso. La cifra más informativa corresponde al concurso 2022, con 11 adjudicaciones: 6 hombres (55%) y 5 mujeres (45%), distribución que se aproxima al promedio del período. Cualquier inferencia sobre tendencias temporales en este indicador resulta metodológicamente improcedente con la información disponible.
+
+### Distribución territorial
+
+```{r}
+#| label: fig-milenio-macrozona
+#| echo: false
+#| fig-cap: "Adjudicaciones Núcleos e Institutos Milenio en Ciencias Sociales por macrozona (2016–2022)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 5
+
+adjudicacion_milenio_limpia_sociales %>%
+  filter(AREA_OCDE == "CIENCIAS SOCIALES",
+         MACROZONA_MINCIENCIA != "SIN INFORMACION") %>%
+  count(MACROZONA_MINCIENCIA, name = "adjudicados") %>%
+  mutate(
+    MACROZONA_MINCIENCIA = fct_reorder(MACROZONA_MINCIENCIA, adjudicados),
+    pct = round(adjudicados / sum(adjudicados) * 100, 1)
+  ) %>%
+  ggplot(aes(x = adjudicados, y = MACROZONA_MINCIENCIA)) +
+  geom_col(fill = "#6e0c0c") +
+  geom_text(aes(label = paste0(adjudicados, " (", pct, "%)")),
+            hjust = -0.15, size = 3.5, fontface = "bold") +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.15))) +
+  labs(
+    x       = "N° adjudicaciones",
+    y       = NULL,
+    caption = "Fuente: ANID 2016-2022, elaboración propia."
+  ) +
+  tema_anid
+```
+
+La @fig-milenio-macrozona presenta el hallazgo más contundente de toda la sección sobre Milenio, y posiblemente el dato que mejor resiste las limitaciones metodológicas señaladas previamente. La Región Metropolitana captura 22 de las 24 adjudicaciones Milenio en Ciencias Sociales (92%). Las restantes 2 adjudicaciones se reparten entre las macrozonas Centro Sur y Norte (1 cada una), mientras que las macrozonas Centro, Sur y Austral no registran ningún Núcleo ni Instituto Milenio en Ciencias Sociales durante todo el período observado.
+
+Esta concentración es considerablemente más extrema que la observada en FONDECYT, donde si bien la Región Metropolitana domina el sistema, otras macrozonas mantienen al menos una presencia relevante. El resultado sugiere que Milenio en Ciencias Sociales opera prácticamente como un fenómeno santiaguino, reforzando la asimetría territorial documentada en el análisis principal. Esta lectura debe entenderse en el contexto del diseño del instrumento, que privilegia la conformación de centros con masa crítica de investigadores con dedicación exclusiva y trayectoria consolidada, perfil que se concentra desproporcionadamente 
+en las universidades con sede en la capital. Sin embargo, también plantea una interrogante de política pública relevante**: si Milenio busca consolidar centros de excelencia capaces de liderar agendas de investigación de frontera, ¿es deseable que en Ciencias Sociales este objetivo se cumpla de manera tan exclusivamente metropolitana?
+
+### Evolución temporal por macrozona
+
+```{r}
+#| label: fig-region-milenio-2
+#| echo: false
+#| fig-cap: "Evolución temporal de adjudicaciones Núcleos e Institutos Milenio en Ciencias Sociales por macrozona (2016–2022)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+adjudicacion_milenio_limpia_sociales %>%
+  filter(MACROZONA_MINCIENCIA != "SIN INFORMACION") %>%
+  count(AGNO_FALLO, MACROZONA_MINCIENCIA) %>%
+  ggplot(aes(x = AGNO_FALLO, y = n,
+             color = MACROZONA_MINCIENCIA,
+             group = MACROZONA_MINCIENCIA)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 3) +
+  geom_text(aes(label = n),
+            vjust = -0.8, size = 3, fontface = "bold", show.legend = FALSE) +
+  scale_x_continuous(breaks = unique(adjudicacion_milenio_limpia_sociales$AGNO_FALLO)) +
+  scale_color_brewer(palette = "Set2") +
+  labs(
+    x       = NULL,
+    y       = "Adjudicaciones",
+    color   = NULL,
+    caption = "Fuente: ANID 2016-2022, elaboración propia"
+  ) +
+  tema_anid +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+La @fig-region-milenio-2 complementa el análisis territorial mostrando la evolución concurso a concurso de las adjudicaciones por macrozona. Se confirma el predominio constante de la Región Metropolitana, con picos visibles en los concursos de 2016, 2020 y 2022. Las demás macrozonas muestran una presencia esporádica y de bajo volumen, sin construir trayectorias sostenidas de adjudicación a lo largo del tiempo. Este patrón refuerza la conclusión previa: el instrumento Milenio en Ciencias Sociales no muestra signos de descentralización territorial durante el período observado, aunque la naturaleza fragmentaria de los 
+datos disponibles impide afirmar de manera concluyente si esta tendencia se ha mantenido en los concursos posteriores a 2022.
+
+### Síntesis: una mirada complementaria al análisis principal
+
+Los hallazgos de esta sección permiten ofrecer una mirada panorámica sobre el instrumento Milenio en Ciencias Sociales que, pese a sus limitaciones metodológicas, dialoga con los principales patrones identificados en el análisis FONDECYT. En particular, la concentración territorial extrema en la Región Metropolitana confirma —y radicaliza— la asimetría documentada en el instrumento principal, mientras que la mayor equidad de género observada en el agregado sugiere que los instrumentos asociativos podrían operar bajo dinámicas algo distintas a las de los concursos individuales senior. Sin embargo, las 
+restricciones de la base de datos impiden profundizar estas hipótesis con la rigurosidad que el tema merecería.
+
+Esta limitación sugiere una agenda clara: un análisis sistemático del financiamiento Milenio en Ciencias Sociales requiere primero resolver los problemas de disponibilidad y granularidad de los datos. La información sobre montos, instituciones patrocinantes, grupos de evaluación y cobertura temporal completa es indispensable para producir un diagnóstico equivalente al que aquí se ha presentado para FONDECYT. Mientras esa información no esté disponible, los análisis sobre Milenio seguirán operando con un nivel de profundidad limitado en comparación con otros instrumentos del sistema.

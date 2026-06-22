@@ -1,0 +1,95 @@
+---
+title: "Estudio de Fondos ANID para el financiamiento  en Ciencias Sociales"
+format:
+  html: 
+    code-fold: true
+    html-math-method: katex
+    number-sections: true
+    code-link: true
+    title-block-banner: true
+    theme:
+      - pretty.scss
+  pdf:
+    geometry: margin=2cm
+    template-partials:
+      - title.tex
+    keep-tex: true
+    fig-pos: "H"
+    include-in-header:
+      text: |
+        \usepackage{float}
+        \usepackage[noblocks]{authblk}
+        \renewcommand*{\Authsep}{, }
+        \renewcommand*{\Authand}{, }
+        \renewcommand*{\Authands}{, }
+        \renewcommand\Affilfont{\small}
+author:
+  - name: René Canales
+    email: renecanales@uc.cl
+    orcid: 0000-0003-1265-7854
+    affiliations: 
+        name: Departmento de Sociología, Universidad de Chile
+        country: Chile
+    attributes:
+      corresponding: true
+  - name: Juan Carlos Castillo
+    email: juancastillov@uchile.cl
+    orcid: 0009-0002-4299-2725
+    affiliations: 
+        name: Department of Sociología, Universidad de Chile
+        country: Chile
+  - name: Gabriel Cortés
+    email: gabriel.cortes@uchile.cl
+    affiliations: 
+        name: Dirección de Investigación Ciencias Sociales, Universidad de Chile
+        country: Chile
+abstract: |
+  Este informe caracteriza la distribución del financiamiento de la Agencia Nacional de Investigación y Desarrollo (ANID) en el área de Ciencias Sociales durante el período 2016-2025, con el propósito de aportar evidencia empírica sistemática al debate sobre la situación del campo en Chile. El estudio se propone identificar los patrones estructurales de adjudicación, examinar las asimetrías existentes y discutir si las recurrentes afirmaciones sobre una "crisis de financiamiento" cuentan con sustento empírico observable en los datos administrativos disponibles.
+
+  Se trabajó con tres bases de datos: postulaciones y adjudicaciones a FONDECYT Iniciación (n=4.027), FONDECYT Regular (n=4.576) y Núcleos e Institutos Milenio en Ciencias Sociales (n=24). Las variables de montos solicitados y adjudicados, no disponibles en las bases públicas estandarizadas, fueron reconstruidas manualmente a partir de los reportes oficiales de cada concurso. El análisis es descriptivo y se organiza secuencialmente por instrumento, examinando cinco dimensiones de desagregación: perspectiva comparada con otras áreas OCDE, género del/la investigador/a responsable, grupo de estudio, tipo de institución patrocinante (CRUCH/No CRUCH y Pública/Privada) y macrozona territorial de ejecución.
+
+  Las Ciencias Sociales se han consolidado como una de las áreas de mayor volumen del sistema FONDECYT, superando las 600 postulaciones anuales en Iniciación y las 400 en Regular hacia 2025. Sin embargo, las tasas de adjudicación se han mantenido estructuralmente estables —en torno al 30-35% en Regular y entre 7-12% en Iniciación—, configurando un escenario de competencia intensificada. El análisis de género revela un patrón con dos caras: en Iniciación se observa una transición hacia la paridad en postulaciones (50/49 en 2023-2024), mientras que en Regular la brecha de postulación permanece estancada en torno al 38% femenino. El análisis institucional confirma que las universidades del CRUCH concentran el 77% de las adjudicaciones en Iniciación y el 81% en Regular, sin signos de convergencia durante la década. La dimensión territorial constituye el hallazgo más unívoco: la Región Metropolitana captura la mayor parte del crecimiento absoluto del sistema, alcanzando una concentración extrema en Núcleos e Institutos Milenio (92% de las adjudicaciones del área).
+
+  Los hallazgos sugieren que el debate público sobre la existencia de una "crisis" del financiamiento requiere mayor precisión analítica: no estamos ante un sistema en colapso, sino ante uno con techos estructurales que se hacen más visibles a medida que la demanda crece sin que el presupuesto agregado se expanda proporcionalmente. El estudio plantea como hipótesis interpretativa para futuras investigaciones que la alta productividad del campo se estaría sosteniendo, al menos en parte, sobre el traslado de los costos del ajuste hacia las y los investigadores —particularmente quienes no cuentan con afiliación a instituciones tradicionales, trayectorias consolidadas o ubicación metropolitana—. Se proponen rutas de investigación complementaria que combinen análisis cuantitativos con abordajes cualitativos sobre las condiciones laborales y las trayectorias académicas del campo.
+keywords: 
+  - Fondos ANID
+  - Facultad de Ciencias Sociales
+bibliography: "refs/refs.bib"
+csl: "refs/apa.csl"
+link-citations: true
+linestretch: 1.15       
+mainfont: Times New Roman
+fontsize: 12pt          
+geometry: "left=2.54cm,right=2.54cm,top=2.54cm,bottom=2.54cm"
+papersize: letter
+colorlinks: true
+fig-height: 4
+fig-width: 7.5
+header-includes:
+  - \usepackage{threeparttable}
+execute:
+  warning: false
+  message: false
+---
+
+:::: {.justify}
+
+
+{{< include 01-introduction.qmd >}}
+
+{{< include 02-methods.qmd >}}
+
+{{< include 03-resultados-fondecyt.qmd >}}
+
+{{< include 04-resultados-nucleos.qmd >}}
+
+{{< include 05-conclusion.qmd >}}
+
+{{< pagebreak >}}
+
+# References
+
+::: {#refs}
+
+:::
+::::

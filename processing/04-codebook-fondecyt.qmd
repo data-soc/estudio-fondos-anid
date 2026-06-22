@@ -1,0 +1,189 @@
+---
+title: "Libro de Códigos para el Estudio de Fondos ANID en Ciencias Sociales"
+subtitle: "Fondos ANID para Ciencias Sociales"
+author: "René Canales, Asistente de Investigación"
+date: today
+lang: es
+fontsize: 12pt
+format:
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 2
+    toc-expand: 2
+    toc-title: Contents
+    number-sections: true
+    number-depth: 3
+    code-link: true
+    title-block-banner: true
+  pdf:
+    number-sections: true
+    number-depth: 3
+editor_options: 
+  chunk_output_type: console
+---
+
+# Libro de códigos: `base_fondecyt_final`
+
+## 1. Descripción general de la base
+
+La base de datos `base_fondecyt_final` corresponde a la base analítica final construida para el estudio de proyectos postulados al programa FONDECYT en el área de Ciencias Sociales. Su objetivo principal es facilitar el análisis de tasas de adjudicación, así como el estudio de desigualdades en el acceso al financiamiento según características de género, adscripción institucional y disciplina.
+
+La unidad de análisis corresponde a **cada proyecto postulado** a concursos FONDECYT. En consecuencia, cada fila representa una postulación única identificada por un código de proyecto. La base incluye tanto proyectos **adjudicados** como **no adjudicados**, lo que permite analizar el proceso competitivo de asignación de recursos.
+
+La base fue construida a partir de la integración de dos fuentes principales provistas por ANID: la base de postulaciones y la base histórica de adjudicaciones. La primera contiene el universo de postulaciones para el período considerado, mientras que la segunda incorpora información complementaria sobre los proyectos efectivamente financiados.
+
+### Características generales
+
+- **Nombre de la base:** `base_fondecyt_final`
+- **Tipo de base:** base analítica final
+- **Unidad de análisis:** proyecto postulado a FONDECYT
+- **Cobertura temporal:** 2016–2024
+- **Número de observaciones:** 8.603
+- **Número de variables:** 21
+- **Fuente principal:** ANID (base de postulaciones y base histórica de adjudicaciones)
+- **Identificador principal:** `CODIGO_PROYECTO`
+
+---
+
+## 2. Construcción y procesamiento de la base
+
+La base `base_fondecyt_final` fue construida mediante un proceso de limpieza, estandarización y cruce de fuentes administrativas. En primer lugar, se filtraron exclusivamente los proyectos correspondientes al programa FONDECYT. Posteriormente, se restringió el universo analítico a las postulaciones clasificadas en el área de **Ciencias Sociales** según la taxonomía OCDE, y se conservaron únicamente aquellas observaciones cuyo estado final de resolución correspondía a **"ADJUDICADO"** o **"NO ADJUDICADO"**.
+
+El procesamiento incluyó, además, la exclusión de instrumentos o concursos no pertinentes para el análisis, la eliminación de registros duplicados, la homogeneización de nombres y formatos textuales, la recodificación de tipos de variables y la conversión de columnas a clases apropiadas (`factor`, `character`, `integer`, `double`) para facilitar su análisis posterior.
+
+En una segunda etapa, la base de postulaciones fue cruzada con la base histórica de adjudicaciones mediante un `left_join` utilizando `CODIGO_PROYECTO` como llave principal. Este procedimiento permitió incorporar información adicional sobre los proyectos adjudicados, incluyendo variables como el título del proyecto, grupo de evaluación, disciplina específica, duración, nombre de la persona responsable, institución principal y monto adjudicado.
+
+### Principales transformaciones aplicadas
+
+- Filtrado exclusivo de proyectos del programa **FONDECYT**
+- Restricción a proyectos del área **Ciencias Sociales**
+- Conservación únicamente de estados de resolución:
+  - `ADJUDICADO`
+  - `NO ADJUDICADO`
+- Exclusión de instrumentos o concursos no relevantes
+- Eliminación de duplicados
+- Estandarización de texto:
+  - conversión a mayúsculas
+  - eliminación de tildes
+  - eliminación de espacios innecesarios
+- Homologación de nombres de regiones
+- Conversión de variables a tipos adecuados
+- Limpieza y estandarización de montos
+- Cruce entre base de postulaciones y base histórica de adjudicaciones
+- Restricción a una observación por proyecto
+
+---
+
+## 3. Estructura general de la base
+
+La base final contiene una observación por proyecto postulado, identificada de manera única mediante la variable `CODIGO_PROYECTO`. El archivo contiene tanto variables provenientes directamente de la base de postulaciones como variables inyectadas desde la base histórica de adjudicaciones.
+
+En términos generales, las variables pueden agruparse en cinco bloques analíticos:
+
+1. **Identificación y clasificación del concurso**
+2. **Clasificación disciplinaria y evaluación**
+3. **Variables territoriales**
+4. **Características del/la postulante e institucionalidad asociada**
+5. **Contenido del proyecto y financiamiento**
+
+---
+
+## 4. Libro de códigos
+
+### 4.1. Variables de identificación y clasificación del concurso
+
+| Variable | Descripción | Tipo | Valores / Codificación | Origen | Notas |
+|---|---|---|---|---|---|
+| `CODIGO_PROYECTO` | Identificador único del proyecto postulado. | `chr` | Código alfanumérico único por observación. | Postulaciones ANID | Llave principal de la base y del cruce con adjudicaciones. Cada código aparece una sola vez en la versión final. |
+| `SUBDIRECCION` | Subdirección administrativa o programática asociada al proyecto. | `fct` | Categorías institucionales definidas por ANID. | Postulaciones ANID | Permite identificar la unidad programática de adscripción del instrumento. |
+| `PROGRAMA` | Programa de financiamiento al que pertenece la postulación. | `fct` | En esta base: `FONDECYT`. | Postulaciones ANID | La base fue filtrada exclusivamente a proyectos FONDECYT. |
+| `INSTRUMENTO` | Tipo de instrumento o concurso al que se presenta el proyecto. | `fct` | Principalmente `INICIACION` y `REGULAR`. | Postulaciones ANID | Distingue modalidades de financiamiento dentro de FONDECYT. |
+| `INSTRUMENTO_RECAT` | Versión recategorizada del instrumento. | `fct` | Replica las categorías de `INSTRUMENTO`. | Postulaciones ANID / armonización | Se conserva por consistencia estructural, aunque no agrega diferenciación adicional en esta versión. |
+| `NOMBRE_CONCURSO` | Nombre completo o descriptivo del concurso. | `fct` | Ej. `INICIACION EN INVESTIGACION`. | Postulaciones ANID | Complementa a `INSTRUMENTO` con una descripción más específica del certamen. |
+| `ESTADO_RESOLUCION_CONCURSO` | Resultado final de la postulación. | `fct` | `ADJUDICADO`; `NO ADJUDICADO`. | Postulaciones ANID | Variable de resultado principal para el análisis de tasas de adjudicación. |
+| `AGNO_FALLO` | Año en que se resuelve oficialmente el concurso. | `int` | 2016–2024 | Postulaciones ANID | Corresponde al año del fallo o resolución, no necesariamente al año de formulación del proyecto. |
+
+#### Nota metodológica
+Este bloque reúne las variables que permiten identificar cada proyecto y clasificarlo dentro de la estructura administrativa y temporal del sistema FONDECYT. Resultan esenciales para análisis de adjudicación por cohorte, concurso e instrumento.
+
+---
+
+### 4.2. Variables de clasificación disciplinaria y evaluación
+
+| Variable | Descripción | Tipo | Valores / Codificación | Origen | Notas |
+|---|---|---|---|---|---|
+| `DISCIPLINA_OECD` | Área disciplinaria amplia del proyecto según clasificación OCDE. | `fct` | En esta base: `CIENCIAS SOCIALES`. | Postulaciones ANID | La base fue filtrada exclusivamente a proyectos de Ciencias Sociales, por lo que no presenta variación interna. |
+| `GRUPO_DE_EVALUACION` | Comité o grupo evaluador asignado al proyecto. | `fct` | Categorías de panel o comité evaluador. | Adjudicaciones ANID | Identifica el espacio específico de evaluación disciplinaria del proyecto. |
+| `DISCIPLINA_DETALLE` | Subdisciplina específica dentro del área de Ciencias Sociales. | `fct` | Categorías más desagregadas (ej. Sociología, Ciencias Jurídicas y Políticas, etc.). | Adjudicaciones ANID | Aporta mayor granularidad analítica que `DISCIPLINA_OECD`. |
+
+#### Nota metodológica
+Estas variables permiten distinguir la adscripción temática de los proyectos y su ubicación dentro de la estructura evaluativa del sistema. Son particularmente relevantes para examinar desigualdades o patrones de adjudicación entre subcampos disciplinares.
+
+---
+
+### 4.3. Variables territoriales
+
+| Variable | Descripción | Tipo | Valores / Codificación | Origen | Notas |
+|---|---|---|---|---|---|
+| `REGION_EJECUCION` | Región en la que se lleva a cabo la ejecución del proyecto. | `fct` | Regiones administrativas de Chile (ej. `RM`, `BIOBIO`, `VALPARAISO`, etc.). | Postulaciones ANID | Los nombres fueron homologados durante el proceso de limpieza para mejorar la comparabilidad entre registros. |
+| `MACROZONA_MINCIENCIA` | Macrozona territorial a la que pertenece la región de ejecución. | `fct` | Categorías agregadas definidas por el Ministerio de Ciencia (ej. `NORTE`, `CENTRO`, `CENTRO SUR`, `RM`, etc.). | Postulaciones ANID / adjudicaciones ANID | Permite agrupar teritorialmente los proyectos en unidades espaciales más amplias que la región. |
+
+#### Nota metodológica
+Estas variables permiten analizar la distribución espacial de las postulaciones y adjudicaciones, tanto a nivel regional como en escalas territoriales agregadas.
+
+---
+
+### 4.4. Variables del/la postulante e institucionalidad asociada
+
+| Variable | Descripción | Tipo | Valores / Codificación | Origen | Notas |
+|---|---|---|---|---|---|
+| `TIPO_BENEFICIARIO` | Tipo de beneficiario/a habilitado para postular. | `fct` | En esta base: `PERSONA NATURAL`. | Postulaciones ANID | No presenta variación interna debido a los filtros aplicados. |
+| `TIPO_INSTITUCION` | Tipo de institución asociada a la postulación. | `fct` | Principalmente `PERSONA NATURAL`; incluye `SIN INFORMACION` en algunos casos. | Postulaciones ANID | Los valores vacíos fueron recodificados como `SIN INFORMACION`. |
+| `SEXO` | Sexo de la persona investigadora responsable del proyecto. | `fct` | `HOMBRE`; `MUJER`. | Postulaciones ANID | Variable central para el análisis de desigualdad de género. |
+| `INSTITUCION_PRINCIPAL` | Institución principal patrocinante o albergante del proyecto. | `fct` | Instituciones de educación superior o investigación. | Adjudicaciones ANID | Identifica la institución de adscripción principal del proyecto. |
+
+#### Nota metodológica
+Este bloque permite caracterizar tanto a la persona responsable como a la institución que respalda la postulación, siendo especialmente útil para examinar desigualdades de género e institucionales en el acceso al financiamiento.
+
+---
+
+### 4.5. Variables de contenido del proyecto y financiamiento
+
+| Variable | Descripción | Tipo | Valores / Codificación | Origen | Notas |
+|---|---|---|---|---|---|
+| `NOMBRE_PROYECTO` | Título formal del proyecto postulado/adjudicado. | `chr` | Texto libre. | Adjudicaciones ANID | Se completa principalmente para proyectos adjudicados. |
+| `NOMBRE_RESPONSABLE` | Nombre de la persona investigadora responsable del proyecto. | `chr` | Texto libre. | Adjudicaciones ANID | Puede utilizarse para verificaciones manuales o trazabilidad, pero requiere tratamiento adicional para análisis longitudinales por persona. |
+| `DURACION_MESES` | Duración aprobada del proyecto, expresada en meses. | `int` | Valores enteros (ej. 24, 36). | Adjudicaciones ANID | Corresponde a la duración formal del proyecto adjudicado. |
+| `MONTO_ADJUDICADO` | Monto de financiamiento adjudicado al proyecto. | `dbl` | Monto en miles de pesos chilenos. | Adjudicaciones ANID | Para proyectos no adjudicados esta variable queda en `NA`, por lo que su ausencia no debe interpretarse como monto cero. |
+
+#### Nota metodológica
+Estas variables capturan atributos sustantivos del proyecto y del financiamiento adjudicado. Dado que provienen de la base de adjudicaciones, su disponibilidad depende estructuralmente de la condición de adjudicación del proyecto.
+
+---
+
+## 5. Consideraciones analíticas y limitaciones
+
+La base `base_fondecyt_final` fue construida para fines analíticos y presenta una estructura altamente adecuada para examinar patrones de adjudicación dentro del sistema FONDECYT en Ciencias Sociales. Sin embargo, su uso requiere considerar algunas limitaciones.
+
+En primer lugar, varias de las variables sustantivas relacionadas con el contenido del proyecto y el financiamiento (por ejemplo, `NOMBRE_PROYECTO`, `DURACION_MESES`, `MONTO_ADJUDICADO`) provienen de la base de adjudicaciones y, por tanto, solo se encuentran disponibles para proyectos adjudicados. Esto implica que su ausencia entre proyectos no adjudicados no debe interpretarse como valor cero o inexistencia sustantiva, sino como falta estructural de información.
+
+En segundo lugar, algunas variables no presentan variación interna en la muestra final debido a los filtros aplicados, como ocurre con `DISCIPLINA_OECD`, `TIPO_BENEFICIARIO` y, en gran medida, `TIPO_INSTITUCION`. Aunque se mantienen en la base por trazabilidad y consistencia documental, su utilidad analítica puede ser limitada en ciertos modelos.
+
+Finalmente, el uso de nombres de personas e instituciones requiere especial cuidado si se desea construir identificadores longitudinales, vincular trayectorias o realizar análisis de redes, ya que tales procedimientos demandan etapas adicionales de desambiguación y armonización.
+
+---
+
+## 6. Resumen estructural de la base
+
+| Indicador | Valor |
+|---|---|
+| Nombre de la base | `base_fondecyt_final` |
+| Número de observaciones | 8.603 |
+| Número de variables | 21 |
+| Unidad de análisis | Proyecto postulado |
+| Cobertura temporal | 2016–2024 |
+| Programa | FONDECYT |
+| Área disciplinaria | Ciencias Sociales |
+| Incluye proyectos no adjudicados | Sí |
+| Variable ID principal | `CODIGO_PROYECTO` |

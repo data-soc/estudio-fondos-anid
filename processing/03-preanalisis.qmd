@@ -1,0 +1,521 @@
+---
+title: "Pre-análisis: diagnóstico y toma de decisiones"
+subtitle: "Fondos ANID para Ciencias Sociales"
+author: "René Canales, Asistente de Investigación"
+date: today
+lang: es
+fontsize: 12pt
+format:
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 2
+    toc-expand: 2
+    toc-title: Contents
+    number-sections: true
+    number-depth: 3
+    code-link: true
+    title-block-banner: true
+  pdf:
+    number-sections: true
+    number-depth: 3
+editor_options: 
+  chunk_output_type: console
+---
+
+En este apartado se documentan las decisiones metodológicas adoptadas para el análisis de las bases de datos de financiamiento ANID en Ciencias Sociales, con foco en el cálculo y la interpretación de las tasas de adjudicación. Se trabajará con cuatro bases procesadas: la base de postulaciones Fondecyt con el merge de adjudicaciones (`base_final`), la base de adjudicaciones históricas Fondecyt (`adjudicacion_limpia`), las postulaciones Milenio (`postulacion_milenio_limpia`) y las adjudicaciones Milenio (`milenio_limpia`). A partir de esto, se construirán tasas de adjudicación desagregadas por sexo, región e institución, documentando los criterios de cálculo y las decisiones metodológicas que afectan su interpretación [^foot-1].
+
+[^foot-1]: Las bases ya se encuentran procesadas y se cargan directamente desde el directorio `input/data/proc`. El objetivo de este documento no es procesar los datos, sino diagnosticar su estructura y construir los indicadores de análisis de manera transparente y reproducible.
+
+## Configuración y librerías
+
+```{r}
+#| label: set
+#| echo: false
+#| message: false
+#| warning: false
+
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE, include = TRUE, warning = FALSE, message = FALSE)
+
+table_format <- if(is_html_output()) {
+  "html"
+} else if(is_latex_output()) {
+  "latex"
+}
+table_format2 <- if(is_html_output()) {
+  T
+} else if(is_latex_output()) {
+  F
+}
+
+options(kableExtra.html.bsTable = T)
+options(knitr.kable.NA = "")
+```
+
+```{r}
+#| label: packages
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(here)
+library(kableExtra)
+library(naniar)
+
+options(scipen = 999)
+rm(list = ls())
+```
+
+## Carga de datos
+
+```{r}
+#| label: carga
+#| echo: true
+#| message: false
+#| warning: false
+
+load(here("input", "data", "proc", "base_fondecyt_merge.RData"))
+load(here("input", "data", "proc", "adjudicacion_limpia.RData"))
+load(here("input", "data", "proc", "postulacion_milenio_limpia.RData"))
+load(here("input", "data", "proc", "milenio_limpia.RData"))
+```
+
+## Diagnóstico general de las bases
+
+Antes de construir los indicadores de adjudicación, se realiza un diagnóstico de la estructura de cada base para identificar posibles inconsistencias, valores faltantes o categorías problemáticas en las variables de interés. Las bases primarias han sido extraídas del repositorio de ANID [https://github.com/ANID-GITHUB](https://github.com/ANID-GITHUB) y procesadas siguiendo un protocolo de limpieza y estandarización documentado en `processing/01-proc-data.qmd`. 
+
+### Base de postulaciones Fondecyt (`base_final`)
+
+La base `base_final` es el resultado del merge entre las postulaciones Fondecyt y las adjudicaciones históricas. Contiene tanto proyectos adjudicados como no adjudicados, por lo que constituye el insumo principal para calcular las tasas de adjudicación a nivel de postulación. Esto se debe a que la base de postulaciones contiene el universo completo de postulaciones y su resultado para el período 2016–2024, incluyendo tanto las adjudicadas como las no adjudicadas. Por su parte, la base de adjudicaciones incluye todos los proyectos adjudicados desde 1982 hasta la fecha y contiene información adicional no disponible en la base de postulaciones. Por ello, su utilidad principal está en complementar y enriquecer la información mediante la fusión con la base de postulaciones.
+
+```{r}
+#| label: diag-fondecyt
+#| echo: true
+#| eval: false
+
+# Estructura general
+glimpse(base_final)
+
+# Distribución del resultado del concurso
+table(base_final$ESTADO_RESOLUCION_CONCURSO)
+
+# Revisión de NAs en variables clave
+base_final %>%
+  select(SEXO, REGION_EJECUCION, TIPO_INSTITUCION, 
+         INSTRUMENTO, ESTADO_RESOLUCION_CONCURSO) %>%
+  miss_var_summary()
+```
+
+Al realizar el merge entre la base de postulaciones y la de adjudicaciones, las variables provenientes de la segunda base (`NOMBRE_PROYECTO`, `GRUPO_DE_EVALUACION`, `DISCIPLINA_DETALLE`, `DURACION_MESES`, `NOMBRE_RESPONSABLE`, `INSTITUCION_PRINCIPAL`, `MONTO_ADJUDICADO`) quedan con valores `NA` para todos los registros cuyo `ESTADO_RESOLUCION_CONCURSO` es "NO ADJUDICADO". Esto es un comportamiento esperado y no constituye un problema de calidad de datos, sino una consecuencia lógica del diseño de la base [^foot-2].
+
+[^foot-2]: Para el cálculo de tasas de adjudicación se utilizará exclusivamente la base de postulaciones Fondecyt (`base_final`), pues contiene el universo completo de postulaciones con su resultado. La base de adjudicaciones históricas se empleará solo para análisis específicos de montos y duración de proyectos adjudicados.
+
+```{r}
+#| label: diag-fondecyt-nas
+#| echo: true
+#| eval: false
+
+# Verificar que los NAs en variables de adjudicación corresponden a "NO ADJUDICADO"
+base_final %>%
+  group_by(ESTADO_RESOLUCION_CONCURSO) %>%
+  summarise(
+    n = n(),
+    na_monto = sum(is.na(MONTO_ADJUDICADO)),
+    na_grupo = sum(is.na(GRUPO_DE_EVALUACION))
+  )
+```
+
+### Base de postulaciones Milenio (`postulacion_milenio_limpia`)
+
+La base de postulaciones Milenio replica la lógica de la base Fondecyt, pero corresponde a un instrumento de financiamiento diferente, con una estructura competitiva distinta (menor número de convocatorias, proyectos de mayor envergadura). Se verifica que las categorías de las variables clave sean comparables con las de Fondecyt.
+
+```{r}
+#| label: diag-milenio
+#| echo: true
+#| eval: false
+
+glimpse(postulacion_milenio_limpia)
+
+# Distribución del resultado del concurso
+table(postulacion_milenio_limpia$ESTADO_RESOLUCION_CONCURSO)
+
+# Revisión de NAs en variables clave
+postulacion_milenio_limpia %>%
+  select(SEXO, REGION_EJECUCION, TIPO_INSTITUCION, 
+         INSTRUMENTO, ESTADO_RESOLUCION_CONCURSO) %>%
+  miss_var_summary()
+```
+
+## Construcción de la tasa de adjudicación
+
+### Definición operacional
+
+La **tasa de adjudicación** se define como la proporción de postulaciones que resultaron adjudicadas sobre el total de postulaciones evaluadas (adjudicadas + no adjudicadas) en un grupo determinado. Formalmente:
+
+$$\text{Tasa de adjudicación} = \frac{N_{\text{adjudicado}}}{N_{\text{adjudicado}} + N_{\text{no adjudicado}}} \times 100$$
+
+Esta definición excluye por construcción las postulaciones inadmisibles o fuera de bases, que fueron eliminadas durante el procesamiento inicial. El denominador corresponde, por tanto, al universo de postulaciones que efectivamente entraron al proceso de evaluación.
+
+### Decisión sobre la unidad de análisis
+
+Una decisión metodológica central es si la tasa se calcula a nivel de **postulación** (cada registro en la base) o a nivel de **proyecto único** (`CODIGO_PROYECTO`). Dado que el interés es caracterizar el proceso competitivo tal como lo experimentan los/as postulantes —incluyendo las repostulaciones—, se optó por calcular la tasa a nivel de postulación. Esto implica que un mismo investigador/a puede contribuir con múltiples observaciones al denominador si postuló en distintos años o instrumentos.
+
+```{r}
+#| label: tasa-global
+#| echo: true
+#| eval: false
+
+# Tasa global de adjudicación - Fondecyt
+tasa_global_fondecyt <- base_final %>%
+  count(ESTADO_RESOLUCION_CONCURSO) %>%
+  mutate(
+    tasa = n / sum(n) * 100
+  )
+
+tasa_global_fondecyt
+
+# Tasa global de adjudicación - Milenio
+tasa_global_milenio <- postulacion_milenio_limpia %>%
+  count(ESTADO_RESOLUCION_CONCURSO) %>%
+  mutate(
+    tasa = n / sum(n) * 100
+  )
+
+tasa_global_milenio
+```
+
+## Tasas de adjudicación por variable
+
+### Por sexo
+
+El análisis de la tasa de adjudicación según el sexo del/la postulante permite identificar brechas de género en el acceso al financiamiento. La variable `SEXO` está disponible en todas las bases y fue estandarizada durante el procesamiento.
+
+```{r}
+#| label: tasa-sexo
+#| echo: true
+
+# Fondecyt: tasa de adjudicación por sexo e instrumento
+tasa_sexo_fondecyt <- base_final %>%
+  group_by(SEXO, INSTRUMENTO, ESTADO_RESOLUCION_CONCURSO) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  group_by(SEXO, INSTRUMENTO) %>%
+  mutate(
+    total = sum(n),
+    tasa = n / total * 100
+  ) %>%
+  filter(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO") %>%
+  select(SEXO, INSTRUMENTO, n_adjudicado = n, total, tasa)
+
+tasa_sexo_fondecyt
+
+# Milenio: tasa de adjudicación por sexo
+tasa_sexo_milenio <- postulacion_milenio_limpia %>%
+  group_by(SEXO, ESTADO_RESOLUCION_CONCURSO) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  group_by(SEXO) %>%
+  mutate(
+    total = sum(n),
+    tasa = n / total * 100
+  ) %>%
+  filter(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO") %>%
+  select(SEXO, n_adjudicado = n, total, tasa)
+
+tasa_sexo_milenio
+```
+
+**Nota metodológica:** Se verificó que la variable `SEXO` no contiene categorías distintas de "FEMENINO" y "MASCULINO" (o equivalentes) tras la estandarización. Si existieran categorías residuales (por ejemplo, registros vacíos o "SIN INFORMACION"), deben ser reportadas y excluidas del cálculo de tasas con explicitación del criterio.
+
+```{r}
+#| label: check-sexo
+#| echo: true
+
+# Verificar categorías disponibles en SEXO
+levels(base_final$SEXO)
+levels(postulacion_milenio_limpia$SEXO)
+```
+
+### Por región de ejecución
+
+El análisis regional permite detectar concentraciones del financiamiento y brechas territoriales. Se trabaja con la variable `REGION_EJECUCION`, que fue abreviada durante el procesamiento para facilitar la lectura.
+
+```{r}
+#| label: tasa-region
+#| echo: true
+
+# Fondecyt: tasa de adjudicación por región
+tasa_region_fondecyt <- base_final %>%
+  group_by(REGION_EJECUCION, ESTADO_RESOLUCION_CONCURSO) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  group_by(REGION_EJECUCION) %>%
+  mutate(
+    total = sum(n),
+    tasa = n / total * 100
+  ) %>%
+  filter(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO") %>%
+  select(REGION_EJECUCION, n_adjudicado = n, total, tasa) %>%
+  arrange(desc(tasa))
+
+tasa_region_fondecyt
+
+# Milenio: tasa de adjudicación por región
+tasa_region_milenio <- postulacion_milenio_limpia %>%
+  group_by(REGION_EJECUCION, ESTADO_RESOLUCION_CONCURSO) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  group_by(REGION_EJECUCION) %>%
+  mutate(
+    total = sum(n),
+    tasa = n / total * 100
+  ) %>%
+  filter(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO") %>%
+  select(REGION_EJECUCION, n_adjudicado = n, total, tasa) %>%
+  arrange(desc(tasa))
+
+tasa_region_milenio
+```
+
+**Nota metodológica:** Algunas regiones pueden tener un número muy bajo de postulaciones, lo que genera tasas de adjudicación con alta variabilidad muestral. Se recomienda reportar el N total por región junto a la tasa, y considerar la agrupación por macrozona (`MACROZONA_MINCIENCIA`) cuando el N regional sea menor a 10 postulaciones en el período analizado.
+
+```{r}
+#| label: check-region
+#| echo: true
+#| eval: false
+
+# Identificar regiones con bajo N en Fondecyt
+base_final %>%
+  count(REGION_EJECUCION) %>%
+  filter(n < 10) %>%
+  arrange(n)
+```
+
+### Por tipo de institución
+
+El tipo de institución albergante del proyecto permite analizar la distribución del financiamiento entre universidades del CRUCH, universidades privadas, centros de investigación y otras entidades. La variable `TIPO_INSTITUCION` fue recodificada durante el procesamiento para asignar "SIN INFORMACION" a los registros vacíos.
+
+```{r}
+#| label: tasa-institucion
+#| echo: true
+
+# Fondecyt: tasa de adjudicación por tipo de institución e instrumento
+tasa_inst_fondecyt <- base_final %>%
+  group_by(TIPO_INSTITUCION, INSTRUMENTO, ESTADO_RESOLUCION_CONCURSO) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  group_by(TIPO_INSTITUCION, INSTRUMENTO) %>%
+  mutate(
+    total = sum(n),
+    tasa = n / total * 100
+  ) %>%
+  filter(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO") %>%
+  select(TIPO_INSTITUCION, INSTRUMENTO, n_adjudicado = n, total, tasa) %>%
+  arrange(INSTRUMENTO, desc(tasa))
+
+tasa_inst_fondecyt
+
+# Milenio: tasa de adjudicación por tipo de institución
+tasa_inst_milenio <- postulacion_milenio_limpia %>%
+  group_by(TIPO_INSTITUCION, ESTADO_RESOLUCION_CONCURSO) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  group_by(TIPO_INSTITUCION) %>%
+  mutate(
+    total = sum(n),
+    tasa = n / total * 100
+  ) %>%
+  filter(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO") %>%
+  select(TIPO_INSTITUCION, n_adjudicado = n, total, tasa) %>%
+  arrange(desc(tasa))
+
+tasa_inst_milenio
+```
+
+**Nota metodológica:** Los registros con `TIPO_INSTITUCION == "SIN INFORMACION"` deben ser reportados pero excluidos de los análisis comparativos entre tipos institucionales, ya que su inclusión distorsionaría las tasas. Se recomienda verificar si estos registros presentan algún patrón sistemático (por ejemplo, si se concentran en un instrumento, año o resultado particular) antes de descartarlos.
+
+```{r}
+#| label: check-institucion
+#| echo: true
+#| eval: false
+
+# Verificar magnitud y distribución de "SIN INFORMACION"
+base_final %>%
+  filter(TIPO_INSTITUCION == "SIN INFORMACION") %>%
+  count(INSTRUMENTO, ESTADO_RESOLUCION_CONCURSO) %>%
+  arrange(INSTRUMENTO)
+```
+
+## Comparación entre instrumentos
+
+La base `base_final` contiene dos instrumentos Fondecyt (Regular e Iniciación), mientras que las bases Milenio corresponden a un programa distinto. Dado que los instrumentos tienen diferentes reglas de postulación, tasas esperadas y perfiles de postulantes, las tasas de adjudicación no son directamente comparables entre ellos sin considerar estas diferencias estructurales.
+
+```{r}
+#| label: tasa-instrumento
+#| echo: true
+
+# Tasa de adjudicación por instrumento - Fondecyt
+tasa_instrumento <- base_final %>%
+  group_by(INSTRUMENTO, ESTADO_RESOLUCION_CONCURSO) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  group_by(INSTRUMENTO) %>%
+  mutate(
+    total = sum(n),
+    tasa = n / total * 100
+  ) %>%
+  filter(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO") %>%
+  select(INSTRUMENTO, n_adjudicado = n, total, tasa)
+
+tasa_instrumento
+```
+
+Al comparar los resultados entre Regular e Iniciación, se espera encontrar diferencias en las tasas globales dado que los concursos tienen distinto volumen de cupos y perfiles de postulantes. Por ello, los análisis desagregados por sexo, región e institución se presentarán siempre con distinción por instrumento cuando la base lo permita.
+
+## Tabla resumen de tasas
+
+```{r}
+#| label: tabla-resumen
+#| echo: true
+#| message: false
+#| warning: false
+
+# Construir tabla resumen con las tasas globales de todas las bases
+tabla_resumen <- bind_rows(
+  
+  base_final %>%
+    group_by(INSTRUMENTO) %>%
+    summarise(
+      N_total = n(),
+      N_adjudicado = sum(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO"),
+      Tasa = N_adjudicado / N_total * 100,
+      .groups = "drop"
+    ) %>%
+    mutate(Programa = "Fondecyt") %>%
+    rename(Instrumento = INSTRUMENTO),
+  
+  postulacion_milenio_limpia %>%
+    group_by(INSTRUMENTO) %>%
+    summarise(
+      N_total = n(),
+      N_adjudicado = sum(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO"),
+      Tasa = N_adjudicado / N_total * 100,
+      .groups = "drop"
+    ) %>%
+    mutate(Programa = "Milenio") %>%
+    rename(Instrumento = INSTRUMENTO)
+  
+) %>%
+  relocate(Programa, Instrumento)
+```
+
+```{r}
+#| echo: false
+#| label: tbl-resumen
+#| tbl-cap: Tasas globales de adjudicación por programa e instrumento (2016-2025)
+#| tbl-cap-location: top
+
+tabla_resumen %>%
+  kable(
+    format = "html",
+    digits = 1,
+    col.names = c("Programa", "Instrumento", "N total", "N adjudicado", "Tasa (%)")
+  ) %>%
+  kable_styling(
+    full_width = FALSE,
+    bootstrap_options = c("striped", "hover", "condensed")
+  )
+```
+
+## Plano de análisis
+
+El plano de análisis organiza las variables y cruces que se trabajarán en la etapa descriptiva, especificando para cada análisis la variable dependiente, las variables de desagregación, el tipo de visualización y la base de datos de origen. La variable dependiente en todos los casos es la **tasa de adjudicación** (proporción de postulaciones adjudicadas sobre el total evaluado), calculada según la definición operacional establecida en la sección anterior.
+
+### Variables y cruces contemplados
+
+La @tbl-plano sintetiza el conjunto de análisis descriptivos planificados. Cada fila corresponde a un cruce específico entre la tasa de adjudicación y una variable de desagregación, indicando el programa al que aplica y el tipo de visualización recomendada.
+
+```{r}
+#| label: plano-data
+#| echo: false
+#| message: false
+#| warning: false
+
+plano <- tibble::tribble(
+  ~Variable,             ~Desagregacion,                   ~Programa,                    ~Visualizacion,
+  "Tasa adjudicación",   "Sexo",                           "Fondecyt (Regular + Iniciación)", "Gráfico de barras agrupado + tabla",
+  "Tasa adjudicación",   "Sexo",                           "Milenio",                    "Gráfico de barras + tabla",
+  "Tasa adjudicación",   "Sexo × Instrumento",             "Fondecyt",                   "Gráfico de barras agrupado",
+  "Tasa adjudicación",   "Año (AGNO_FALLO)",               "Fondecyt (Regular + Iniciación)", "Gráfico de líneas",
+  "Tasa adjudicación",   "Año (AGNO_FALLO)",               "Milenio",                    "Gráfico de líneas",
+  "Tasa adjudicación",   "Año × Sexo",                     "Fondecyt",                   "Gráfico de líneas por grupo",
+  "Tasa adjudicación",   "Región de ejecución",            "Fondecyt",                   "Tabla ordenada + mapa opcional",
+  "Tasa adjudicación",   "Región × Instrumento",           "Fondecyt",                   "Tabla cruzada",
+  "Tasa adjudicación",   "Instrumento",                    "Fondecyt",                   "Tabla + gráfico de barras",
+  "Tasa adjudicación",   "Disciplina detallada",           "Fondecyt",                   "Tabla ordenada",
+  "Tasa adjudicación",   "Disciplina × Sexo",              "Fondecyt",                   "Tabla cruzada",
+  "Tasa adjudicación",   "Disciplina × Año",               "Fondecyt",                   "Gráfico de líneas por disciplina",
+  "N postulaciones",     "Año × Instrumento",              "Fondecyt",                   "Gráfico de líneas",
+  "N postulaciones",     "Año × Sexo",                     "Fondecyt + Milenio",         "Gráfico de líneas por grupo"
+)
+```
+
+```{r}
+#| echo: false
+#| label: tbl-plano
+#| tbl-cap: Plano de análisis descriptivo
+#| tbl-cap-location: top
+
+plano %>%
+  kable(
+    format = "html",
+    col.names = c("Variable dependiente", "Desagregación", "Programa", "Visualización")
+  ) %>%
+  kable_styling(
+    full_width = TRUE,
+    bootstrap_options = c("striped", "hover", "condensed")
+  ) %>%
+  column_spec(1, bold = TRUE)
+```
+
+### Secuencia de análisis
+
+El análisis descriptivo se desarrollará en tres etapas secuenciales. En primer lugar, se presentará un panorama general con las tasas globales de adjudicación por programa e instrumento para el período 2016-2025, estableciendo la línea base desde la cual se interpretarán los cruces posteriores. En segundo lugar, se analizará la dimensión de género, examinando si existen brechas en la tasa de adjudicación según sexo del/la postulante, tanto de forma global como desagregada por instrumento y por año. La evolución temporal de estas brechas es de particular interés para identificar si las diferencias se han reducido o ampliado en el período analizado.
+
+En tercer lugar, se abordará la dimensión territorial mediante el análisis de las tasas por región de ejecución, con especial atención a la posible concentración del financiamiento en la Región Metropolitana. Finalmente, se incorporará la dimensión disciplinar a través de la variable `DISCIPLINA_DETALLE`, que permite identificar qué subdisciplinas dentro de las Ciencias Sociales concentran mayor proporción de adjudicaciones y si existen patrones diferenciados por sexo o a lo largo del tiempo.
+
+### Decisiones de visualización
+
+Para los análisis de evolución temporal se utilizarán gráficos de líneas con `AGNO_FALLO` en el eje x y la tasa de adjudicación en el eje y, distinguiendo grupos mediante color cuando corresponda (por ejemplo, sexo o instrumento). Para las comparaciones entre categorías discretas (sexo, instrumento, disciplina) se emplearán gráficos de barras horizontales ordenados de mayor a menor tasa, acompañados de tablas que reporten el N total y el N adjudicado para facilitar la interpretación. Todos los gráficos incluirán etiquetas con los valores de la tasa para favorecer la lectura directa sin necesidad de recurrir al eje.
+
+```{r}
+#| label: tema-grafico
+#| echo: true
+
+# Tema base para todos los gráficos del análisis
+tema_anid <- theme_minimal(base_size = 12) +
+  theme(
+    plot.title    = element_text(face = "bold", size = 13),
+    plot.subtitle = element_text(color = "grey40", size = 11),
+    axis.title    = element_text(size = 11),
+    legend.position = "bottom",
+    panel.grid.minor = element_blank()
+  )
+
+# Paleta para sexo
+colores_sexo <- c("FEMENINO" = "#c0392b", "MASCULINO" = "#2471a3")
+
+# Paleta para instrumento
+colores_instrumento <- c("REGULAR" = "#1a5276", "INICIACION" = "#d4ac0d")
+```
+
+
+## Diagnóstico y propuestas
+
+Considerando el análisis realizado, hay tres decisiones metodológicas centrales que deben quedar explícitas para la etapa de análisis:
+
+**Unidad de análisis.** Se trabajará con la postulación como unidad de análisis y no con el proyecto único. Esto permite capturar el proceso competitivo tal como lo viven los postulantes, incluyendo las repostulaciones, y es consistente con la estructura de las bases disponibles.
+
+**Cálculo de la tasa de adjudicación.** La tasa se calculará siempre sobre el total de postulaciones evaluadas (adjudicadas + no adjudicadas), excluyendo por definición los casos inadmisibles que fueron eliminados durante el procesamiento. Los registros con categorías problemáticas en variables clave (por ejemplo, "SIN INFORMACION" en `TIPO_INSTITUCION` o regiones con N < 10) serán reportados pero excluidos de los análisis comparativos, explicitando el criterio en cada caso.
+
+**Separación por instrumento.** Todos los análisis desagregados por sexo, región e institución se presentarán con distinción por instrumento (Regular / Iniciación en Fondecyt; tipo en Milenio). La comparación entre programas (Fondecyt vs. Milenio) se realizará solo de manera descriptiva y con las cautelas necesarias, dado que sus estructuras competitivas son estructuralmente distintas.
+
+Para proseguir con el análisis, se propone lo siguiente: primero, construir las tablas y gráficos descriptivos de las tasas desagregadas a partir del código de este documento; segundo, verificar los supuestos de los análisis estadísticos inferenciales (tamaño muestral por celda, distribución de las tasas) antes de aplicar pruebas de significancia; y tercero, considerar el uso de la variable `AGNO_FALLO` para análisis longitudinales que permitan evaluar si las brechas observadas se han ampliado o reducido en el período 2016-2025.
+
+**Datos no disponibles y solicitudes de acceso a la información**. Las bases públicas de ANID no contienen toda la información necesaria para un análisis exhaustivo del proceso competitivo. Por ello, se realizaron solicitudes de acceso a la información al amparo de la Ley N° 20.285, dirigidas a ANID a través del Portal de Transparencia del Estado. Las solicitudes cubren cuatro dimensiones no disponibles en las bases actuales: (1) puntajes de evaluación por proyecto para el período 2016-2025, incluyendo puntaje total, puntaje asignado al CV del investigador principal, puntaje desagregado por criterio y puntaje de corte de adjudicación; (2) caracterización de investigador/a principal y co-investigadores, incluyendo género, institución patrocinante, grado académico y disciplina, con el objetivo de construir trayectorias de investigación; (3) identificador único por investigador/a asociado a cada proyecto, para distinguir entre postulantes nuevos y recurrentes y analizar el efecto de adjudicaciones previas sobre el éxito en concursos posteriores; y (4) montos solicitados y adjudicados por proyecto para examinar la evolución del financiamiento en el período. En caso de recibir respuesta favorable, estas variables permitirán enriquecer sustancialmente los análisis descriptivos e incorporar dimensiones que las bases públicas actuales no permiten abordar.
+
+**Datos postulaciones FACSO**. Se realizó una solicitud de acceso a la información a la Facultad de Ciencias Sociales de la Universidad de Chile para obtener la base de datos de postulaciones a fondos internos FACSO desde 2016, con el objetivo de comparar las tasas de adjudicación internas con las tasas de adjudicación externas (ANID) para los investigadores/as afiliados a esa institución. Esta comparación permitirá identificar posibles brechas entre el financiamiento interno y externo, así como analizar si los patrones observados en ANID se replican o difieren en el contexto institucional específico de FACSO. En caso de recibir respuesta favorable, se integrará esta base al análisis descriptivo y se calcularán las tasas de adjudicación internas por sexo, región e institución para los investigadores/as de FACSO, comparándolas con las tasas externas correspondientes. Esto independientemente de la respuesta a la solicitud de datos de ANID, dado que el análisis de las tasas internas de FACSO es un aporte relevante por sí mismo para comprender el panorama del financiamiento en esa institución.

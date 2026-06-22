@@ -1,0 +1,690 @@
+---
+title: "Data preparation"
+subtitle: "Fondos ANID para Ciencias Sociales"
+author: "René Canales, Asistente de Investigación"
+date: today
+lang: es
+fontsize: 12pt
+format:
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 2
+    toc-expand: 2
+    toc-title: Contents
+    number-sections: true
+    number-depth: 3
+    code-link: true
+    title-block-banner: true
+  pdf:
+    number-sections: true
+    number-depth: 3
+editor_options: 
+  chunk_output_type: console
+---
+
+# Presentación
+
+Este documento muestra la preparación de los datos para el análisis de los proyectos financiados por ANID en el área de Ciencias Sociales. El proceso incluye la limpieza, transformación y organización de los datos para facilitar su análisis posterior.
+
+```{r}
+#| label: set
+#| echo: false
+#| message: false
+#| warning: false
+
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE, include = TRUE, warning = FALSE, message = FALSE)
+
+table_format <- if(is_html_output()) {
+  "html"
+} else if(is_latex_output()) {
+  "latex"
+}
+table_format2 <- if(is_html_output()) {
+  T
+} else if(is_latex_output()) {
+  F
+}
+
+options(kableExtra.html.bsTable = T)
+options(knitr.kable.NA = "")
+```
+
+# Librerías
+
+```{r}
+#| label: packages
+#| echo: true
+#| eval: false
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(here)
+library(SciViews)
+library(naniar)
+library(readxl)
+library(stringi)
+
+
+
+options(scipen=999)
+rm(list = ls())
+```
+
+# Data
+
+## Bases de Datos Fondecyt (2016-2025): Postulaciones y Adjudicaciones
+
+```{r}
+#| label: data
+#| echo: true
+#| eval: false
+#| message: false
+#| warning: false
+
+postulaciones <- read.csv(file = here("input", "data", "raw", "POSTULACIONES_2016_2025.csv"), 
+                          sep = ";",
+                          encoding = "UTF-8",
+                          stringsAsFactors = FALSE)
+
+# Verificar estructura del data frame
+glimpse(postulaciones)
+```
+
+```{r}
+#| label: data-2
+#| echo: true
+#| eval: false
+#| message: false
+#| warning: false
+
+adjudicacion <- read.csv(file = here("input", "data", "raw", "BDH_HISTORICA.csv"), 
+                          sep = ";",
+                          encoding = "UTF-8",
+                          stringsAsFactors = FALSE)
+
+# Verificar estructura del data frame
+glimpse(adjudicacion)
+```
+
+### Procesamiento y limpieza: Base postulaciones completa
+
+```{r}
+#| label: procesamiento-completa
+#| echo: true
+#| eval: false
+#| message: false
+#| warning: false
+
+postulaciones_limpia <- postulaciones %>%
+  
+  # 1. Filtros para variables de interés
+ filter(ESTADO_RESOLUCION_CONCURSO %in% c("ADJUDICADO", "NO ADJUDICADO")) %>%
+  filter(PROGRAMA == "FONDECYT") %>%
+  filter(INSTRUMENTO %in% c("REGULAR", "INICIACION")) %>%
+  
+  # 2. Eliminar columnas innecesarias (N)
+  select(-N, -INSTRUMENTO_RECAT, -NOMBRE_CONCURSO, -TIPO_BENEFICIARIO, -TIPO_INSTITUCION) %>%
+  
+  # 3. Estandarización de textos 
+  mutate(across(where(is.character), ~str_squish(str_to_upper(.)))) %>%
+  mutate(across(where(is.character), ~stri_trans_general(., id = "Latin-ASCII"))) %>%
+  
+  # 4. Transformar variables categóricas a factores (excluyendo el ID único)
+  mutate(across(where(is.character) & !CODIGO_PROYECTO, as.factor))
+
+postulaciones_limpia <- postulaciones_limpia %>%
+  mutate(
+    REGION_EJECUCION = as.character(REGION_EJECUCION),
+    REGION_EJECUCION = str_replace(REGION_EJECUCION, "REGION METROPOLITANA DE SANTIAGO", "RM"),
+    REGION_EJECUCION = str_replace(REGION_EJECUCION, "REGION DE |REGION DEL |REGION ", ""),
+    REGION_EJECUCION = as.factor(REGION_EJECUCION)
+  )
+
+# Para verificar que los vacíos desaparecieron y las regiones se acortaron:
+summary(postulaciones_limpia$REGION_EJECUCION)
+
+# Revisar la estructura final
+glimpse(postulaciones_limpia)
+summary(postulaciones_limpia)
+```
+
+### Procesamiento y limpieza: Base postulaciones Ciencias Sociales
+
+Primero, se procesaron y limpiaron los datos de postulaciones Fondecyt, aplicando filtros para seleccionar solo proyectos en Ciencias Sociales entre 2016 y 2025, eliminando columnas innecesarias, estandarizando textos, y transformando variables categóricas a factores. Luego se realizó un cruce con la base de postulaciones para inyectar información adicional de las adjudicaciones a cada postulación.
+
+```{r}
+#| label: procesamiento-ciencias-sociales
+#| echo: true
+#| eval: false
+#| message: false
+#| warning: false
+
+postulaciones_limpia_sociales <- postulaciones %>%
+  
+  # 1. Filtros para variables de interés
+  filter(DISCIPLINA_OECD == "CIENCIAS SOCIALES") %>%
+  filter(ESTADO_RESOLUCION_CONCURSO %in% c("ADJUDICADO", "NO ADJUDICADO")) %>%
+  filter(PROGRAMA == "FONDECYT") %>%
+  filter(INSTRUMENTO %in% c("REGULAR", "INICIACION")) %>%
+  
+  # 2. Eliminar columnas innecesarias (N)
+  select(-N, -INSTRUMENTO_RECAT, -NOMBRE_CONCURSO, -TIPO_BENEFICIARIO, -TIPO_INSTITUCION) %>%
+  
+  # 3. Estandarización de textos 
+  mutate(across(where(is.character), ~str_squish(str_to_upper(.)))) %>%
+  mutate(across(where(is.character), ~stri_trans_general(., id = "Latin-ASCII"))) %>%
+  
+  # 4. Transformar variables categóricas a factores (excluyendo el ID único)
+  mutate(across(where(is.character) & !CODIGO_PROYECTO, as.factor))
+
+postulaciones_limpia_sociales <- postulaciones_limpia_sociales %>%
+  mutate(
+    REGION_EJECUCION = as.character(REGION_EJECUCION),
+    REGION_EJECUCION = str_replace(REGION_EJECUCION, "REGION METROPOLITANA DE SANTIAGO", "RM"),
+    REGION_EJECUCION = str_replace(REGION_EJECUCION, "REGION DE |REGION DEL |REGION ", ""),
+    REGION_EJECUCION = as.factor(REGION_EJECUCION)
+  )
+
+# Para verificar que los vacíos desaparecieron y las regiones se acortaron:
+summary(postulaciones_limpia_sociales$REGION_EJECUCION)
+
+# Revisar la estructura final
+glimpse(postulaciones_limpia_sociales)
+summary(postulaciones_limpia_sociales)
+```
+
+### Descripción Bases: `postulaciones_limpia` y `postulaciones_limpia_sociales`
+
+La base de datos **POSTULACIONES_2016_2025** contiene información sobre las postulaciones realizadas a los distintos fondos y programas de becas de la Agencia Nacional de Investigación y Desarrollo (ANID, ex CONICYT) entre los años 2016 y 2025. Esta base de datos abarca el universo de postulaciones institucionales, sobre la cual se aplicaron dos filtros fundamentales: en primer lugar, se seleccionó únicamente la disciplina "Ciencias Sociales" según la clasificación de la OCDE para producir una base de datos específica únicamente con los datos para las disciplinas de las ciencias sociales; y en segundo lugar, se conservaron exclusivamente aquellas postulaciones cuyo proceso de evaluación finalizó en condición de "Adjudicado" o "No Adjudicado", excluyendo postulaciones inadmisibles o fuera de bases. El tamaño final de la muestra comprende 30.373 registros únicos en la base `postulaciones_limpia` y 8603 registros en la base `postulaciones_limpia_sociales`, lo que representa el universo de postulaciones a proyectos Fondecyt en el área de Ciencias Sociales durante el período analizado.
+
+Entre las variables principales de esta base se encuentran identificadores únicos como `CODIGO_PROYECTO`, variables temporales como `AGNO_FALLO` que registra el año de resolución del concurso, y variables de clasificación institucional como `SUBDIRECCION`, `PROGRAMA` e `INSTRUMENTO`, que permiten categorizar el tipo de financiamiento (ej. Becas PFCHA, Proyectos FONDECYT, FONDEF, etc.). La variable `ESTADO_RESOLUCION_CONCURSO` indica el resultado final de la postulación. Además, la base incluye variables geográficas como `REGION_EJECUCION` y `MACROZONA_MINCIENCIA`, así como variables demográficas e institucionales del postulante, como `SEXO`. Otras variables como `TIPO_BENEFICIARIO` y `TIPO_INSTITUCION` fueron eliminadas posteriormente por contener información redundante, ya que en ambas variables el 99% de los casos correspondían a "PERSONA NATURAL" respectivamente, lo que no aportaba variabilidad significativa para el análisis.
+
+El proceso de depuración aplicado a esta base incluyó la eliminación de columnas redundantes, la estandarización de cadenas de texto (eliminación de tildes, espacios en blanco y conversión a mayúsculas), y la transformación de variables textuales a formato de factor (*factor*) para optimizar el uso de memoria y facilitar los modelos estadísticos y análisis longitudinales posteriores. 
+
+### Procesamiento y limpieza: Base adjudicaciones completa
+
+```{r}
+#| label: procesamiento-3
+#| echo: true
+#| eval: false
+#| message: false
+#| warning: false
+
+
+adjudicacion_limpia <- adjudicacion %>%
+  
+  # 1. Filtros para variables de interés
+  filter(PROGRAMA == "FONDECYT") %>%
+  filter(AGNO_FALLO >= 2016) %>% # Para que calce con tu base de postulaciones
+  
+  # 2. Eliminar columnas innecesarias (N y notas vacías)
+  select(-N, -NOTA_MONTO, -NOMBRE_CONCURSO, -PALABRAS_CLAVES, -MONEDA) %>%
+  
+  # 3. Arreglar el MONTO_ADJUDICADO
+  mutate(
+    MONTO_ADJUDICADO = str_remove_all(MONTO_ADJUDICADO, "\\.|,"), # Quita separadores de miles
+    MONTO_ADJUDICADO = as.numeric(MONTO_ADJUDICADO)
+  ) %>%
+  
+  # 4. Estandarización de textos 
+  mutate(across(where(is.character), ~str_squish(str_to_upper(.)))) %>%
+  mutate(across(where(is.character), ~stri_trans_general(., id = "Latin-ASCII"))) %>%
+  
+  # 5. Transformar a factores las variables categóricas
+  mutate(across(c(SUBDIRECCION, PROGRAMA, INSTRUMENTO, AREA_OCDE, 
+                  DISCIPLINA_DETALLE, GRUPO_DE_EVALUACION, SEXO, 
+                  INSTITUCION_PRINCIPAL, MACROZONA_MINCIENCIA, REGION_EJECUCION), as.factor))
+
+# Revisar la estructura final
+glimpse(adjudicacion_limpia)
+summary(adjudicacion_limpia$MONTO_ADJUDICADO) # Para verificar que calculó bien los números
+
+adjudicacion_limpia <- adjudicacion_limpia %>%
+  mutate(
+    # Aplicar la misma limpieza de regiones que hicimos en postulaciones
+    REGION_EJECUCION = as.character(REGION_EJECUCION),
+    REGION_EJECUCION = str_replace(REGION_EJECUCION, "REGION DE METROPOLITANA", "RM"),
+    REGION_EJECUCION = str_replace(REGION_EJECUCION, "REGION DE |REGION DEL |REGION ", ""),
+    REGION_EJECUCION = as.factor(REGION_EJECUCION),
+    
+    # Arreglar el error de tipeo oficial ("CIENICAS")
+    DISCIPLINA_DETALLE = as.character(DISCIPLINA_DETALLE),
+    DISCIPLINA_DETALLE = str_replace(DISCIPLINA_DETALLE, "CIENICAS", "CIENCIAS"),
+    DISCIPLINA_DETALLE = as.factor(DISCIPLINA_DETALLE)
+  )
+
+# Seleccionar solo las columnas "nuevas" que queremos inyectar a postulaciones
+adjudicaciones_para_cruce <- adjudicacion_limpia %>%
+  select(
+    CODIGO_PROYECTO,
+    NOMBRE_PROYECTO,
+    GRUPO_DE_EVALUACION,
+    DISCIPLINA_DETALLE,
+    DURACION_MESES,
+    NOMBRE_RESPONSABLE,
+    INSTITUCION_PRINCIPAL,
+    MONTO_ADJUDICADO
+  )
+
+# Left Join
+base_final_completa <- postulaciones_limpia %>%
+  left_join(adjudicaciones_para_cruce, by = "CODIGO_PROYECTO")
+```
+
+### Procesamiento y limpieza: Base adjudicaciones ciencias sociales
+
+Luego, replicando lo hecho con la base de postulaciones, se procesaron y limpiaron los datos de adjudicaciones Fondecyt, aplicando filtros para seleccionar solo proyectos en Ciencias Sociales entre 2016 y 2025, eliminando columnas innecesarias, estandarizando textos, y transformando variables categóricas a factores. Luego se realizó un cruce con la base de postulaciones para inyectar información adicional de las adjudicaciones a cada postulación.
+
+```{r}
+#| label: procesamiento-4
+#| echo: true
+#| eval: false
+#| message: false
+#| warning: false
+
+adjudicacion_limpia_sociales <- adjudicacion %>%
+  
+  # 1. Filtros para variables de interés
+  filter(AREA_OCDE == "CIENCIAS SOCIALES") %>%
+  filter(PROGRAMA == "FONDECYT") %>%
+  filter(AGNO_FALLO >= 2016) %>% # Para que calce con tu base de postulaciones
+  
+  # 2. Eliminar columnas innecesarias (N y notas vacías)
+  select(-N, -NOTA_MONTO, -NOMBRE_CONCURSO, -PALABRAS_CLAVES, -MONEDA) %>%
+  
+  # 3. Arreglar el MONTO_ADJUDICADO
+  mutate(
+    MONTO_ADJUDICADO = str_remove_all(MONTO_ADJUDICADO, "\\.|,"), # Quita separadores de miles
+    MONTO_ADJUDICADO = as.numeric(MONTO_ADJUDICADO)
+  ) %>%
+  
+  # 4. Estandarización de textos 
+  mutate(across(where(is.character), ~str_squish(str_to_upper(.)))) %>%
+  mutate(across(where(is.character), ~stri_trans_general(., id = "Latin-ASCII"))) %>%
+  
+  # 5. Transformar a factores las variables categóricas
+  mutate(across(c(SUBDIRECCION, PROGRAMA, INSTRUMENTO, AREA_OCDE, 
+                  DISCIPLINA_DETALLE, GRUPO_DE_EVALUACION, SEXO, 
+                  INSTITUCION_PRINCIPAL, MACROZONA_MINCIENCIA, REGION_EJECUCION), as.factor))
+
+# Seleccionar columnas "nuevas" que se busca incorporar a postulaciones
+adjudicaciones_para_cruce_sociales <- adjudicacion_limpia_sociales %>%
+  select(
+    CODIGO_PROYECTO,
+    NOMBRE_PROYECTO,
+    GRUPO_DE_EVALUACION,
+    DISCIPLINA_DETALLE,
+    DURACION_MESES,
+    NOMBRE_RESPONSABLE,
+    INSTITUCION_PRINCIPAL,
+    MONTO_ADJUDICADO
+  )
+
+# Left Join para juntar ambas bases
+base_final_sociales <- postulaciones_limpia_sociales %>%
+  left_join(adjudicaciones_para_cruce_sociales, by = "CODIGO_PROYECTO")
+
+
+
+# Revisar la estructura final
+glimpse(adjudicacion_limpia_sociales)
+summary(adjudicacion_limpia_sociales$MONTO_ADJUDICADO) # Para verificar que calculó bien los números
+```
+
+Considerando que tanto la base de postulaciones contiene también a los proyectos adjudicados, se realizó un cruce (left join) entre ambas bases utilizando `CODIGO_PROYECTO` como clave, con el objetivo de inyectar la información de adjudicaciones a cada postulación. Este proceso permitió enriquecer la base de postulaciones con variables adicionales provenientes de las adjudicaciones, como el nombre del proyecto, grupo de evaluación, disciplina detallada, duración, monto adjudicado, entre otros. De todas formas, la base de adjudicaciones cuenta con mayor granularidad que la base de postulaciones, por lo que hay ciertos casos que en tanto no estén adjudicados no cuentan con la información de adjudicación, lo que se refleja en valores NA en las variables provenientes de adjudicaciones para los proyectos no adjudicados. Sin embargo, esta estructura permite realizar análisis comparativos entre postulaciones y adjudicaciones, así como análisis longitudinales para comprender la evolución de los proyectos a lo largo del tiempo.
+
+Al mismo tiempo, la variable de grupo de estudio no se encontraba bien equilibrada, por lo que se realizó un proceso de agrupamiento de las disciplinas detalladas en grupos de estudio más generales como detalla ANID para cada categoría, con el objetivo de facilitar el análisis posterior. Este proceso implicó revisar cada una de las disciplinas detalladas presentes en la base de adjudicaciones, y asignarlas a grupos de estudio más amplios que representaran áreas temáticas coherentes dentro de las ciencias sociales. Por ejemplo, disciplinas como "Antropología" y "Arqueología" que figuraban por separado, fueron agrupadas bajo el grupo de estudio "Antropología y Arqueología". Este proceso se realizó para todas las disciplinas detalladas, resultando en un conjunto final de grupos de estudio que permiten analizar los proyectos adjudicados desde una perspectiva temática más generalizada, facilitando así la interpretación y comparación entre diferentes áreas dentro de las ciencias sociales.
+
+```{r}
+#| label: procesamiento-5
+#| echo: true
+#| eval: false
+#| message: false
+#| warning: false
+
+base_final_sociales <- base_final_sociales %>%
+  mutate(
+    GRUPO_ESTUDIO = case_when(
+
+      # ── ANTROPOLOGÍA Y ARQUEOLOGÍA ──────────────────────────
+      GRUPO_DE_EVALUACION %in% c(
+        "ANTROP. Y ARQUE",
+        "ANTROPOLOGIA CULTURAL Y SOCIAL",
+        "ANTROPOLOGIA FISICA",
+        "ANTROPOLOGIA Y ARQUEOLOGIA",
+        "ARQUEOLOGIA",
+        "OTRAS ESPECIALIDADES DE LA ANTROPOLOGIA"
+      ) ~ "Antropología y Arqueología",
+
+      # ── ARTES Y ARQUITECTURA ────────────────────────────────
+      GRUPO_DE_EVALUACION %in% c(
+        "ARTES Y ARQUITECTURA",
+        "DISENO",
+        "HISTORIA DE LA ARQUITECTURA Y LA CIUDAD",
+        "HISTORIA DEL ARTE",
+        "MUSICA",
+        "PROYECTO ARQUITECTONICO Y URBANO"
+      ) ~ "Artes y Arquitectura",
+
+      # ── SOCIOLOGÍA, TRABAJO SOCIAL Y CS. DE LA COMUNICACIÓN ─
+      GRUPO_DE_EVALUACION %in% c(
+        "SOCIOLOGIA",
+        "SOCIOLOGIA CS I",
+        "CAMBIO SOCIAL Y DESARROLLO",
+        "SOCIOLOGIA DE LAS ORGANIZACIONES FORMALE",
+        "SOCIOLOGIA URBANA Y RURAL",
+        "TEORIA SOCIO-CULTURAL",
+        "SOCIOLOGIA DEL TRABAJO",
+        "OTRAS SOCIOLOGIAS",
+        "CS. DE LA COMUNICACION E INFORMACION",
+        "POLITICA CIENTIFICA Y TECNOLOGICA",
+        "TRABAJO SOCIAL (EST. FAMILIA, TEMAS SOCI)"
+      ) ~ "Sociología, Trabajo Social y Cs. de la Comunicación",
+
+      # ── GEOGRAFÍA Y URBANISMO ────────────────────────────────
+      GRUPO_DE_EVALUACION %in% c(
+        "GEOGRAFIA Y URBANISM",
+        "GEOGRAFIA HUMANA Y CULTURAL",
+        "DISENO URBANO",
+        "ESTUDIOS URBANOS",
+        "HABITAT RESIDENCIAL Y COMUNIDADES",
+        "PLANIFICACION TERRITORIAL",
+        "RIESGOS SOCIO-NATURALES Y SUSTENTABILIDA",
+        "SUSTENTABILIDAD URBANA"
+      ) ~ "Geografía y Urbanismo",
+
+      # ── PSICOLOGÍA ───────────────────────────────────────────
+      GRUPO_DE_EVALUACION %in% c(
+        "PSICOLOGIA",
+        "SICOLOGIA",
+        "PSICOLOGIA CLINICA",
+        "PSICOLOGIA DE LA EDUCACION Y COGNITIVA",
+        "PSICOLOGIA EXPERIMENTAL",
+        "PSICOLOGIA SOCIAL",
+        "PSICOBIOLOGIA",
+        "OTRAS PSICOLOGIAS"
+      ) ~ "Psicología",
+
+      # ── CIENCIAS ECONÓMICAS Y ADMINISTRATIVAS ───────────────
+      GRUPO_DE_EVALUACION %in% c(
+        "CS. ECONOM/ADMI",
+        "DESARROLLO ECONOMICO",
+        "ECONOMETRIA",
+        "ECONOMIA DE LA ENERGIA, AMBIENTAL Y DE L",
+        "ECONOMIA DE SECTORES SOCIALES (ANALISIS",
+        "ECONOMIA EXPERIMENTAL Y CONDUCTUAL",
+        "ECONOMIA LABORAL Y DE LA POBLACION",
+        "ECONOMIA POLITICA",
+        "ECONOMIA REGIONAL Y ECONOMIA URBANA",
+        "ESTRATEGIA Y TEORIA DE LAS ORGANIZACIONE",
+        "FINANZAS",
+        "INNOVACION Y EMPRENDIMIENTO",
+        "MARCROECONOMIA, ECONOMIA INTERNACIONAL Y",
+        "ORGANIZACION INDUSTRIAL",
+        "TEORIA ECONOMICA"
+      ) ~ "Ciencias Económicas y Administrativas",
+
+      # ── CIENCIAS JURÍDICAS Y POLÍTICAS ──────────────────────
+      GRUPO_DE_EVALUACION %in% c(
+        "CIENCIAS JURIDICAS Y POLITICAS",
+        "CS. JURIDICAS Y POL.",
+        "CIENCIA POLITICA (INC. LEGISLACION )",
+        "CRIMINOLOGIA",
+        "DERECHO COMERCIAL, INDUSTRIAL Y MINERO",
+        "DERECHO DEL AMBIENTE",
+        "DERECHO ECONOMICO",
+        "DERECHO INTERNACIONAL PUBLICO Y PRIVADO",
+        "DERECHO PENAL",
+        "DERECHO PRIVADO",
+        "DERECHO PROCESAL",
+        "DERECHO PUBLICO",
+        "DERECHO ROMANO",
+        "ESTUDIOS INTERNACIONALES Y COOP.INTERNAL",
+        "HISTORIA Y FILOSOFIA DEL DERECHO",
+        "OTRAS ESPECIALIDADES DEL DERECHO"
+      ) ~ "Ciencias Jurídicas y Políticas",
+
+      # ── EDUCACIÓN ────────────────────────────────────────────
+      GRUPO_DE_EVALUACION %in% c(
+        "EDUCACION",
+        "EDUCACION SUPERIOR",
+        "EDUCACION INICIAL-ESCOLAR",
+        "EDUC INICIAL-ESCOLAR",
+        "ACADEMIA",
+        "APRENDIZAJE, DESARROLLO Y DESEMPENO",
+        "CALIDAD Y SISTEMA",
+        "CONVIVENCIA, VIOLENCIA Y FORMACION",
+        "DIDACTICA ESPECIFICA",
+        "DIVERSIDAD",
+        "DOCENTES",
+        "EDUCACION INTERCULTURAL",
+        "EDUCACION RURAL",
+        "EDUCACION TECNICA",
+        "ENSENANZA Y APRENDIZAJE",
+        "FORMACION INICIAL",
+        "HISTORIA DE LA EDUCACION",
+        "LIDERAZGO Y GESTION",
+        "MEDICION EDUCACIONAL",
+        "POLITICA EDUCATIVA",
+        "TECNOLOGIA Y APRENDIZAJE"
+      ) ~ "Educación",
+
+      # ── INVESTIGACIÓN INTERDISCIPLINARIA ─────────────────────
+      GRUPO_DE_EVALUACION %in% c(
+        "INTER-TRANS DISCIPLI",
+        "INVESTIGACION INTER-TRANS DISCIPLINARIA",
+        "TRANS-INTER DISCIPLI",
+        "LINGUISTICALITERATU",
+        "LITERATURA CHILENA",
+        "HISTORIA",
+        "SOCIOLOGIA CS I"       # revisar si no va mejor en Sociología
+      ) ~ "Investigación Interdisciplinaria",
+
+      # ── VACÍOS Y NA ──────────────────────────────────────────
+      is.na(GRUPO_DE_EVALUACION) | GRUPO_DE_EVALUACION == "" ~ NA_character_,
+
+      TRUE ~ "Sin clasificar"
+    ),
+    GRUPO_ESTUDIO = factor(GRUPO_ESTUDIO, levels = c(
+      "Antropología y Arqueología",
+      "Artes y Arquitectura",
+      "Sociología, Trabajo Social y Cs. de la Comunicación",
+      "Geografía y Urbanismo",
+      "Psicología",
+      "Ciencias Económicas y Administrativas",
+      "Ciencias Jurídicas y Políticas",
+      "Educación",
+      "Investigación Interdisciplinaria"
+    ))
+  )
+
+
+base_final_sociales <- base_final_sociales %>%
+  mutate(
+    INSTITUCION_PRINCIPAL = case_when(
+      INSTITUCION_PRINCIPAL == "UNIVERSIDAD DE OHIGGINS"         ~ "UNIVERSIDAD DE O'HIGGINS",
+      INSTITUCION_PRINCIPAL == "UNIVERSIDAD BERNARDO OHIGGINS"   ~ "UNIVERSIDAD BERNARDO O'HIGGINS",
+      INSTITUCION_PRINCIPAL == "UNIVERSIDAD DEL BIO-BIO"         ~ "UNIVERSIDAD DEL BIO BIO",
+      INSTITUCION_PRINCIPAL == "UNIVERSIDAD CATOLICA CARDENAL RAUL SILVA HENRIQUEZ" ~ "UNIVERSIDAD CATOLICA CARDENAL SILVA HENRIQUEZ",
+      INSTITUCION_PRINCIPAL == "UNIVERSIDAD ANDRES BELLO"        ~ "UNIVERSIDAD NACIONAL ANDRES BELLO",
+      TRUE ~ INSTITUCION_PRINCIPAL
+    )
+  )
+
+base_final_sociales %>%
+  filter(GRUPO_ESTUDIO == "Sin clasificar") %>%
+  count(GRUPO_DE_EVALUACION, sort = TRUE)
+
+  base_final_sociales %>%
+  count(GRUPO_ESTUDIO, sort = TRUE)
+```
+
+
+### Descripción de la base de adjudicaciones Fondecyt
+
+La base de datos **BDH_HISTORICA** contiene el registro histórico completo de las adjudicaciones de fondos Fondecyt desde 1982 hasta 2025. Si bien el período temporal original de esta base abarca más de cuatro décadas de financiamiento científico, para efectos de este análisis se aplicó un filtro temporal que selecciona únicamente los años 2016 a 2025, con el propósito de mantener consistencia con la base de postulaciones. El universo de análisis corresponde a todos los proyectos adjudicados en concursos Fondecyt, sobre los cuales se aplicaron dos filtros principales: selección de la disciplina "Ciencias Sociales" según la clasificación de la OCDE y restricción al período 2016-2025.
+
+Esta fue fusionada con la base de postulaciones anteriormente expuesta para aunarlas y dejar una base de datos final que contiene tanto a los proyectos adjudicados como a los no adjudicados, con el objetivo de enriquecer la información disponible para cada postulación con variables provenientes de las adjudicaciones. Quedando con dos productos finales: una base de datos completa con todas las postulaciones y adjudicaciones fondecyt (base_final_completa), y una base de datos específica para Ciencias Sociales con todas las postulaciones y adjudicaciones en esta área (base_final_sociales).
+
+Las variables principales incluyen identificadores de proyecto como CODIGO_PROYECTO, variables temporales como AGNO_CONCURSO y AGNO_FALLO —que permiten distinguir entre el año de convocatoria y el año de resolución—, y variables de financiamiento como DURACION_MESES, que registra la extensión temporal del proyecto. El volumen de los recursos asignados se captura en la variable MONTO_ADJUDICADO, expresado en miles de pesos chilenos. La clasificación institucional se registra mediante las variables SUBDIRECCION, PROGRAMA e INSTRUMENTO, mientras que la clasificación disciplinaria se detalla en AREA_OCDE y GRUPO_DE_EVALUACION. Esta última variable es particularmente relevante para el análisis, ya que identifica el panel evaluador al que fue asignado cada proyecto, operando como un proxy de la subdisciplina de pertenencia dentro de las Ciencias Sociales.
+
+Sin embargo, dado que GRUPO_DE_EVALUACION contiene categorías de granularidad variable —algunas muy específicas y otras agregadas, con inconsistencias de nomenclatura producto de distintas versiones del sistema de registro— fue necesario construir una variable derivada, GRUPO_ESTUDIO, que agrupa las 101 categorías originales en nueve áreas disciplinares comparables: Antropología y Arqueología; Artes y Arquitectura; Sociología, Trabajo Social y Ciencias de la Comunicación; Geografía y Urbanismo; Psicología; Ciencias Económicas y Administrativas; Ciencias Jurídicas y Políticas; Educación; e Investigación Interdisciplinaria. La clasificación se realizó mediante correspondencia directa entre los valores observados en la base y las categorías de destino, priorizando la coherencia disciplinar por sobre la agrupación administrativa original. Todos los casos fueron clasificados satisfactoriamente, sin observaciones residuales.
+
+Adicionalmente, se incluyen variables geográficas como REGION_EJECUCION y MACROZONA_MINCIENCIA, y variables sobre las características de los beneficiarios e instituciones albergantes como SEXO, TIPO_BENEFICIARIO, NOMBRE_RESPONSABLE e INSTITUCION_PRINCIPAL.
+
+El proceso de depuración aplicado contempló la conversión de variables numéricas relacionadas con montos y años a los tipos de datos apropiados (*numeric* e *integer*), la transformación de variables categóricas a factores, y la estandarización de cadenas de texto (incluyendo la corrección de errores tipográficos de origen en los registros oficiales). Finalmente, se aplicó un doble filtrado por disciplina y período temporal, ordenando los registros para facilitar los análisis longitudinales y comparativos posteriores. Es importante destacar que esta base de adjudicaciones, al contener solo proyectos financiados, se utilizó para enriquecer la base de postulaciones mediante un cruce que permitió inyectar información adicional de los proyectos adjudicados a cada postulación correspondiente, facilitando así un análisis integral del proceso competitivo en el programa Fondecyt.
+
+## Bases de Datos Milenio (2016-2025): Postulaciones y Adjudicaciones
+
+```{r}
+#| label: data-postulaciones-milenio
+#| echo: true
+#| eval: false
+#| message: false
+#| warning: false
+
+rm(list = ls()) # Limpiar el entorno de trabajo para evitar conflictos con las bases anteriores
+
+postulacion_milenio <- read.csv(file = here("input", "data", "raw", "POSTULACIONES_MILENIO.csv"), 
+                                 sep = ";",
+                                 encoding = "UTF-8",
+                                 stringsAsFactors = FALSE)
+
+# Verificar estructura del data frame
+glimpse(postulacion_milenio)
+```
+
+```{r}
+#| label: data-milenio
+#| echo: true
+#| eval: false
+#| message: false
+#| warning: false
+
+adjudicacion_milenio <- read.csv(file = here("input", "data", "raw", "BDH_PROYECTOS_MILENIO.csv"), 
+                                  sep = ";",
+                                  encoding = "UTF-8",
+                                  stringsAsFactors = FALSE)
+
+# Verificar estructura del data frame
+glimpse(adjudicacion_milenio)
+summary(adjudicacion_milenio)
+```
+
+### Procesamiento y limpieza: Base adjudicación completa
+
+```{r}
+#| label: procesamiento-adjudicacion-milenio
+#| echo: true
+#| eval: false
+#| message: false
+#| warning: false
+
+adjudicacion_milenio_limpia <- adjudicacion_milenio %>%
+  
+  # 2. Filtros metodológicos
+  filter(AGNO_FALLO >= 2001) %>%
+  
+  # 4. Estandarización de textos (mayúsculas, sin espacios, sin tildes)
+  mutate(across(where(is.character), ~str_squish(str_to_upper(.)))) %>%
+  mutate(across(where(is.character), ~stri_trans_general(., id = "Latin-ASCII"))) %>%
+  
+  # 5. Homologar los nombres de las regiones
+  mutate(
+    REGION_EJECUCION = str_replace(REGION_EJECUCION, "REGION METROPOLITANA", "RM"),
+    REGION_EJECUCION = str_replace(REGION_EJECUCION, "REGION DE |REGION DEL |REGION ", "")
+  ) %>%
+  
+  # 6. Transformar variables categóricas a factores
+  mutate(across(c(SUBDIRECCION, PROGRAMA, INSTRUMENTO, AREA_OCDE, 
+                  DISCIPLINA_DETALLE, GRUPO_DE_EVALUACION, SEXO, 
+                  INSTITUCION_PRINCIPAL, MACROZONA_MINCIENCIA, REGION_EJECUCION), as.factor))
+
+# Verificar que el monto sobrevivió
+glimpse(adjudicacion_milenio_limpia)
+```
+
+### Descripción de la base de adjudicaciones Proyectos Milenio
+
+La base de datos **BDH_PROYECTOS_MILENIO** contiene el registro de las adjudicaciones de los Proyectos de Investigación del programa Milenio, que representa una línea de financiamiento de excelencia en investigación científica en Chile. Este programa se distingue por otorgar fondos de mayor envergadura y duración que los Fondecyt tradicionales, incluyendo diferentes modalidades como Núcleos Milenio, Institutos Milenio, entre otros instrumentos de financiamiento para investigación de excelencia. Para este análisis se consideró el período temporal 2016-2025, aplicando filtros para seleccionar únicamente proyectos adjudicados en el área de "Ciencias Sociales" según la clasificación OECD.
+
+El conjunto de variables principales incluye identificadores como `CODIGO_PROYECTO` que distingue de manera única cada proyecto Milenio, variables temporales como `AGNO_CONCURSO` y `AGNO_FALLO` que registran el año de convocatoria y resolución respectivamente, y `DURACION_MESES` que especifica la duración del proyecto. Una característica distintiva de esta base es la variable `MONTO_ADJUDICADO..M..` que registra los montos adjudicados expresados en millones de pesos chilenos, sin embargo ha habido que eliminarla porque varios de los valores no estaban presentes en la base de datos para el caso de las ciencias sociales. Las variables `SUBDIRECCION`, `PROGRAMA` e `INSTRUMENTO` permiten clasificar el tipo de programa y modalidad específica (Núcleo, Instituto, etc.), mientras que `AREA_OCDE` y `DISCIPLINA_DETALLE` proporcionan la clasificación disciplinaria y sub-disciplinaria. La variable `GRUPO_DE_EVALUACION` identifica el panel evaluador, y se incluyen también variables geográficas como `REGION_EJECUCION` y `MACROZONA_MINCIENCIA`, así como características de los beneficiarios mediante `SEXO`, `TIPO_BENEFICIARIO` y `TIPO_INSTITUCION`.
+
+El proceso de depuración consistió en la conversión de variables numéricas a los tipos de datos apropiados, la transformación de variables categóricas a factores para optimizar el análisis, la aplicación de filtros por área disciplinaria y período temporal, y el ordenamiento temporal de los registros. Es importante destacar que la expresión de montos en millones de pesos chilenos facilita la comparación entre proyectos de gran envergadura y refleja la escala significativamente mayor de estos instrumentos de financiamiento comparados con los Fondecyt regulares.
+
+### Procesamiento y limpieza postulaciones Milenio
+
+```{r}
+#| label: procesamiento-postulacion-milenio
+#| echo: true
+#| eval: false
+#| message: false
+#| warning: false
+
+# Reemplaza 'postulaciones_milenio_bruta' por el nombre real de tu base
+postulacion_milenio_limpia <- postulacion_milenio %>%
+  
+  # 2. Filtros de población objetivo y ventana temporal
+  filter(ANO_FALLO >= 2001) %>%
+  filter(ESTADO_DE_ADJUDICACION %in% c("ADJUDICADO", "NO ADJUDICADO")) %>%
+  
+  # 4. Estandarización de textos (mayúsculas, sin espacios extra y sin tildes)
+  mutate(across(where(is.character), ~str_squish(str_to_upper(.)))) %>%
+  mutate(across(where(is.character), ~stri_trans_general(., id = "Latin-ASCII"))) %>%
+  
+  # 5. Homologar nombres de regiones
+  mutate(
+    REGION_EJECUCION = str_replace(REGION_EJECUCION, "REGION METROPOLITANA", "RM"),
+    REGION_EJECUCION = str_replace(REGION_EJECUCION, "REGION DE |REGION DEL |REGION ", "")
+  ) %>%
+  
+  # 6. Transformar a variables categóricas (factores)
+  mutate(across(where(is.character) & !CODIGO_PROYECTO, as.factor))
+
+# Revisar cómo quedó
+glimpse(postulacion_milenio_limpia)
+```
+
+### Descripción de la base de postulaciones Proyectos Milenio
+
+La base de datos **POSTULACIONES_MILENIO** contiene el registro de las propuestas presentadas al Programa Iniciativa Científica Milenio (actualmente bajo la Agencia Nacional de Investigación y Desarrollo, ANID). Si bien la base original abarca el historial de postulaciones a Institutos y Núcleos Milenio desde 1999, para efectos de esta investigación se aplicó un filtro temporal que restringe la muestra al período 2001-2017, pues es el año más reciente del que constan los datos, eso permite garantizar comparabilidad longitudinal, aunque diferente de la base de postulaciones Fondecyt. Asimismo, el universo de análisis se delimitó exclusivamente a los centros de investigación de la disciplina "Ciencias Sociales" (según la clasificación de la OCDE), conservando únicamente aquellas propuestas cuyo proceso de evaluación culminó en condición de "Adjudicado" o "No Adjudicado". 
+
+Entre las variables principales se encuentran el `CODIGO_PROYECTO` como identificador único, variables de clasificación institucional como `SUBDIRECCION`, `PROGRAMA` e `INSTRUMENTO` (que especifican si se trata de un Instituto o un Núcleo Milenio), y variables temporales como `ANO_FALLO`. El resultado del concurso se captura en la variable `ESTADO_DE_ADJUDICACION`. La base también incluye caracterizaciones geográficas (`REGION_EJECUCION` y `MACROZONA_MINCIENCIA`), así como variables sociodemográficas e institucionales vinculadas a la dirección del centro propuesto, tales como `SEXO`, `TIPO_BENEFICIARIO` y `TIPO_INSTITUCION`.
+
+Una limitación relevante de esta fuente refiere a la cobertura temporal de los datos de postulaciones. Si bien la base POSTULACIONES_MILENIO contempla en principio el historial de propuestas presentadas al programa, los registros disponibles para el período de análisis se restringen al año 2017, lo que impide construir series longitudinales de tasas de postulación y adjudicación comparables a las disponibles para Fondecyt. En consecuencia, los datos de postulaciones Milenio se utilizan de manera acotada como referencia ilustrativa para ese año, sin extender su uso a análisis de tendencias temporales.
+
+Para el análisis longitudinal del programa Milenio en el período 2016-2025, el estudio se apoya exclusivamente en la base de proyectos adjudicados, que sí cuenta con cobertura completa del período. Esto implica que, a diferencia de Fondecyt —donde es posible calcular tasas de éxito y caracterizar el universo de postulantes—, el análisis de Milenio se concentra en describir el perfil y la distribución de los centros financiados, sin poder dar cuenta del conjunto de propuestas que no lograron adjudicación en cada concurso.
+
+El proceso de depuración aplicado a esta matriz contempló una primera fase de homologación estructural, donde se renombraron variables clave (eliminando separadores de punto y unificando nomenclaturas) para hacerlas estrictamente consistentes con la estructura de la base Fondecyt. Posteriormente, se eliminaron columnas redundantes, se estandarizaron las cadenas de texto (eliminación de tildes, espacios en blanco y conversión a mayúsculas, incluyendo la limpieza de prefijos regionales), y se transformaron las variables textuales a formato de factor (*factor*) para optimizar los modelos estadísticos y el cálculo de tasas de adjudicación en investigación asociativa.
+
+## Resumen de las transformaciones aplicadas
+
+El proceso de preparación de datos aplicado sistemáticamente a todas las bases contempló múltiples etapas de transformación y estandarización. En primer lugar, se realizó una estandarización de tipos de datos donde las variables numéricas relacionadas con años, montos y duraciones fueron convertidas a los tipos `integer` o `numeric` según correspondiera, mientras que las variables categóricas se transformaron a tipo `factor` para optimizar tanto el uso de memoria como los análisis estadísticos posteriores. Adicionalmente, se llevó a cabo el renombramiento de variables que contenían caracteres especiales como puntos o espacios, reemplazándolos por guiones bajos para mantener consistencia con las convenciones de nomenclatura en R y evitar problemas de sintaxis.
+
+En segundo lugar, se aplicaron filtros uniformes a todas las bases de datos. El filtro disciplinario seleccionó únicamente proyectos clasificados como "Ciencias Sociales" según la taxonomía OECD, asegurando la homogeneidad del objeto de estudio. El filtro temporal, aplicado especialmente a las bases históricas que contenían datos previos a 2016, restringió el análisis al período 2016-2025, permitiendo mantener consistencia temporal entre todas las bases y concentrarse en la década más reciente de financiamiento científico en Ciencias Sociales.
+
+En tercer lugar, todas las bases fueron ordenadas sistemáticamente por `AGNO_FALLO` y `CODIGO_PROYECTO`, facilitando los análisis temporales, longitudinales y la identificación de patrones a lo largo del tiempo. Este ordenamiento resulta fundamental para rastrear trayectorias de investigadores e instituciones, así como para analizar tendencias en el financiamiento.
+
+Finalmente, es importante destacar que todas las bases comparten un conjunto común de variables clave que permiten su comparación y eventual integración. Entre estas variables se encuentran identificadores únicos como `CODIGO_PROYECTO` y `N`, variables temporales como `AGNO_FALLO` y `AGNO_CONCURSO` (cuando aplica), variables de clasificación institucional como `SUBDIRECCION`, `PROGRAMA` e `INSTRUMENTO`, variables geográficas como `REGION_EJECUCION` y `MACROZONA_MINCIENCIA`, variables demográficas e institucionales como `SEXO`, `TIPO_BENEFICIARIO` y `TIPO_INSTITUCION`, y variables disciplinarias como `DISCIPLINA_OECD` (o `AREA_OCDE`) y `DISCIPLINA_DETALLE`. Esta estructura común garantiza la comparabilidad y la posibilidad de realizar análisis integrados entre diferentes instrumentos de financiamiento.
+
+
+## Guardar datos procesados
+
+```{r}
+#| label: guardar
+#| echo: true
+#| eval: false
+#| message: false
+#| warning: false
+
+# Guardar como RData
+save(postulaciones_limpia_sociales, file = here("input", "data", "proc", "postulaciones_limpia.RData"))
+save(adjudicacion_limpia, file = here("input", "data", "proc", "adjudicacion_limpia.RData"))
+save(base_final_completa, file = here("input", "data", "proc", "base_fondecyt_completa.RData"))
+save(base_final_sociales, file = here("input", "data", "proc", "base_fondecyt_sociales.RData"))
+save(adjudicacion_milenio_limpia_sociales, file = here("input", "data", "proc", "adjudicacion_milenio_limpia_sociales.RData"))
+save(postulacion_milenio_limpia, file = here("input", "data", "proc", "postulacion_milenio_limpia.RData"))
+```

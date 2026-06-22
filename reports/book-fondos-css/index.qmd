@@ -1,0 +1,50 @@
+﻿---
+title: "Estudio de Fondos ANID para el financiamiento  en Ciencias Sociales"
+number-sections: false
+numbered: false
+format:
+  html:
+    title-block-style: none
+    toc: false
+  pdf:
+    title-block-style: none
+---
+
+::: {.content-visible when-format="pdf"}
+\small\textbf{Palabras clave:} Fondos ANID, Facultad de Ciencias Sociales
+\normalsize
+:::
+
+::: {.content-visible when-format="html"}
+<style>
+nav#TOC { display: none !important; }
+div[data-when-format="pdf"] { display: none !important; }
+</style>
+<span class="keywords-line"><strong>Palabras clave:</strong> Adjudicación de Fondos; Financiamiento </span>
+:::
+
+::: {.content-visible when-format="html"}
+::: {.callout-note appearance="minimal" style="background-color: #f5f5f5; padding: 10px; border-left: 4px solid #999;"}
+
+Esta investigación fue desarrollada por René Canales, Juan Carlos Castillo y Gabriel Cortés, del Departamento de Sociología y de la Dirección de Investigación y Publicaciones de la Facultad de Ciencias Sociales, Universidad de Chile.
+
+El informe se encuentra disponible en versión web en [https://renejcanales.github.io/fondos-css/docs/](https://renejcanales.github.io/fondos-css/docs/) y en formato PDF en [https://renejcanales.github.io/fondos-css/docs/reporte-fondos.pdf](https://renejcanales.github.io/fondos-css/docs/reporte-fondos.pdf).
+
+**Citar de la siguiente manera:**
+
+- _Canales, R., Castillo, J.-C., & Cortés, G. (2026). Estudio sobre fuentes de financiamiento para la investigación en Ciencias Sociales en Chile: Diagnóstico y análisis de concursos ANID. Informe técnico. Dirección de Investigación, Facultad de Ciencias Sociales, Universidad de Chile._
+
+:::
+:::
+
+# Resumen ejecutivo {.unnumbered}
+
+Este informe caracteriza la distribución del financiamiento de la Agencia Nacional de Investigación y Desarrollo (ANID) en el área de Ciencias Sociales durante el período 2016-2025, con el propósito de aportar evidencia empírica sistemática al debate sobre la situación del campo en Chile. El estudio se propone identificar los patrones estructurales de adjudicación, examinar las asimetrías existentes y discutir si las recurrentes afirmaciones sobre una "crisis de financiamiento" cuentan con sustento empírico observable en los datos administrativos disponibles.
+
+Se trabajó con tres bases de datos: postulaciones y adjudicaciones a FONDECYT Iniciación (n=4.027), FONDECYT Regular (n=4.576) y Núcleos e Institutos Milenio en Ciencias Sociales (n=24). Las variables de montos solicitados y adjudicados, no disponibles en las bases públicas estandarizadas, fueron reconstruidas manualmente a partir de los reportes oficiales de cada concurso. El análisis es descriptivo y se organiza secuencialmente por instrumento, examinando cinco dimensiones de desagregación: perspectiva comparada con otras áreas OCDE, género del/la investigador/a responsable, grupo de estudio, tipo de institución patrocinante (CRUCH/No CRUCH y Pública/Privada) y macrozona territorial de ejecución.
+
+Las Ciencias Sociales se han consolidado como una de las áreas de mayor volumen del sistema FONDECYT, superando las 600 postulaciones anuales en Iniciación y las 400 en Regular hacia 2025. Sin embargo, las tasas de adjudicación se han mantenido estructuralmente estables —en torno al 30-35% en Regular y entre 7-12% en Iniciación—, configurando un escenario de competencia intensificada. El análisis de género revela un patrón con dos caras: en Iniciación se observa una transición hacia la paridad en postulaciones (50/49 en 2023-2024), mientras que en Regular la brecha de postulación permanece estancada en torno al 38% femenino. El análisis institucional confirma que las universidades del CRUCH concentran el 77% de las adjudicaciones en Iniciación y el 81% en Regular, sin signos de convergencia durante la década. La dimensión territorial constituye el hallazgo más unívoco: la Región Metropolitana captura la mayor parte del crecimiento absoluto del sistema, alcanzando una concentración extrema en Núcleos e Institutos Milenio (92% de las adjudicaciones del área).
+
+Los hallazgos sugieren que el debate público sobre la existencia de una "crisis" del financiamiento requiere mayor precisión analítica: no estamos ante un sistema en colapso, sino ante uno con techos estructurales que se hacen más visibles a medida que la demanda crece sin que el presupuesto agregado se expanda proporcionalmente. El estudio plantea como hipótesis interpretativa para futuras investigaciones que la alta productividad del campo se estaría sosteniendo, al menos en parte, sobre el traslado de los costos del ajuste hacia las y los investigadores —particularmente quienes no cuentan con afiliación a instituciones tradicionales, trayectorias consolidadas o ubicación metropolitana—. Se proponen rutas de investigación complementaria que combinen análisis cuantitativos con abordajes cualitativos sobre las condiciones laborales y las trayectorias académicas del campo.
+
+

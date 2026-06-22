@@ -1,0 +1,327 @@
+---
+title: "Analisis descriptivo preliminar"
+subtitle: "Fondos ANID en Ciencias Sociales"
+author: "Rene Canales, Asistente de Investigacion"
+date: today
+lang: es
+fontsize: 12pt
+format:
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 2
+    toc-expand: 2
+    toc-title: Contenidos
+    number-sections: true
+    number-depth: 3
+    code-link: true
+    title-block-banner: true
+editor_options:
+  chunk_output_type: console
+---
+
+# Presentacion
+
+Este documento presenta un analisis descriptivo preliminar de las bases procesadas ubicadas en `input/data/proc`. El objetivo es revisar volumen, composicion, distribuciones clave y una aproximacion inicial a tasas de adjudicacion por anio.
+
+```{r}
+#| label: setup
+#| echo: false
+#| message: false
+#| warning: false
+
+library(knitr)
+knitr::opts_chunk$set(
+	echo = TRUE,
+	include = TRUE,
+	warning = FALSE,
+	message = FALSE
+)
+
+table_format <- if (is_html_output()) {
+	"html"
+} else if (is_latex_output()) {
+	"latex"
+}
+
+options(knitr.kable.NA = "")
+options(scipen = 999)
+```
+
+# Librerías
+
+```{r}
+#| label: packages
+#| include: true
+#| eval: false
+
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(kableExtra)
+library(here)
+library(SciViews)
+library(naniar)
+library(readxl)
+library(stringi)
+
+options(scipen=999)
+rm(list = ls())
+```
+
+# Datos
+
+```{r}
+#| label: data
+#| include: false
+#| warning: false
+#| message: false
+
+load(here("input", "data", "proc", "postulaciones_limpia.RData"))
+load(here("input", "data", "proc", "adjudicacion_limpia.RData"))
+load(here("input", "data", "proc", "milenio_limpia.RData"))
+load(here("input", "data", "proc", "postulacion_milenio_limpia.RData"))
+load(here("input", "data", "proc", "base_fondecyt_merge.RData"))
+
+glimpse(base_final)
+
+```
+
+# Base Postulaciones
+
+```{r}
+#| label: tab-postulaciones
+#| include: false
+#| warning: false
+#| message: false
+
+
+# Descripción de postulaciones Fondecyt en el campo de las ciencias sociales y sus categorías más importantes
+
+tabla_descriptiva <- postulaciones_limpia %>%
+  select(ESTADO_RESOLUCION_CONCURSO, PROGRAMA, INSTRUMENTO, SEXO, MACROZONA_MINCIENCIA) %>%
+  mutate(
+    PROGRAMA = fct_lump_n(PROGRAMA, n = 2, other_level = "OTROS PROGRAMAS"),
+    across(everything(), ~fct_na_value_to_level(., level = "Sin información"))  # ← cambio aquí
+  ) %>%
+  pivot_longer(everything(), names_to = "Variable", values_to = "Categoria") %>%
+  count(Variable, Categoria) %>%
+  group_by(Variable) %>%
+  mutate(
+    Porcentaje = round(n / sum(n) * 100, 1),
+    `n (%)` = paste0(
+      format(n, big.mark = ".", decimal.mark = ",", scientific = FALSE),
+      " (",
+      formatC(Porcentaje, format = "f", digits = 1, decimal.mark = ","),
+      "%)"
+    )
+  ) %>%
+  ungroup() %>%
+  mutate(
+    Variable = case_match(Variable,
+      "ESTADO_RESOLUCION_CONCURSO" ~ "Estado de la Postulación",
+      "PROGRAMA"                   ~ "Programa (Fondo Principal)",
+      "INSTRUMENTO"                ~ "Tipo de Instrumento",
+      "SEXO"                       ~ "Sexo del Postulante",
+      "MACROZONA_MINCIENCIA"       ~ "Macrozona de Ejecución",
+    )
+  ) %>%
+  select(Variable, Categoria, `n (%)`)
+
+
+tabla_descriptiva %>%
+  kbl(
+    caption   = "Tabla 1. Descripción de las postulaciones",
+    align     = c("l", "l", "r"),
+    col.names = c("Variable", "Categoría", "n (%)")
+  ) %>%
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+    full_width        = FALSE,
+    position          = "left",
+    font_size         = 13
+  ) %>%
+  collapse_rows(columns = 1, valign = "top") %>%
+  row_spec(0, bold = TRUE, background = "#2c3e50", color = "white")
+```
+
+```{r}
+#| label: grafico-adjudicacion
+#| include: false
+#| warning: false
+#| message: false
+
+# Preparar datos
+datos_grafico <- postulaciones_limpia %>%
+  filter(!is.na(AGNO_FALLO)) %>%
+  group_by(AGNO_FALLO, SEXO) %>%
+  summarise(
+    total        = n(),
+    adjudicados  = sum(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO", na.rm = TRUE),
+    tasa         = adjudicados / total * 100,
+    .groups = "drop"
+  )
+
+# Escalado para eje secundario
+escala <- max(datos_grafico$adjudicados) / 100
+
+# Gráfico
+ggplot(datos_grafico, aes(x = factor(AGNO_FALLO), group = SEXO, color = SEXO, fill = SEXO)) +
+  
+  # Barras: número de adjudicados
+  geom_col(
+    aes(y = adjudicados),
+    position = position_dodge(width = 0.7),
+    width    = 0.6,
+    alpha    = 0.75
+  ) +
+  
+  # Línea: tasa de adjudicación
+  geom_line(
+    aes(y = tasa * escala),
+    position = position_dodge(width = 0.7),
+    linewidth = 0.9,
+    linetype  = "dashed"
+  ) +
+  geom_point(
+    aes(y = tasa * escala),
+    position = position_dodge(width = 0.7),
+    size  = 2.5,
+    shape = 21,
+    fill  = "white",
+    stroke = 1.2
+  ) +
+  
+  # Ejes
+  scale_y_continuous(
+    name     = "N° Adjudicados",
+    labels   = label_number(big.mark = ".", decimal.mark = ","),
+    sec.axis = sec_axis(
+      ~ . / escala,
+      name   = "Tasa de Adjudicación (%)",
+      labels = label_number(suffix = "%", decimal.mark = ",")
+    )
+  ) +
+  
+  # Colores
+  scale_color_manual(values = c("HOMBRE" = "#E07B54", "MUJER" = "#2C7BB6")) +
+  scale_fill_manual(values  = c("HOMBRE" = "#E07B54", "MUJER" = "#2C7BB6")) +
+  
+  # Etiquetas
+  labs(
+    title    = "Adjudicación por año según sexo",
+    subtitle = "Barras: N° adjudicados | Línea discontinua: tasa de adjudicación (%)",
+    x        = "Año de fallo",
+    color    = "Sexo",
+    fill     = "Sexo",
+    caption  = "Fuente: elaboración propia"
+  ) +
+  
+  # Tema
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title       = element_text(face = "bold", size = 14),
+    plot.subtitle    = element_text(size = 10, color = "grey40"),
+    axis.title.y.right = element_text(color = "grey30"),
+    axis.title.y.left  = element_text(color = "grey30"),
+    legend.position  = "bottom",
+    panel.grid.minor = element_blank()
+  )
+```
+
+```{r}
+#| label: grafico-adjudicacion-2
+#| include: false
+#| warning: false
+#| message: false
+
+
+# Graficos de adjudicación por año y sexo, separados por instrumento
+
+# Función reutilizable
+grafico_adjudicacion <- function(data, instrumento_filtro, titulo) {
+  
+  datos <- data %>%
+    filter(INSTRUMENTO == instrumento_filtro, !is.na(AGNO_FALLO)) %>%
+    group_by(AGNO_FALLO, SEXO) %>%
+    summarise(
+      total       = n(),
+      adjudicados = sum(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO", na.rm = TRUE),
+      tasa        = adjudicados / total * 100,
+      .groups = "drop"
+    )
+  
+  escala <- max(datos$adjudicados, na.rm = TRUE) / 100
+  
+  ggplot(datos, aes(x = factor(AGNO_FALLO), group = SEXO, color = SEXO, fill = SEXO)) +
+    
+    geom_col(
+      aes(y = adjudicados),
+      position = position_dodge(width = 0.7),
+      width    = 0.6,
+      alpha    = 0.75
+    ) +
+    
+    geom_line(
+      aes(y = tasa * escala),
+      position  = position_dodge(width = 0.7),
+      linewidth = 0.9,
+      linetype  = "dashed"
+    ) +
+    geom_point(
+      aes(y = tasa * escala),
+      position = position_dodge(width = 0.7),
+      size     = 2.5,
+      shape    = 21,
+      fill     = "white",
+      stroke   = 1.2
+    ) +
+    
+    scale_y_continuous(
+      name     = "N° Adjudicados",
+      labels   = label_number(big.mark = ".", decimal.mark = ","),
+      sec.axis = sec_axis(
+        ~ . / escala,
+        name   = "Tasa de Adjudicación (%)",
+        labels = label_number(suffix = "%", decimal.mark = ",")
+      )
+    ) +
+    
+    scale_color_manual(values = c("MUJER" = "#E07B54", "HOMBRE" = "#2C7BB6")) +
+    scale_fill_manual(values  = c("MUJER" = "#E07B54", "HOMBRE" = "#2C7BB6")) +
+    
+    labs(
+      title    = titulo,
+      subtitle = "Barras: N° adjudicados | Línea discontinua: tasa de adjudicación (%)",
+      x        = "Año de fallo",
+      color    = "Sexo",
+      fill     = "Sexo",
+      caption  = "Fuente: elaboración propia a partir de Bases ANID"
+    ) +
+    
+    theme_minimal(base_size = 13) +
+    theme(
+      plot.title         = element_text(face = "bold", size = 14),
+      plot.subtitle      = element_text(size = 10, color = "grey40"),
+      axis.title.y.right = element_text(color = "grey30"),
+      axis.title.y.left  = element_text(color = "grey30"),
+      legend.position    = "bottom",
+      panel.grid.minor   = element_blank()
+    )
+}
+
+# Generar ambos gráficos
+grafico_regular    <- grafico_adjudicacion(postulaciones_limpia, "REGULAR",    "Adjudicación por año según sexo — REGULAR")
+grafico_iniciacion <- grafico_adjudicacion(postulaciones_limpia, "INICIACION", "Adjudicación por año según sexo — INICIACIÓN")
+
+# Mostrar
+grafico_regular
+grafico_iniciacion
+```
+
+# Comentarios preliminares
+
+1. Este reporte permite identificar variaciones de volumen por anio, cambios de composicion y diferencias preliminares entre postulacion y adjudicacion.
+2. La tasa de adjudicacion aqui mostrada es descriptiva y depende de la coherencia entre universos anuales de postulaciones y adjudicaciones.
+3. Como siguiente paso, conviene estandarizar definiciones por instrumento y limpiar posibles inconsistencias de `CODIGO_PROYECTO` para analisis inferenciales.

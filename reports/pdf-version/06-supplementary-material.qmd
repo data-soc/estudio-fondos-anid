@@ -1,0 +1,8 @@
+---
+author: "Equipo EDUMER"
+bibliography: "refs/refs.bib"
+csl: "refs/apa.csl"
+---
+
+# Supplementary material
+

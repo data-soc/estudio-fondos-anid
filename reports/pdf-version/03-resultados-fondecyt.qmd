@@ -1,0 +1,1831 @@
+---
+bibliography: "refs/refs.bib"
+csl: "refs/apa.csl"
+---
+
+```{r}
+#| label: library-2
+#| echo: false
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(here)
+library(kableExtra)
+library(sjPlot)
+library(forcats)
+library(chilemapas)
+library(patchwork)
+
+rm(list = ls())
+```
+
+
+```{r}
+#| label: data
+#| echo: false
+#| message: false
+#| warning: false
+
+# Cargar datos
+load(here("input", "data", "proc", "base_fondecyt_completa.RData"))
+load(here("input", "data", "proc", "base_fondecyt_sociales_merge_monto.RData"))
+
+# Tema base
+tema_anid <- theme_minimal(base_size = 12) +
+  theme(
+    plot.title    = element_text(face = "bold", size = 13),
+    plot.subtitle = element_text(color = "grey40", size = 11),
+    axis.title    = element_text(size = 11),
+    legend.position = "bottom",
+    panel.grid.minor = element_blank()
+  )
+
+```
+
+# Proyectos FONDECYT: Un panorama general
+
+En la siguiente sección se presentan los análisis descriptivos del análisis de la participación de las Ciencias Sociales en concursos FONDECYT entre 2016 y 2025. Estos resultados examinan las tendencias generales para cada instrumento -Iniciación y Regular- en términos de volumen de postulaciones y adjudicaciones, así como las diferencias por género, grupo de estudio e institución patrocinante. Este análisis busca ofrecer una visión integral sobre la dinámica de financiamiento en esta disciplina, identificando patrones relevantes y posibles áreas de mejora para futuras convocatorias.
+
+Para abordar estos objetivos, el análisis se organiza de manera secuencial para cada uno de los instrumentos evaluados (Iniciación y Regular). En primer lugar, se ofrece una perspectiva comparada que sitúa a las Ciencias Sociales frente a otras disciplinas en términos de volumen de postulaciones y adjudicaciones. Posteriormente, el foco se desplaza hacia el interior de la disciplina para examinar las brechas de género en ambas etapas del concurso. Luego, se profundiza en las dinámicas internas mediante un doble nivel de desagregación: primero, según los diferentes grupos de estudio que componen el área y sus respectivas diferencias por montos promedio que se asignan en total, diferencias por género; y segundo, a partir de las instituciones patrocinantes participantes. Finalmente, el apartado concluye con un análisis de la distribución territorial del financiamiento a nivel de macrozonas, permitiendo así identificar la concentración o descentralización de los recursos.
+
+## FONDECYT Iniciación
+
+### Ciencias Sociales en perspectiva comparada
+
+```{r}
+#| label: fig-postulaciones-global
+#| echo: false
+#| fig-cap: "Tasa de postulaciones y adjudicaciones Fondecyt Iniciación (2016–2025). Las áreas disciplinarias siguen la clasificación OECD"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+base_final_completa %>%
+  filter(INSTRUMENTO == "INICIACION",
+         DISCIPLINA_OECD != "MULTIDISCIPLINA") %>%
+  mutate(
+    ESTADO = if_else(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO", 
+                     "Adjudicado", 
+                     "No adjudicado")
+  ) %>%
+  group_by(AGNO_FALLO, DISCIPLINA_OECD, ESTADO) %>%
+  summarise(total = n(), .groups = "drop") %>%
+  ggplot(aes(x = factor(AGNO_FALLO), y = total, fill = ESTADO)) +
+  geom_col(position = "stack") +
+  facet_wrap(~ DISCIPLINA_OECD, scales = "fixed") +      # <-- cambiado
+  scale_fill_manual(values = c("Adjudicado"    = "#770606", 
+                                "No adjudicado" = "#d87676")) +
+  labs(
+    x       = NULL,
+    y       = "Número de postulaciones",
+    fill    = NULL,
+    caption = "Fuente: ANID 2016-2025, elaboración propia.\n*2021 sin concurso."
+  ) +
+  tema_anid +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    plot.caption = element_text(
+      hjust  = 0,
+      size   = 9,
+      color  = "gray40",
+      face   = "italic",
+      margin = margin(t = 10)
+    )
+  )
+```
+
+Al analizar la @fig-postulaciones-global, se puede observar que en comparación con las demás disciplinas reconocidas por la [][OECD](https://www.conicyt.cl/becas-conicyt/files/2012/08/articles-36351_areas_ocde.pdf), las Ciencias Sociales se posicionan como el área de mayor volumen y dinamismo dentro del sistema de financiamiento FONDECYT de Iniciación, superando consistentemente en cantidad de postulaciones al resto. Mientras que otras áreas muestran tendencias más planas o estancadas hasta el 2022, las Ciencias Sociales presentan un crecimiento sostenido que alcanza un volumen superior a las 600 postulaciones, una cifra que duplica casos como el de Ingeniería e incluso cuadruplica otros como el de las Ciencias Médicas en el mismo periodo. Esta demanda entrega sugeriría que existe una competencia bastante más estrecha por la adjudicación que en el resto de las disciplinas, juzgando por el número de proyectos no seleccionados (rojo claro en el gráfico), el cual es, en términos absolutos, el más elevado de todas las categorías comparadas.
+
+En relación con el comportamiento sistémico, las Ciencias Sociales actúan como el principal exponente de la recuperación post-2023, que de manera transversal entre disciplinas fue el punto más bajo en términos de postulaciones al instrumento Fondecyt de Iniciación. Aunque todas las disciplinas experimentaron una contracción drástica en ese año, la capacidad de recuperación en las Ciencias Sociales fue la más pronunciada, logrando en 2025 su máximo histórico. A diferencia de Humanidades o Ciencias Agrícolas, que mantuvieron escalas de participación reducidas, o de Ingeniería, que muestra una tendencia más volátil, las Ciencias Sociales demuestran una trayectoria de expansión que consolida su rol protagónico en la última década, cerrando el periodo como el motor principal de la competitividad científica reflejada en el gráfico.
+
+```{r}
+#| label: fig-adjudicaciones-global
+#| echo: false
+#| fig-cap: "Tasa de adjudicación Fondecyt de Iniciación en Ciencias Sociales (2016–2025)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+df_adj <- base_final_completa %>%
+  filter(INSTRUMENTO == "INICIACION",
+         DISCIPLINA_OECD != "MULTIDISCIPLINA") %>%
+  group_by(AGNO_FALLO, DISCIPLINA_OECD) %>%
+  summarise(
+    postulados = n(),
+    adjudicado = sum(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO"),
+    .groups = "drop"
+  ) %>%
+  mutate(tasa = adjudicado / postulados * 100)
+
+df_adj %>%
+  ggplot(aes(x = AGNO_FALLO, y = tasa, color = DISCIPLINA_OECD, group = DISCIPLINA_OECD)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2.5) +
+  scale_y_continuous(limits = c(0, 100), labels = function(x) paste0(x, "%")) +
+  scale_x_continuous(breaks = unique(df_adj$AGNO_FALLO)) +
+  labs(
+    x       = NULL,
+    y       = "Tasa de adjudicación (%)",
+    color   = "Disciplina OCDE",
+    caption = "Fuente: ANID 2016-2025, elaboración propia.\n*2021 sin concurso."
+  ) +
+  tema_anid +
+  theme(
+    axis.text.x  = element_text(angle = 45, hjust = 1),
+    plot.caption = element_text(hjust = 0, size = 9, color = "gray40", face = "italic", margin = margin(t = 10))
+  )
+```
+
+Por su parte, la @fig-adjudicaciones-global se concentra en la evolución del porcentaje de proyectos adjudicados (%) por disciplina OECD para el instrumento FONDECYT de Iniciación en el mismo periodo (2016-2025). Se observa que las Ciencias Sociales mantienen niveles de adjudicación relativamente estables durante la mayor parte del periodo (entre el 20 y el 30% de las postulaciones resultan adjudicadas), salvo por un pico marcado en 2023 alcanzando casi un 50%, pero hay que mencionar que, tal como se mencionó anteriormente, fue el año con menos postulaciones en todo el periodo para todas las disciplinas, volviendo a niveles similares a los años anteriores en 2024 y 2025%. Comparativamente, Ciencias Sociales supera sistemáticamente a la mayoría de las otras disciplinas, siendo el aumento de 2023 el evento más destacado del periodo. Mientras que otras disciplinas como Humanidades o Ciencias Agrícolas muestran tasas más bajas y estables, las Ciencias Sociales evidencian una mayor volatilidad, especialmente en el contexto de la recuperación post-2023.
+
+### Diferencias por género 
+
+```{r}
+#| label: fig-genero-iniciación-1
+#| echo: false
+#| fig-cap: "Postulaciones a proyectos Fondecyt Iniciación por género en Ciencias Sociales (2016–2025)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+base_final_sociales %>%
+  filter(INSTRUMENTO == "INICIACION",
+         SEXO != "SIN INFORMACION") %>%
+  group_by(AGNO_FALLO, SEXO) %>%
+  summarise(total = n(), .groups = "drop") %>%
+  group_by(AGNO_FALLO) %>%
+  mutate(pct = round(total / sum(total) * 100, 1)) %>%
+  ungroup() %>%
+  ggplot(aes(x = factor(AGNO_FALLO), y = pct, fill = SEXO)) +
+  geom_col(position = "stack") +
+  geom_text(
+    aes(label = paste0(total, "\n(", pct, "%)")),
+    position = position_stack(vjust = 0.5),
+    size = 3, fontface = "bold", color = "white"
+  ) +
+  scale_fill_manual(values = c("HOMBRE" = "#1a5276", "MUJER" = "#c0392b")) +
+  scale_y_continuous(labels = function(x) paste0(x, "%"),
+                     breaks = seq(0, 100, 25)) +
+  labs(
+    x       = NULL,
+    y       = "Postulaciones (%)",
+    fill    = NULL,
+    caption = "Fuente: ANID 2016-2025, elaboración propia\n*2021 sin concurso."
+  ) +
+  tema_anid +
+  theme(
+    legend.position = "top",
+    axis.text.x     = element_text(angle = 45, hjust = 1),
+    plot.caption    = element_text(
+      hjust  = 0,
+      size   = 8,
+      color  = "gray40",
+      face   = "italic",
+      margin = margin(t = 10)
+    )
+  )
+```
+
+La @fig-genero-iniciación-1 muestra las postulaciones a Fondecyt Iniciaicón por año en Ciencias Sociales según género. Lo primero que se puede observar es que el número total de solicitudes creció hacia los años finales del periodo (pasando de ~335 en 2016 a ~580–645 en 2023–2025). En términos comparativos por género, los hombres representan la mayoría de las postulaciones durante la mayor parte del periodo (generalmente entre 53% y 58%). Sin embargo, a partir de 2022 las proporciones se acercan: 2022 registra aproximadamente 49.4% mujeres y 50.6% hombres, y 2023–2024 mantienen una distribución cercana a 51/49 a favor de hombres. En consecuencia, aunque el total de postulaciones aumenta marcadamente en los últimos años, la participación relativa de mujeres también se incrementa respecto a los niveles más bajos observados en 2018–2019.
+
+```{r}
+#| label: fig-genero-iniciación-2
+#| echo: false
+#| fig-cap: "Adjudicaciones Fondecyt de Iniciación por género en Ciencias Sociales (2016–2025)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+base_final_sociales %>%
+  filter(INSTRUMENTO == "INICIACION",
+         SEXO != "SIN INFORMACION") %>%
+  group_by(AGNO_FALLO, SEXO) %>%
+  summarise(
+    adjudicado = sum(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO"),
+    .groups = "drop"
+  ) %>%
+  group_by(AGNO_FALLO) %>%
+  mutate(pct = round(adjudicado / sum(adjudicado) * 100, 1)) %>%
+  ungroup() %>%
+  ggplot(aes(x = factor(AGNO_FALLO), y = pct, fill = SEXO)) +
+  geom_col(position = "stack") +
+  geom_text(
+    aes(label = paste0(adjudicado, "\n(", pct, "%)")),
+    position = position_stack(vjust = 0.5),
+    size = 3, fontface = "bold", color = "white"
+  ) +
+  scale_fill_manual(values = c("HOMBRE" = "#1a5276", "MUJER" = "#c0392b")) +
+  scale_y_continuous(labels = function(x) paste0(x, "%"),
+                     breaks = seq(0, 100, 25)) +
+  labs(
+    x       = NULL,
+    y       = "Adjudicaciones (%)",
+    fill    = NULL,
+    caption = "Fuente: ANID 2016-2025, elaboración propia\n*2021 sin concurso."
+  ) +
+  tema_anid +
+  theme(
+    legend.position = "top",
+    axis.text.x     = element_text(angle = 45, hjust = 1),
+    plot.caption    = element_text(
+      hjust  = 0,
+      size   = 8,
+      color  = "gray40",
+      face   = "italic",
+      margin = margin(t = 10)
+    )
+  )
+```
+
+Por su parte, la @fig-genero-iniciación-2 se enfoca en la tasa de adjudicación (%) por género en Fondecyt Iniciación para Ciencias Sociales entre 2016 y 2025. Se observa que, aunque los hombres representan la mayoría de las postulaciones, las tasas de adjudicación entre géneros son relativamente similares a lo largo del periodo. En general, ambos géneros presentan tasas fluctuantes entre aproximadamente 7% y 12%, con algunos picos atípicos como el aumento en 2023 (hombres: 15.8%, mujeres: 23.1%), aunque este año también se caracterizó por una disminución inusual en el número total de postulaciones. En años anteriores, las diferencias entre géneros son mínimas, sugiriendo que, a pesar de la mayor cantidad de postulaciones masculinas, la probabilidad de adjudicación es comparable entre hombres y mujeres en esta disciplina.
+
+### Diferencias por grupo de estudio
+
+```{r}
+#| label: fig-grupo-estudio-iniciacion
+#| echo: false
+#| fig-cap: "Número de adjudicaciones Fondecyt de Iniciación (2016–2025) por grupo de estudio. Los grupos siguen la clasificación ANID"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+df_soc <- base_final_sociales %>%
+  filter(
+    INSTRUMENTO == "INICIACION",
+    ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO",
+    !is.na(GRUPO_ESTUDIO),
+    GRUPO_ESTUDIO %in% c(
+      "Antropología y Arqueología",
+      "Sociología, Trabajo Social y Cs. de la Comunicación",
+      "Psicología",
+      "Ciencias Jurídicas y Políticas",
+      "Educación",
+      "Geografía y Urbanismo"
+    )
+  ) %>%
+  group_by(AGNO_FALLO, GRUPO_ESTUDIO) %>%
+  summarise(total = n(), .groups = "drop")
+
+colores <- c(
+  "Educación"                                           = "#44708b",
+  "Ciencias Jurídicas y Políticas"                      = "#c77972",
+  "Sociología, Trabajo Social y Cs. de la Comunicación" = "#499669",
+  "Psicología"                                          = "#8f6d9c",
+  "Antropología y Arqueología"                          = "#c9b97b",
+  "Geografía y Urbanismo"                               = "#d9a679"
+)
+
+df_soc %>%
+  ggplot(aes(x = factor(AGNO_FALLO), y = total, fill = GRUPO_ESTUDIO)) +
+  geom_col(position = "stack") +
+  scale_fill_manual(values = colores) +
+  labs(
+    x       = NULL,
+    y       = "N° adjudicaciones",
+    fill    = NULL,
+    caption = "Fuente: ANID 2016-2025, elaboración propia"
+  ) +
+  tema_anid +
+  theme(
+    axis.text.x  = element_text(angle = 45, hjust = 1),
+    legend.text  = element_text(size = 8),
+    plot.caption = element_text(hjust = 0, size = 9, color = "gray40", face = "italic", margin = margin(t = 10))
+  )
+```
+
+La @fig-grupo-estudio-iniciacion presenta la evolución de las adjudicaciones Fondecyt Iniciación por grupo de estudio dentro de la disciplina de Ciencias Sociales entre 2016 y 2025. Se observa que el grupo de "Educación" es el más destacado, con un crecimiento sostenido, aunque esto posiblemente se deba a que a partir del año 2023 el grupo de estudio contemplaba tres áreas diferentes. A este le siguen, "Ciencias Jurídicas y Políticas" y "Sociología, Trabajo Social y Cs. de la Comunicación", que también muestran incrementos significativos a lo largo del periodo. Otros grupos como "Ciencias Económicas y Administrativas" y "Psicología" presentan una tendencia más estable pero con un aumento gradual hacia los años finales. En contraste, grupos como "Geografía y Urbanismo" y "Antropología y Arqueología" mantienen niveles más bajos de adjudicación, aunque con cierta variabilidad a lo largo del tiempo. Este comportamiento sugiere una concentración de adjudicaciones en ciertos grupos de estudio dentro de las Ciencias Sociales, reflejando posiblemente áreas de mayor interés o demanda dentro del sistema de financiamiento FONDECYT Iniciación.
+
+```{r}
+#| label: fig-composicion-grupo-genero
+#| fig-cap: "Composición de grupos de estudio por género en adjudicaciones Fondecyt de Iniciación (2016–2025)"
+#| echo: false
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+base_final_sociales %>%
+  filter(
+    INSTRUMENTO == "INICIACION",
+    ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO",
+    SEXO != "SIN INFORMACION",
+    !is.na(GRUPO_ESTUDIO)
+  ) %>%
+  count(AGNO_FALLO, GRUPO_ESTUDIO, SEXO, name = "adjudicados") %>%
+  complete(AGNO_FALLO, GRUPO_ESTUDIO, SEXO, fill = list(adjudicados = 0)) %>%
+  group_by(AGNO_FALLO, GRUPO_ESTUDIO) %>%
+  mutate(
+    total_grupo = sum(adjudicados),
+    pct = if_else(total_grupo > 0,
+                  round(adjudicados / total_grupo * 100, 1),
+                  NA_real_)
+  ) %>%
+  ungroup() %>%
+  ggplot(aes(x = factor(AGNO_FALLO), y = GRUPO_ESTUDIO, fill = pct)) +
+  geom_tile(color = "white", linewidth = 0.5) +
+  geom_text(aes(label = if_else(is.na(pct), "—", paste0(pct, "%"))),
+            size = 2.5, fontface = "bold", color = "white") +
+  facet_wrap(~ SEXO, ncol = 2) +
+  scale_fill_gradient(low = "#ebb0b0", high = "#420303",
+                      na.value = "gray90", limits = c(0, 100)) +
+  scale_y_discrete(labels = function(x) str_wrap(x, width = 30)) +
+  labs(
+    x       = NULL,
+    y       = NULL,
+    fill    = "% dentro de\nadjudicados",
+    caption = "Fuente: ANID 2016-2025, elaboración propia.\nCeldas marcadas con '—' indican años sin adjudicaciones en el grupo."
+  ) +
+  tema_anid +
+  theme(
+    axis.text.x  = element_text(angle = 45, hjust = 1, size = 7),
+    axis.text.y  = element_text(size = 8),
+    strip.text   = element_text(size = 10, face = "bold"),
+    plot.caption = element_text(
+      hjust = 0, size = 9, color = "gray40",
+      face = "italic", margin = margin(t = 10)
+    )
+  )
+```
+
+
+La @fig-composicion-grupo-genero muestra la composición porcentual por género de adjudicaciones Fondecyt Iniciación para cada grupo de estudio entre 2016 y 2025. Se observa que, aunque la mayoría de los grupos de estudio presentan una distribución relativamente equilibrada entre hombres y mujeres, algunos grupos como "Educación" y "Ciencias Jurídicas y Políticas" tienden a tener una mayor proporción de adjudicaciones para mujeres, especialmente en los años más recientes. En contraste, grupos como "Psicología" y "Sociología, Trabajo Social y Cs. de la Comunicación" muestran una distribución más homogénea entre géneros a lo largo del periodo. Sin embargo, es importante destacar que la variabilidad en la composición por género no sigue un patrón uniforme, sugiriendo que factores específicos de cada grupo de estudio podrían influir en las diferencias observadas en la participación y adjudicación por género dentro de las Ciencias Sociales, como por ejemplo la cantidad de hombres y mujeres que postulan a cada grupo. Este último dato, altamente relevante, no se encuentra disponible en la base de datos para proyectos no adjudicados, lo que limita la interpretación de estas diferencias.
+
+```{r}
+#| label: fig-grupo-monto
+#| echo: false
+#| fig-cap: "Monto total promedio solicitado por grupo de estudio en Fondecyt de Iniciación (2016–2025)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+df_plot <- base_final_sociales |>
+  filter(INSTRUMENTO == "INICIACION",
+         !is.na(GRUPO_ESTUDIO), !is.na(MONTO_SOLIC_PROM_GRUPO_ANIO), !is.na(AGNO_FALLO)) |>
+  group_by(GRUPO_ESTUDIO, AGNO_FALLO) |>
+  summarise(monto_solic = mean(MONTO_SOLIC_PROM_GRUPO_ANIO, na.rm = TRUE),
+            n = n(),
+            .groups = "drop")
+
+df_plot %>%
+  ggplot(aes(x = AGNO_FALLO, y = monto_solic, color = GRUPO_ESTUDIO, group = GRUPO_ESTUDIO)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2.5) +
+  scale_y_continuous(labels = scales::label_comma(prefix = "$")) +
+  scale_x_continuous(breaks = unique(df_plot$AGNO_FALLO)) +
+  labs(
+    x      = "Año de fallo",
+    y      = "Monto promedio solicitado (CLP)",
+    color  = "Grupo de estudio"
+  ) +
+  tema_anid +
+  theme(
+    axis.text.x  = element_text(angle = 45, hjust = 1),
+    legend.text  = element_text(size = 8)
+  )
+```
+
+```{r}
+#| label: fig-grupo-monto-2
+#| echo: false
+#| fig-cap: "Monto total promedio adjudicado por grupo de estudio en Fondecyt de Iniciación (2016–2025)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+
+df_plot <- base_final_sociales |>
+  filter(INSTRUMENTO == "INICIACION",
+         !is.na(GRUPO_ESTUDIO), !is.na(MONTO_PROM_GRUPO_ANIO), !is.na(AGNO_FALLO)) |>
+  group_by(GRUPO_ESTUDIO, AGNO_FALLO) |>
+  summarise(monto_prom = mean(MONTO_PROM_GRUPO_ANIO, na.rm = TRUE),
+            n = n(),
+            .groups = "drop")
+
+df_plot %>%
+  ggplot(aes(x = AGNO_FALLO, y = monto_prom, color = GRUPO_ESTUDIO, group = GRUPO_ESTUDIO)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2.5) +
+  scale_y_continuous(labels = scales::label_comma(prefix = "$")) +
+  scale_x_continuous(breaks = unique(df_plot$AGNO_FALLO)) +
+  labs(
+    x      = "Año de fallo",
+    y      = "Monto promedio adjudicado (CLP)",
+    color  = "Grupo de estudio"
+  ) +
+  tema_anid +
+  theme(
+    axis.text.x  = element_text(angle = 45, hjust = 1),
+    legend.text  = element_text(size = 8)
+  )
+```
+
+La @fig-grupo-monto presenta la evolución del monto promedio solicitado proyecto en FONDECYT Iniciación entre 2016 y 2025, desagregado por grupo de estudio. Este indicador permite observar cuánto se solicitó en promedio por cada grupo de estudio al momento de postular, lo que constituye una señal directa de la estructura de costos esperada por los investigadores en cada área y de cómo estas expectativas evolucionaron a lo largo del período.
+
+Se observa una tendencia ascendente generalizada a lo largo del período, consistente con el reajuste inflacionario, esto a pesar de que el financiamiento tope establecidos por ANID en sus bases concursales no ha tenido ajustes en los últimos 10 años. El grupo de Geografía y Urbanismo se posiciona consistentemente como el de mayor monto solicitado promedio, seguido por Antropología y Arqueología y Psicología, todos ellos campos cuya investigación suele requerir trabajo de terreno, instrumentos especializados o procesamiento de muestras, lo que encarece el presupuesto típico de un proyecto. En contraste, Ciencias Jurídicas y Políticas y Ciencias Económicas y Administrativas mantienen los montos solicitados más bajos a lo largo de todo el período —en algunos años por debajo de los $60 millones promedio—, lo que refleja una estructura de costos menor asociada a investigación predominantemente teórica, documental o basada en datos secundarios.
+
+Un patrón interesante es que las brechas entre grupos se mantienen relativamente estables en el tiempo: los grupos que pedían más en 2016 siguen pidiendo más en 2025, sugiriendo que las diferencias responden a factores estructurales de cada disciplina (tipo de metodología, necesidad de equipamiento, costos de campo) y no a cambios coyunturales en las estrategias de postulación. Esta estabilidad es relevante porque sirve como referencia para interpretar las brechas observadas en los montos adjudicados.
+
+La @fig-grupo-monto-2 presenta la evolución del monto promedio efectivamente adjudicado por proyecto en FONDECYT Iniciación entre 2016 y 2025 para cada grupo de estudio. A diferencia del monto solicitado, esta variable captura lo que ANID terminó entregando a cada disciplina por proyecto en cada año, una vez aplicados los recortes y ajustes presupuestarios del proceso de evaluación.
+
+Se observa una convergencia gradual de los montos adjudicados hacia el final del período, fenómeno que contrasta con la estabilidad de las brechas en los montos solicitados. Mientras que en 2016 la dispersión entre grupos era amplia (con diferencias de hasta $45 millones entre el grupo de mayor adjudicación promedio —Geografía y Urbanismo, $91M— y el de menor —Ciencias Jurídicas y Políticas, $46M—), hacia 2024-2025 los grupos se agrupan en una franja más estrecha que va desde los $57M (Ciencias Jurídicas) hasta los $98M (Geografía y Urbanismo). En este sentido, el grueso de las Ciencias Sociales tiende a recibir montos similares al final del período (entre $80M y $95M), salvo Ciencias Jurídicas y Políticas que se mantiene como un caso aparte por su baja estructura de costos.
+
+Resalta el comportamiento de Ciencias Económicas y Administrativas, que parte siendo uno de los grupos con menor monto adjudicado promedio (~$66M en 2016) pero experimenta un crecimiento abrupto a partir de 2022, alcanzando $82M en 2023 y estabilizándose en torno a esa cifra. Antropología y Arqueología presenta el patrón opuesto: tras un peak en 2018 (~$96M), su trayectoria se mantiene oscilante hasta cerrar el período en niveles similares al promedio de la disciplina. Por su parte, Ciencias Jurídicas y Políticas muestra una persistencia notable en sus bajos montos adjudicados, con un único punto de inflexión en 2023 cuando alcanza $64M, pero rápidamente retorna a su nivel histórico cercano a los $57M en 2025.
+
+La comparación entre la @fig-grupo-monto y la @fig-grupo-monto-2 permite calcular la brecha entre lo solicitado y lo adjudicado, indicador útil para entender cuánto recortó ANID en cada disciplina. Si bien la tendencia general muestra que los grupos reciben en promedio entre un 65% y un 80% de lo solicitado, la consistencia interna del sistema parece operar de forma similar entre todas las áreas de Ciencias Sociales: ningún grupo aparece sistemáticamente "castigado" o "favorecido" en el ajuste presupuestario. 
+Esto sugiere que las brechas observadas en los montos adjudicados reflejan principalmente las brechas preexistentes en los montos solicitados.
+
+### Diferencias por institución patrocinante
+
+```{r}
+#| label: fig-institucion-iniciación-1
+#| echo: false
+#| fig-cap: "Número de adjudicaciones Fondecyt Iniciación por Institución Patroncinante (2016–2025)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+base_final_sociales %>%
+  filter(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO",
+         INSTRUMENTO == "INICIACION") %>%
+  count(INSTITUCION_PRINCIPAL, sort = TRUE) %>%
+  slice_max(n, n = 15) %>%
+  mutate(INSTITUCION_PRINCIPAL = fct_reorder(INSTITUCION_PRINCIPAL, n)) %>%
+  ggplot(aes(x = n, y = INSTITUCION_PRINCIPAL)) +
+  geom_col(fill = "#6e0c0c") +
+  geom_text(aes(label = n), hjust = -0.3, size = 3.5, fontface = "bold") +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.1))) +
+  labs(
+    x       = "Número de adjudicaciones",
+    y       = NULL,
+    caption = "Fuente: ANID 2016-2025, elaboración propia"
+  ) +
+  tema_anid
+```
+
+La @fig-institucion-iniciación-1 presenta el ranking de las instituciones con mayor número de adjudicaciones exclusivamente en el área de Ciencias Sociales para el periodo 2016-2025. La distribución revela una alta concentración de proyectos en un grupo reducido de universidades, donde la Pontificia Universidad Católica de Chile lidera ampliamente con 148 adjudicaciones, seguida por la Universidad de Chile con 99 y la Universidad Alberto Hurtado con 68. Estas tres instituciones encabezan la lista, marcando una brecha significativa respecto al resto de las entidades nacionales en cuanto a volumen de investigación financiada en esta disciplina.
+
+Hacia la mitad y base de la tabla, se observa una mayor homogeneidad en el número de proyectos, con instituciones como la Universidad Austral de Chile (53), la Pontificia Universidad Católica de Valparaíso (51) y la Universidad Adolfo Ibáñez (43) manteniendo cifras competitivas. El tramo final del ranking muestra una participación muy equilibrada entre diversas casas de estudio regionales y privadas, como la Universidad Católica de Temuco, la Universidad de Los Andes y la Universidad de Santiago de Chile, todas situándose en un rango de entre 25 y 38 adjudicaciones. En conjunto, el gráfico evidencia que, si bien la producción en Ciencias Sociales está presente en diversas zonas del país, el núcleo principal de adjudicaciones se concentra de manera predominante en instituciones con base en la Región Metropolitana.
+
+```{r}
+#| label: fig-cruch-adjudicaciones-iniciacion
+#| echo: false
+#| fig-cap: "Adjudicaciones Fondecyt de Iniciación en Ciencias Sociales según tipo de institución CRUCH vs No Tradicional (2016–2025)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+cruch <- c(
+  "UNIVERSIDAD DE CHILE",
+  "PONTIFICIA UNIVERSIDAD CATOLICA DE CHILE",
+  "UNIVERSIDAD DE SANTIAGO DE CHILE",
+  "UNIVERSIDAD DE CONCEPCION",
+  "UNIVERSIDAD AUSTRAL DE CHILE",
+  "UNIVERSIDAD CATOLICA DEL NORTE",
+  "UNIVERSIDAD DE VALPARAISO",
+  "PONTIFICIA UNIVERSIDAD CATOLICA DE VALPARAISO",
+  "PONTIFICA UNIVERSIDAD CATOLICA DE VALPARAISO",
+  "UNIVERSIDAD TECNICA FEDERICO SANTA MARIA",
+  "UNIVERSIDAD DE LA FRONTERA",
+  "UNIVERSIDAD DE TALCA",
+  "UNIVERSIDAD DEL BIO BIO",
+  "UNIVERSIDAD DE LA SERENA",
+  "UNIVERSIDAD DE TARAPACA",
+  "UNIVERSIDAD DE ANTOFAGASTA",
+  "UNIVERSIDAD DE ATACAMA",
+  "UNIVERSIDAD DE LOS LAGOS",
+  "UNIVERSIDAD DE MAGALLANES",
+  "UNIVERSIDAD CATOLICA DEL MAULE",
+  "UNIVERSIDAD CATOLICA DE TEMUCO",
+  "UNIVERSIDAD CATOLICA DE LA SANTISIMA CONCEPCION",
+  "UNIVERSIDAD ARTURO PRAT",
+  "UNIVERSIDAD METROPOLITANA DE CIENCIAS DE LA EDUCACION",
+  "UNIVERSIDAD TECNOLOGICA METROPOLITANA",
+  "UNIVERSIDAD DE PLAYA ANCHA DE CIENCIAS DE LA EDUCACION",
+  "UNIVERSIDAD DE O'HIGGINS",
+  "UNIVERSIDAD DE AYSEN",
+  "UNIVERSIDAD ALBERTO HURTADO",
+  "UNIVERSIDAD DIEGO PORTALES",
+  "UNIVERSIDAD DE LOS ANDES"
+)
+
+no_cruch <- c(
+  "UNIVERSIDAD ADOLFO IBANEZ",
+  "UNIVERSIDAD NACIONAL ANDRES BELLO",
+  "UNIVERSIDAD DEL DESARROLLO",
+  "UNIVERSIDAD AUTONOMA DE CHILE",
+  "UNIVERSIDAD CENTRAL DE CHILE",
+  "UNIVERSIDAD CATOLICA CARDENAL SILVA HENRIQUEZ",
+  "UNIVERSIDAD ACADEMIA DE HUMANISMO CRISTIANO",
+  "UNIVERSIDAD MAYOR",
+  "UNIVERSIDAD SAN SEBASTIAN",
+  "UNIVERSIDAD SANTO TOMAS",
+  "UNIVERSIDAD BERNARDO O'HIGGINS",
+  "UNIVERSIDAD FINIS TERRAE",
+  "UNIVERSIDAD DE LAS AMERICAS",
+  "UNIVERSIDAD VINA DEL MAR",
+  "UNIVERSIDAD GABRIELA MISTRAL"
+)
+
+base_final_sociales %>%
+  filter(INSTRUMENTO == "INICIACION",
+         ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO") %>%
+  mutate(
+    TIPO_INSTITUCION = case_when(
+      INSTITUCION_PRINCIPAL %in% cruch    ~ "CRUCH",
+      INSTITUCION_PRINCIPAL %in% no_cruch ~ "No CRUCH",
+      TRUE                                ~ NA_character_
+    )
+  ) %>%
+  filter(!is.na(TIPO_INSTITUCION)) %>%
+  count(AGNO_FALLO, TIPO_INSTITUCION, name = "adjudicados") %>%
+  ggplot(aes(x = factor(AGNO_FALLO), y = adjudicados, fill = TIPO_INSTITUCION)) +
+  geom_col(position = position_dodge(width = 0.85), width = 0.75) +
+  geom_text(aes(label = adjudicados),
+            position = position_dodge(width = 0.85),
+            vjust = -0.4, size = 3, fontface = "bold") +
+  scale_fill_manual(values = c("CRUCH" = "#6e0c0c", "No CRUCH" = "#c77972")) +
+  labs(
+    x       = NULL,
+    y       = "N° adjudicaciones",
+    fill    = NULL,
+    caption = "Fuente: ANID 2016-2025, elaboración propia.\n*U. Alberto Hurtado, U. Diego Portales y U. de los Andes se clasifican como CRUCH para toda la serie, aunque ingresaron formalmente en 2018-2019.\n**Centros de investigación, fundaciones y museos excluidos del análisis."
+  ) +
+  tema_anid +
+  theme(
+    axis.text.x  = element_text(angle = 45, hjust = 1),
+    plot.caption = element_text(
+      hjust = 0, size = 8, color = "gray40",
+      face = "italic", margin = margin(t = 10)
+    )
+  )
+```
+
+La @fig-cruch-adjudicaciones-iniciacion permite comparar el comportamiento agregado de las universidades pertenecientes al Consejo de Rectores (CRUCH) frente a las universidades privadas no tradicionales en la adjudicación de proyectos FONDECYT de Iniciación en Ciencias Sociales durante el período 2016-2025. El patrón más evidente es la brecha estructural sostenida entre ambos grupos: las instituciones CRUCH concentran la gran mayoría de las adjudicaciones cada año, con un crecimiento que pasa de 48 proyectos en 2016 a 125 en 2025 —un aumento del 160%. Las universidades no tradicionales, en cambio, parten de una base considerablemente menor (15 proyectos en 2016) y, aunque también muestran una tendencia al alza alcanzando 38 adjudicaciones en 2025, su volumen se mantiene en una escala notoriamente inferior a lo largo de todo el período.
+
+Un punto de inflexión importante se observa a partir de 2022, año en que las universidades no tradicionales experimentan un salto significativo en su participación, pasando de 20 adjudicaciones promedio anuales en 2016-2020 a un rango de 35-38 en 2022-2025. Aun así, la brecha relativa se mantiene estable: en el último año del período, las CRUCH representan aproximadamente el 77% del total de adjudicaciones, mientras que las no tradicionales el 23% restante. Esto sugiere que, si bien existe una expansión absoluta de ambos sectores, no se observa un proceso de convergencia entre los dos grupos institucionales en términos de su capacidad de captura de financiamiento concursable.
+
+```{r}
+#| label: tbl-clasificacion-instituciones
+#| echo: false
+#| tbl-cap: "Clasificación de instituciones según pertenencia al Consejo de Rectores (CRUCH)"
+#| tbl-cap-location: top
+
+# Limpiar etiquetas (Title Case + tildes para mejor presentación)
+limpiar_nombres <- function(x) {
+  x %>%
+    str_to_title() %>%
+    str_replace_all("De La", "de la") %>%
+    str_replace_all("De Los", "de los") %>%
+    str_replace_all("De Las", "de las") %>%
+    str_replace_all("\\bDe\\b", "de") %>%
+    str_replace_all("\\bDel\\b", "del") %>%
+    str_replace_all("\\bY\\b", "y") %>%
+    str_replace_all("Universidad", "U.") %>%
+    str_replace_all("Pontificia", "P.") %>%
+    str_replace_all("Catolica", "Católica") %>%
+    str_replace_all("Tecnica", "Técnica") %>%
+    str_replace_all("Bio Bio", "Bío-Bío") %>%
+    str_replace_all("Tarapaca", "Tarapacá") %>%
+    str_replace_all("Ibanez", "Ibáñez") %>%
+    str_replace_all("Vina del Mar", "Viña del Mar") %>%
+    str_replace_all("Andres Bello", "Andrés Bello") %>%
+    str_replace_all("Aysen", "Aysén") %>%
+    str_replace_all("Henriquez", "Henríquez") %>%
+    str_replace_all("Sebastian", "Sebastián") %>%
+    str_replace_all("Tomas", "Tomás") %>%
+    str_replace_all("Educacion", "Educación") %>%
+    str_replace_all("Concepcion", "Concepción") %>%
+    str_replace_all("Magallanes", "Magallanes") %>%
+    str_replace_all("Tecnologica", "Tecnológica")
+}
+
+# Quitar el duplicado de PUCV (typo de la base)
+cruch_limpio   <- limpiar_nombres(setdiff(cruch, "PONTIFICA UNIVERSIDAD CATOLICA DE VALPARAISO"))
+no_cruch_limpio <- limpiar_nombres(no_cruch)
+
+# Ordenar alfabéticamente
+cruch_limpio    <- sort(cruch_limpio)
+no_cruch_limpio <- sort(no_cruch_limpio)
+
+# Igualar longitudes (rellenar con NA la columna más corta)
+max_len <- max(length(cruch_limpio), length(no_cruch_limpio))
+length(cruch_limpio)    <- max_len
+length(no_cruch_limpio) <- max_len
+
+# Construir tabla
+tabla_inst <- tibble(
+  `CRUCH (n = 30)`        = cruch_limpio,
+  `No CRUCH (n = 15)` = no_cruch_limpio
+) %>%
+  mutate(across(everything(), ~ replace_na(., "")))
+
+# Renderizar
+tabla_inst %>%
+  kbl(
+    align     = c("l", "l"),
+    booktabs  = TRUE,
+    longtable = TRUE
+  ) %>%
+  kable_styling(
+    latex_options = c("striped", "repeat_header"),
+    font_size  = 10,
+    full_width = FALSE
+  ) %>%
+  column_spec(1, border_right = TRUE) %>%
+  row_spec(0, bold = TRUE) %>%
+  footnote(
+    general = c(
+      "U. Alberto Hurtado, U. Diego Portales y U. de los Andes ingresaron al CRUCH en 2018-2019; se clasifican como CRUCH para toda la serie 2016-2025.",
+      "Listado de instituciones presentes en la base FONDECYT 2016-2025 para Ciencias Sociales. Excluye centros de investigación, fundaciones y museos."
+    ),
+    general_title = "Notas:",
+    footnote_as_chunk = FALSE,
+    threeparttable = TRUE
+  )
+```
+
+Esta brecha debe interpretarse considerando varios factores estructurales que diferencian a ambos tipos de instituciones. Primero, las universidades CRUCH son 30 instituciones -señaladas en la @tbl-clasificacion-instituciones- con una trayectoria investigativa consolidada y, en muchos casos, con varias décadas de existencia, mientras que un número importante de universidades privadas no tradicionales son de creación más reciente y han tenido históricamente un foco más docente que investigativo. Segundo, las universidades CRUCH —especialmente las 18 estatales y las nueve del G9— reciben aportes basales del Estado (Aporte Fiscal Directo, Convenios Marco) que les permiten sostener infraestructura, contratar investigadores con dedicación exclusiva y financiar costos asociados a la postulación a fondos concursables, capacidad que no es comparable en la mayoría de instituciones privadas no tradicionales. Tercero, la presencia de cuerpos académicos con doctorado, productividad científica acreditada y redes de colaboración previa —factores que pesan en la evaluación FONDECYT— está históricamente concentrada en el sistema CRUCH. Por tanto, más que un indicador de "calidad relativa", la brecha observada refleja una asimetría estructural del sistema de educación superior chileno en cuanto a las condiciones materiales para hacer investigación.
+
+```{r}
+#| label: fig-publica-adjudicaciones-iniciacion
+#| echo: false
+#| fig-cap: "Adjudicaciones Fondecyt de Iniciación en Ciencias Sociales según tipo de institución Pública vs Privada (2016–2025)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+publicas <- c(
+  "UNIVERSIDAD DE CHILE",
+  "UNIVERSIDAD DE SANTIAGO DE CHILE",
+  "UNIVERSIDAD DE VALPARAISO",
+  "UNIVERSIDAD DE LA FRONTERA",
+  "UNIVERSIDAD DE TALCA",
+  "UNIVERSIDAD DEL BIO BIO",
+  "UNIVERSIDAD DE LA SERENA",
+  "UNIVERSIDAD DE TARAPACA",
+  "UNIVERSIDAD DE ANTOFAGASTA",
+  "UNIVERSIDAD DE ATACAMA",
+  "UNIVERSIDAD DE LOS LAGOS",
+  "UNIVERSIDAD DE MAGALLANES",
+  "UNIVERSIDAD ARTURO PRAT",
+  "UNIVERSIDAD METROPOLITANA DE CIENCIAS DE LA EDUCACION",
+  "UNIVERSIDAD TECNOLOGICA METROPOLITANA",
+  "UNIVERSIDAD DE PLAYA ANCHA DE CIENCIAS DE LA EDUCACION",
+  "UNIVERSIDAD DE O'HIGGINS",
+  "UNIVERSIDAD DE AYSEN"
+)
+
+base_final_sociales %>%
+  filter(INSTRUMENTO == "INICIACION",
+         ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO",
+         !is.na(INSTITUCION_PRINCIPAL),
+         (INSTITUCION_PRINCIPAL %in% cruch | INSTITUCION_PRINCIPAL %in% no_cruch)) %>%
+  mutate(
+    NATURALEZA = if_else(INSTITUCION_PRINCIPAL %in% publicas,
+                          "Pública", "Privada")
+  ) %>%
+  count(AGNO_FALLO, NATURALEZA, name = "adjudicados") %>%
+  ggplot(aes(x = factor(AGNO_FALLO), y = adjudicados, fill = NATURALEZA)) +
+  geom_col(position = position_dodge(width = 0.85), width = 0.75) +
+  geom_text(aes(label = adjudicados),
+            position = position_dodge(width = 0.85),
+            vjust = -0.4, size = 3, fontface = "bold") +
+  scale_fill_manual(values = c("Pública" = "#1a5276", "Privada" = "#c77972")) +
+  labs(
+    x       = NULL,
+    y       = "N° adjudicaciones",
+    fill    = NULL,
+    caption = "Fuente: ANID 2016-2025, elaboración propia.\n*Universidades públicas: 18 universidades estatales chilenas.\n**Centros de investigación, fundaciones y museos excluidos del análisis."
+  ) +
+  tema_anid +
+  theme(
+    axis.text.x  = element_text(angle = 45, hjust = 1),
+    plot.caption = element_text(
+      hjust = 0, size = 8, color = "gray40",
+      face = "italic", margin = margin(t = 10)
+    )
+  )
+```
+
+La @fig-publica-adjudicaciones-iniciacion compara las adjudicaciones de FONDECYT de Iniciación según la naturaleza jurídica de las instituciones beneficiarias, distinguiendo entre las 18 universidades estatales que componen el sector público y el conjunto de universidades privadas —incluyendo tanto las privadas tradicionales del CRUCH (G9, UAH, UDP, U. de los Andes) como las privadas no tradicionales—. El gráfico revela una inversión interesante de la jerarquía observada al analizar el corte CRUCH/No CRUCH: cuando se desagrega por naturaleza jurídica, las universidades privadas captan la mayoría de las adjudicaciones a lo largo de todo el período, pasando de 57 proyectos en 2016 a 118 en 2025 (un crecimiento del 107%). Las universidades estatales, por su parte, parten desde 30 adjudicaciones en 2016 y alcanzan 45 en 2025, mostrando un crecimiento más modesto del 50%.
+
+La brecha entre ambos sectores se mantiene relativamente estable en términos absolutos durante los primeros años (2016-2020), con las privadas superando a las estatales en aproximadamente 27 a 37 proyectos anuales. Sin embargo, a partir de 2022 esta diferencia se amplía notoriamente, alcanzando un peak en 2023 cuando las privadas adjudicaron 111 proyectos frente a 43 de las estatales —una brecha de 68 proyectos. En el año más reciente del período (2025), las privadas representan aproximadamente el 72% del total adjudicado en este universo, mientras que las estatales el 28% restante.
+
+```{r}
+#| label: tbl-clasificacion-publica-privada
+#| echo: false
+#| tbl-cap: "Clasificación de instituciones según naturaleza jurídica: estatales vs privadas"
+#| tbl-cap-location: top
+
+# Universo total de universidades (estatales + privadas, sin centros)
+todas_universidades <- c(setdiff(cruch, "PONTIFICA UNIVERSIDAD CATOLICA DE VALPARAISO"),
+                         no_cruch)
+
+# Privadas = todas las no estatales
+privadas <- setdiff(todas_universidades, publicas)
+
+# Limpiar etiquetas (misma función que usamos antes, idéntico criterio)
+limpiar_nombres <- function(x) {
+  x %>%
+    str_to_title() %>%
+    str_replace_all("De La", "de la") %>%
+    str_replace_all("De Los", "de los") %>%
+    str_replace_all("De Las", "de las") %>%
+    str_replace_all("\\bDe\\b", "de") %>%
+    str_replace_all("\\bDel\\b", "del") %>%
+    str_replace_all("\\bY\\b", "y") %>%
+    str_replace_all("Universidad", "U.") %>%
+    str_replace_all("Pontificia", "P.") %>%
+    str_replace_all("Catolica", "Católica") %>%
+    str_replace_all("Tecnica", "Técnica") %>%
+    str_replace_all("Bio Bio", "Bío-Bío") %>%
+    str_replace_all("Tarapaca", "Tarapacá") %>%
+    str_replace_all("Ibanez", "Ibáñez") %>%
+    str_replace_all("Vina del Mar", "Viña del Mar") %>%
+    str_replace_all("Andres Bello", "Andrés Bello") %>%
+    str_replace_all("Aysen", "Aysén") %>%
+    str_replace_all("Henriquez", "Henríquez") %>%
+    str_replace_all("Sebastian", "Sebastián") %>%
+    str_replace_all("Tomas", "Tomás") %>%
+    str_replace_all("Educacion", "Educación") %>%
+    str_replace_all("Concepcion", "Concepción") %>%
+    str_replace_all("Tecnologica", "Tecnológica")
+}
+
+publicas_limpio <- sort(limpiar_nombres(publicas))
+privadas_limpio <- sort(limpiar_nombres(privadas))
+
+# Igualar longitudes
+max_len <- max(length(publicas_limpio), length(privadas_limpio))
+length(publicas_limpio) <- max_len
+length(privadas_limpio) <- max_len
+
+# Construir tabla
+tabla_pubpriv <- tibble(
+  `Públicas (n = 18)`  = publicas_limpio,
+  `Privadas (n = 27)` = privadas_limpio
+) %>%
+  mutate(across(everything(), ~ replace_na(., "")))
+
+# Renderizar
+tabla_pubpriv %>%
+  kbl(
+    align     = c("l", "l"),
+    booktabs  = TRUE,
+    longtable = TRUE
+  ) %>%
+  kable_styling(
+    latex_options = c("striped", "repeat_header"),
+    font_size  = 10,
+    full_width = FALSE
+  ) %>%
+  column_spec(1, border_right = TRUE) %>%
+  row_spec(0, bold = TRUE) %>%
+  footnote(
+    general = c(
+      "Las 18 universidades estatales chilenas se clasifican como 'Públicas'. El resto (27 instituciones, incluyendo G9, privadas tradicionales recientemente incorporadas al CRUCH como UAH, UDP, U. de los Andes, y privadas no tradicionales) se clasifican como 'Privadas'.",
+      "Listado de instituciones presentes en la base FONDECYT 2016-2025 para Ciencias Sociales. Excluye centros de investigación, fundaciones y museos."
+    ),
+    general_title = "Notas:",
+    footnote_as_chunk = FALSE,
+    threeparttable = TRUE
+  )
+```
+
+Esta diferencia debe interpretarse considerando varios factores estructurales. Primero, como muestra la @tbl-clasificacion-publica-privada,el universo de universidades privadas es numéricamente mayor: solo 18 instituciones son estatales, mientras que el resto del sistema universitario nacional (incluyendo G9 y privadas no tradicionales) suma más de 30 instituciones consideradas en este análisis. Por tanto, parte de la brecha se explica simplemente por el mayor número de instituciones privadas que pueden postular. Segundo, dentro del sector privado se encuentran instituciones con altísima productividad investigativa (PUC, U. Austral, U. de Concepción, U. Diego Portales, UAH), varias de las cuales lideran el ranking nacional de adjudicaciones FONDECYT en Ciencias Sociales, lo que infla el agregado del grupo. Tercero, las universidades estatales han enfrentado desafíos sostenidos de financiamiento basal en la última década que pueden haber limitado su capacidad de expansión en investigación concursable, a pesar de su rol histórico como pilares del sistema universitario chileno.
+
+Es importante destacar que esta lectura complementa pero no reemplaza el análisis previo del corte CRUCH/No CRUCH: ambos cortes permiten observar distintas dimensiones del sistema. Mientras el primero captura la asimetría entre el sistema tradicional consolidado y las instituciones de creación más reciente, este segundo corte evidencia que la naturaleza pública o privada de las instituciones también constituye una dimensión relevante para entender la distribución del financiamiento concursable, aunque su lectura debe hacerse con cuidado por la heterogeneidad interna del sector privado, que agrupa en una sola categoría a instituciones muy distintas entre sí en términos de trayectoria, recursos y orientación.
+
+```{r}
+#| label: fig-institucion-iniciación-3
+#| echo: false
+#| fig-cap: "Evolución de adjudicaciones Fondecyt de Iniciación del top 6 Instituciones Patroncinantes (2016–2025)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+top6 <- base_final_sociales %>%
+  filter(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO",
+         INSTRUMENTO == "INICIACION") %>%
+  count(INSTITUCION_PRINCIPAL, sort = TRUE) %>%
+  slice_max(n, n = 6) %>%
+  pull(INSTITUCION_PRINCIPAL)
+
+df_inst <- base_final_sociales %>%
+  filter(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO",
+         INSTITUCION_PRINCIPAL %in% top6,
+         INSTRUMENTO == "INICIACION") %>%
+  count(AGNO_FALLO, INSTITUCION_PRINCIPAL)
+
+colores_set2 <- c("#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3", "#a6d854", "#ffd92f")
+names(colores_set2) <- top6
+
+df_inst %>%
+  ggplot(aes(x = AGNO_FALLO, y = n, color = INSTITUCION_PRINCIPAL, group = INSTITUCION_PRINCIPAL)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2.5) +
+  scale_color_manual(values = colores_set2,
+                     labels = function(x) str_wrap(x, 25)) +
+  scale_x_continuous(breaks = unique(df_inst$AGNO_FALLO)) +
+  labs(
+    x       = NULL,
+    y       = "Adjudicaciones",
+    color   = NULL,
+    caption = "Fuente: ANID 2016-2025, elaboración propia"
+  ) +
+  tema_anid +
+  theme(
+    axis.text.x     = element_text(angle = 45, hjust = 1),
+    legend.text     = element_text(size = 7),
+    legend.position = "bottom",
+    plot.caption    = element_text(hjust = 0, size = 9, color = "gray40", face = "italic", margin = margin(t = 10))
+  ) +
+  guides(color = guide_legend(nrow = 3))
+```
+
+La @fig-institucion-iniciación-3 permite observar la evolución temporal de las adjudicaciones en Ciencias Sociales para las instituciones líderes vistas en el gráfico anterior, revelando patrones de estabilidad y volatilidad diferenciados entre 2016 y 2025. La Pontificia Universidad Católica de Chile se mantiene consistentemente en la parte superior de la distribución, logrando un crecimiento que culmina en su punto más alto hacia 2025, a pesar de experimentar una caída excepcional y profunda en 2021. Por su parte, la Universidad de Chile muestra una trayectoria de mayor fluctuación; tras un descenso marcado en los primeros años y el impacto de 2021, presenta una recuperación robusta hacia el final del periodo, consolidándose como la segunda institución con mayor volumen de proyectos.
+
+En el grupo de instituciones con menores volúmenes relativos, se observa un comportamiento mucho más errático y entrecruzado. La Universidad Alberto Hurtado y la Pontificia Universidad Católica de Valparaíso muestran ciclos de adjudicación altamente variables, con picos de éxito seguidos de descensos inmediatos, lo que sugiere una mayor sensibilidad a las variaciones anuales de los concursos. Al igual que en los análisis por disciplina, el año 2021 aparece como un punto de inflexión crítico donde casi todas las universidades —especialmente las dos principales— sufrieron una contracción drástica, para luego iniciar un ciclo de expansión que lleva a la mayoría de las instituciones a cerrar 2025 con niveles de adjudicación superiores o similares a sus promedios históricos.
+
+```{r}
+#| label: fig-adjudicaciones-institucion-genero
+#| fig-cap: "Adjudicaciones Fondecyt de Iniciación por género en el top 6 Instituciones Patroncinantes (2016–2025)"
+#| fig-cap-location: top
+#| echo: false
+#| fig-width: 10
+#| fig-height: 6
+
+top6_inst <- base_final_sociales %>%
+  filter(
+    INSTRUMENTO == "INICIACION",
+    ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO",
+    SEXO != "SIN INFORMACION"
+  ) %>%
+  group_by(INSTITUCION_PRINCIPAL) %>%
+  summarise(total = n(), .groups = "drop") %>%
+  slice_max(total, n = 6) %>%
+  pull(INSTITUCION_PRINCIPAL)
+
+base_final_sociales %>%
+  filter(
+    INSTRUMENTO == "INICIACION",
+    ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO",
+    SEXO != "SIN INFORMACION",
+    INSTITUCION_PRINCIPAL %in% top6
+  ) %>%
+  group_by(AGNO_FALLO, INSTITUCION_PRINCIPAL, SEXO) %>%
+  summarise(total = n(), .groups = "drop") %>%
+  ggplot(aes(x = factor(AGNO_FALLO), y = total, fill = SEXO)) +
+  geom_col(position = "dodge") +
+  facet_wrap(~ INSTITUCION_PRINCIPAL, ncol = 2,
+             labeller = labeller(INSTITUCION_PRINCIPAL = label_wrap_gen(25))) +
+  scale_fill_manual(
+    values = c("MUJER" = "#c77972", "HOMBRE" = "#44708b"),
+    labels = c("MUJER" = "MUJER", "HOMBRE" = "HOMBRE")
+  ) +
+  labs(
+    x       = NULL,
+    y       = "N° adjudicaciones",
+    fill    = NULL,
+    caption = "Fuente: ANID 2016-2025, elaboración propia"
+  ) +
+  tema_anid +
+  theme(
+    axis.text.x  = element_text(angle = 45, hjust = 1, size = 7),
+    strip.text   = element_text(size = 9, face = "bold"),
+    plot.caption = element_text(
+      hjust  = 0,
+      size   = 9,
+      color  = "gray40",
+      face   = "italic",
+      margin = margin(t = 10)
+    )
+  )
+```
+
+La @fig-adjudicaciones-institucion-genero muestra la distribución de adjudicaciones por género para las seis instituciones con mayor número de proyectos adjudicados en Ciencias Sociales entre 2016 y 2025. Se observa que, aunque la mayoría de las instituciones presentan una mayor cantidad de adjudicaciones para hombres, la proporción de mujeres adjudicadas es significativa y en algunos casos se acerca o supera a la de los hombres, especialmente en años recientes. Por ejemplo, la Universidad de Chile muestra una tendencia hacia una mayor equidad de género en sus adjudicaciones, mientras que la Pontificia Universidad Católica de Chile mantiene una brecha más pronunciada a favor de los hombres. En general, el gráfico revela que, aunque persisten diferencias por género en las adjudicaciones dentro de las principales instituciones, existe una tendencia hacia una mayor participación femenina en los proyectos financiados en Ciencias Sociales, lo que podría reflejar cambios en las dinámicas de postulación y adjudicación a lo largo del tiempo.
+
+### Diferencias por macrozona
+
+```{r}
+#| label: fig-region-iniciación-1
+#| echo: false
+#| fig-cap: "Tasa de adjudicación Fondecyt de Inicación en Ciencias Sociales por macrozona (2016–2025)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+# Tabla de correspondencia macrozona → regiones
+macrozona_regiones <- tibble(
+  MACROZONA_MINCIENCIA = c(
+    "NORTE", "NORTE", "NORTE",          # 3
+    "CENTRO", "CENTRO", "CENTRO",        # 3
+    "RM",                                # 1
+    "CENTRO SUR", "CENTRO SUR",          # 2
+    "SUR", "SUR", "SUR",                 # 3
+    "AUSTRAL", "AUSTRAL", "AUSTRAL", "AUSTRAL"  # 4
+  ),
+  codigo_region = c(
+    "15", "01", "02",          # Arica, Tarapacá, Antofagasta
+    "03", "04", "05",          # Atacama, Coquimbo, Valparaíso
+    "13",                      # RM
+    "06", "07",                # O'Higgins, Maule
+    "16", "08", "09",          # Ñuble, Biobío, Araucanía
+    "14", "10", "11", "12"     # Los Ríos, Los Lagos, Aysén, Magallanes
+  )
+)
+
+# Datos base con ambas métricas
+datos_mapa <- base_final_sociales %>%
+  filter(INSTRUMENTO == "INICIACION",
+         MACROZONA_MINCIENCIA != "SIN INFORMACION") %>%
+  group_by(MACROZONA_MINCIENCIA) %>%
+  summarise(
+    total      = n(),
+    adjudicado = sum(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO"),
+    tasa       = adjudicado / total * 100,
+    .groups = "drop"
+  ) %>%
+  mutate(pct_adj = adjudicado / sum(adjudicado) * 100) %>%
+  left_join(macrozona_regiones, by = "MACROZONA_MINCIENCIA")
+
+# Geometría base
+geo_base <- chilemapas::mapa_comunas %>%
+  group_by(codigo_region) %>%
+  summarise(geometry = st_union(geometry), .groups = "drop") %>%
+  st_as_sf() %>%
+  left_join(datos_mapa, by = "codigo_region")
+
+tema_leyenda <- theme(
+  legend.position  = "right",
+  legend.direction = "vertical",
+  legend.key.height = unit(2, "cm"),
+  legend.key.width  = unit(0.4, "cm"),
+  legend.text       = element_text(size = 9),
+  legend.title      = element_text(size = 10, face = "bold")
+)
+
+mapa1 <- ggplot(geo_base) +
+  geom_sf(aes(fill = total), color = "white", linewidth = 0.3) +
+  scale_fill_gradient(low = "#f0a3a3", high = "#5e0e0e", na.value = "gray90") +
+  labs(title = "Postulaciones", fill = "N") +
+  tema_anid + tema_leyenda +
+  theme(axis.text = element_blank(), axis.ticks = element_blank(), panel.grid = element_blank())
+
+mapa2 <- ggplot(geo_base) +
+  geom_sf(aes(fill = tasa), color = "white", linewidth = 0.3) +
+  scale_fill_gradient(
+    low = "#f0a3a3", high = "#5e0e0e", na.value = "gray90",
+    labels = scales::percent_format(scale = 1)
+  ) +
+  labs(title = "Tasa de adjudicación", fill = "%") +
+  tema_anid + tema_leyenda +
+  theme(axis.text = element_blank(), axis.ticks = element_blank(), panel.grid = element_blank())
+
+# Combinar
+mapa1 + mapa2 +
+  plot_annotation(
+    tag_levels = NULL,
+    caption    = "Fuente: ANID 2016-2025, elaboración propia.\nNota: casos sin información de macrozona excluidos.",
+    theme      = theme(
+      plot.caption = element_text(hjust = 0, size = 12, color = "gray40", face = "italic")
+    )
+  )
+```
+
+La @fig-region-iniciación-1 presenta un análisis geográfico de las adjudicaciones Fondecyt Iniciación en Ciencias Sociales por macrozona entre 2016 y 2025, utilizando dos mapas para ilustrar tanto el número total de postulaciones como la tasa de adjudicación (%) por macrozona. 
+
+La distribución de postulaciones y adjudicaciones en Ciencias Sociales a FONDECYT de Iniciación muestra una fuerte concentración en la macrozona Metropolitana, que supera ampliamente al resto del país en volumen de postulaciones. Le siguen en importancia las macrozonas Centro y Centro Sur, que agrupan regiones con universidades tradicionales de mayor trayectoria investigativa. En materia de postulaciones, el patrón es relativamente más equilibrado entre macrozonas, aunque la Región Metropolitana sigue concentrando las tasas más altas, lo que sugiere que el volumen de postulaciones no opera como ventaja competitiva en términos de éxito relativo. Las macrozonas Norte, Sur y Austral, en cambio, registran niveles de adjudicación considerablemente menores.
+
+```{r}
+#| label: fig-region-iniciación-2
+#| echo: false
+#| fig-cap: "Evolución temporal de adjudicaciones Fondecyt deIniciación en Ciencias Sociales por macrozona (2016–2025)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+df_macro <- base_final_sociales %>%
+  filter(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO",
+         MACROZONA_MINCIENCIA != "SIN INFORMACION",
+         INSTRUMENTO == "INICIACION") %>%
+  count(AGNO_FALLO, MACROZONA_MINCIENCIA)
+
+macrozonas <- unique(df_macro$MACROZONA_MINCIENCIA)
+colores_set2 <- c("#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3",
+                  "#a6d854", "#ffd92f", "#e5c494", "#b3b3b3")[seq_along(macrozonas)]
+names(colores_set2) <- macrozonas
+
+df_macro %>%
+  ggplot(aes(x = AGNO_FALLO, y = n, color = MACROZONA_MINCIENCIA, group = MACROZONA_MINCIENCIA)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2.5) +
+  scale_color_manual(values = colores_set2) +
+  scale_x_continuous(breaks = unique(df_macro$AGNO_FALLO)) +
+  labs(
+    x       = NULL,
+    y       = "Adjudicaciones",
+    color   = NULL,
+    caption = "Fuente: ANID 2016-2025, elaboración propia"
+  ) +
+  tema_anid +
+  theme(
+    axis.text.x     = element_text(angle = 45, hjust = 1),
+    legend.position = "bottom",
+    plot.caption    = element_text(hjust = 0, size = 9, color = "gray40", face = "italic", margin = margin(t = 10))
+  )
+```
+
+La @fig-region-iniciación-2 muestra la evolución temporal de las adjudicaciones FONDECYT de Iniciación en Ciencias Sociales entre 2016 y 2025 confirma el predominio sostenido de la macrozona Metropolitana, que creció de 48 proyectos adjudicados en 2016 a 97 en 2025, consolidándose como la única macrozona con una tendencia clara al alza durante el período. El resto de las macrozonas se mantiene en niveles notoriamente más bajos y relativamente estables: Centro Sur y Sur oscilan entre 10 y 26 adjudicaciones, mientras que Centro se mueve en un rango similar. Norte y Austral presentan los valores más bajos del período, con Austral bordeando consistentemente el cero a lo largo de toda la serie. Destaca la ausencia de datos para 2021, probablemente asociada a las disrupciones del concurso durante la pandemia. En conjunto, la brecha entre la Región Metropolitana y el resto del país no solo persiste sino que se amplía en el tiempo, lo que plantea interrogantes sobre la distribución territorial de las capacidades de investigación en ciencias sociales.
+
+## FONDECYT Regular
+
+### Ciencias Sociales en perspectiva comparada
+
+```{r}
+#| label: fig-postulaciones-global-regular
+#| echo: false
+#| fig-cap: "Tasa de postulaciones y adjudicaciones Fondecyt Regular (2016–2025). Las áreas disciplinarias siguen la clasificación OECD"
+#| fig-cap-location: top
+#| fig-height: 6
+
+base_final_completa %>%
+  filter(INSTRUMENTO == "REGULAR",
+         DISCIPLINA_OECD != "MULTIDISCIPLINA") %>%
+  mutate(
+    ESTADO = if_else(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO", 
+                     "Adjudicado", 
+                     "No adjudicado")
+  ) %>%
+  group_by(AGNO_FALLO, DISCIPLINA_OECD, ESTADO) %>%
+  summarise(total = n(), .groups = "drop") %>%
+  ggplot(aes(x = factor(AGNO_FALLO), y = total, fill = ESTADO)) +
+  geom_col(position = "stack") +
+  facet_wrap(~ DISCIPLINA_OECD, scales = "fixed") +      # <-- cambiado
+  scale_fill_manual(values = c("Adjudicado"    = "#770606", 
+                                "No adjudicado" = "#d87676")) +
+  labs(
+    x       = NULL,
+    y       = "Número de postulaciones",
+    fill    = NULL,
+    caption = "Fuente: ANID 2016-2025, elaboración propia"
+  ) +
+  tema_anid +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    plot.caption = element_text(
+      hjust  = 0,
+      size   = 9,
+      color  = "gray40",
+      face   = "italic",
+      margin = margin(t = 10)
+    )
+  )
+```
+
+Al analizar la @fig-postulaciones-global-regular, que muestra la distribución de postulaciones por disciplina OECD, se puede observar que las Ciencias Sociales se consolidan como una de las áreas con mayor volumen de postulaciones en FONDECYT Regular, situándose en un nivel comparable al de Ciencias Naturales. Mientras que otras áreas como Ciencias Médicas, Ingeniería, Humanidades y Ciencias Agrícolas mantienen escalas acotadas a lo largo del periodo, las Ciencias Sociales presentan un crecimiento sostenido que supera las 400 postulaciones anuales en los años finales, alcanzando un máximo histórico en 2025.
+
+En relación con el comportamiento sistémico, las Ciencias Sociales exhiben una trayectoria de expansión similar a la observada en Iniciación, aunque con escalas absolutas distintas: si Iniciación llega a superar las 600 postulaciones anuales en 2025, Regular se mueve en un rango menor pero igualmente robusto. Esta consistencia sugiere que la expansión de la disciplina opera de manera transversal entre ambos instrumentos, reflejando un aumento generalizado del interés por postular a fondos concursables FONDECYT en Ciencias Sociales, tanto en el tramo inicial de la carrera investigativa como en el tramo senior.
+
+A diferencia de Iniciación, donde se observaba una contracción marcada en 2023 seguida de una fuerte recuperación, en Regular la trayectoria es más estable, sin caídas abruptas durante el periodo. El número de proyectos no seleccionados (rojo claro) es proporcionalmente elevado en Ciencias Sociales, lo que evidencia una presión competitiva sostenida sobre el instrumento: una alta demanda por adjudicación que, como veremos en el gráfico siguiente, encuentra un techo relativamente estable en las tasas de aprobación.
+
+
+```{r}
+#| label: fig-adjudicaciones-global-regular-2
+#| echo: false
+#| fig-cap: "Tasa de adjudicación Fondecyt Regular en Ciencias Sociales (2016–2025)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+df_adj <- base_final_completa %>%
+  filter(INSTRUMENTO == "REGULAR",
+         DISCIPLINA_OECD != "MULTIDISCIPLINA") %>%
+  group_by(AGNO_FALLO, DISCIPLINA_OECD) %>%
+  summarise(
+    postulados = n(),
+    adjudicado = sum(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO"),
+    .groups = "drop"
+  ) %>%
+  mutate(tasa = adjudicado / postulados * 100)
+
+df_adj %>%
+  ggplot(aes(x = AGNO_FALLO, y = tasa, color = DISCIPLINA_OECD, group = DISCIPLINA_OECD)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2.5) +
+  scale_y_continuous(limits = c(0, 100), labels = function(x) paste0(x, "%")) +
+  scale_x_continuous(breaks = unique(df_adj$AGNO_FALLO)) +
+  labs(
+    x       = NULL,
+    y       = "Tasa de adjudicación (%)",
+    color   = "Disciplina OCDE",
+    caption = "Fuente: ANID 2016-2025, elaboración propia"
+  ) +
+  tema_anid +
+  theme(
+    axis.text.x  = element_text(angle = 45, hjust = 1),
+    plot.caption = element_text(hjust = 0, size = 9, color = "gray40", face = "italic", margin = margin(t = 10))
+  )
+```
+
+Por su parte, la @fig-adjudicaciones-global-regular-2 se concentra en la evolución de la tasa de adjudicación (%) por disciplina OECD para FONDECYT Regular entre 2016 y 2025.
+
+Se observa que las Ciencias Sociales exhiben una trayectoria notablemente estable, situándose mayoritariamente en un rango entre el 25% y el 35% de adjudicación durante toda la serie, sin presentar picos atípicos ni caídas abruptas. Esta consistencia contrasta con otras áreas que experimentaron oscilaciones significativas en el periodo: Humanidades alcanzó un pico anómalo del 42% en 2023, mientras que Ciencias Médicas registró una caída drástica al 20% en 2025. Las Ciencias Sociales convergen hacia el final del periodo en un 31.1%, cifra alineada con el promedio histórico del área en este instrumento.
+
+Esta estabilidad debe leerse en conjunto con el patrón de postulaciones descrito previamente. Mientras que en Iniciación las tasas de adjudicación en Ciencias Sociales presentaban mayor volatilidad —con picos como el 19.6% de 2023 directamente vinculados a la fuerte caída de postulaciones de ese año—, en Regular la combinación de demanda creciente y tasas estables sugiere que el sistema opera con un techo presupuestario más rígido: a medida que aumentan las postulaciones, el número absoluto de proyectos aprobados crece de manera proporcional, sin que la tasa relativa de adjudicación se altere significativamente. Comparativamente, las Ciencias Sociales se ubican entre las disciplinas con mejores tasas de adjudicación en Regular, superando consistentemente a Humanidades (que tiende a oscilar entre el 25% y el 30%, con la excepción de su pico de 2023) y manteniéndose en niveles similares a Ciencias Naturales.
+
+### Diferencias por género 
+
+```{r}
+#| label: fig-genero-regular-1
+#| echo: false
+#| fig-cap: "Postulación a proyectos Fondecyt Regular por género en Ciencias Sociales (2016–2025)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+base_final_sociales %>%
+  filter(INSTRUMENTO == "REGULAR",
+         SEXO != "SIN INFORMACION") %>%
+  group_by(AGNO_FALLO, SEXO) %>%
+  summarise(total = n(), .groups = "drop") %>%
+  group_by(AGNO_FALLO) %>%
+  mutate(pct = round(total / sum(total) * 100, 1)) %>%
+  ungroup() %>%
+  ggplot(aes(x = factor(AGNO_FALLO), y = pct, fill = SEXO)) +
+  geom_col(position = "stack") +
+  geom_text(
+    aes(label = paste0(total, "\n(", pct, "%)")),
+    position = position_stack(vjust = 0.5),
+    size = 3, fontface = "bold", color = "white"
+  ) +
+  scale_fill_manual(values = c("HOMBRE" = "#1a5276", "MUJER" = "#c0392b")) +
+  scale_y_continuous(labels = function(x) paste0(x, "%"),
+                     breaks = seq(0, 100, 25)) +
+  labs(
+    x       = NULL,
+    y       = "Postulaciones (%)",
+    fill    = NULL,
+    caption = "Fuente: ANID 2016-2025, elaboración propia\n*2021 sin concurso."
+  ) +
+  tema_anid +
+  theme(
+    legend.position = "top",
+    axis.text.x     = element_text(angle = 45, hjust = 1),
+    plot.caption    = element_text(
+      hjust  = 0,
+      size   = 8,
+      color  = "gray40",
+      face   = "italic",
+      margin = margin(t = 10)
+    )
+  )
+```
+
+La @fig-genero-regular-1 muestra las postulaciones a FONDECYT Regular por año en Ciencias Sociales según género. Lo primero que se puede notar es que el número total de solicitudes creció de manera sostenida durante el periodo (pasando de aproximadamente 393 postulaciones en 2016 a 578 en 2025), siguiendo la misma tendencia expansiva observada en Iniciación aunque a una escala absoluta menor.
+
+En términos comparativos por género, los hombres han representado consistentemente la mayoría de las postulaciones a lo largo de todo el 
+período, oscilando entre el 60% y el 65%. La participación femenina, por su parte, ha experimentado un crecimiento sostenido en términos absolutos, pasando de 147 postulaciones en 2016 a 224 en 2025. Sin embargo, en términos relativos, el peso de las investigadoras se ha 
+mantenido estancado en torno al 38%** durante todo el periodo, evidencia de que el aumento de la demanda agregada fue traccionado principalmente por postulantes masculinos —particularmente notorio en 2025, cuando loshombres concentraron 354 postulaciones frente a 224 mujeres.
+
+A diferencia de Iniciación, donde se observó una tendencia clara hacia la paridad en los años recientes (con proporciones cercanas al 50/50 desde 2022), en Regular la brecha de género se mantiene estructuralmente estable a lo largo de toda la serie. Esta diferencia entre instrumentos sugiere que, si bien las nuevas generaciones de investigadoras están ingresando al sistema FONDECYT a través del tramo de Iniciación con tasas de participación cada vez más equitativas, el acceso a la categoría de investigador responsable en el tramo senior del financiamiento concursable sigue presentando una marcada concentración demográfica masculina. Esta persistencia podría reflejar tanto efectos cohorte —los académicos en condiciones de postular a Regular hoy iniciaron sus trayectorias en periodos con menor representación femenina— como barreras estructurales asociadas a las trayectorias académicas en el tramo intermedio y senior del sistema universitario chileno.
+
+```{r}
+#| label: fig-genero-regular-2
+#| echo: false
+#| fig-cap: "Adjudicaciones Fondecyt Regular por género en Ciencias Sociales (2016–2025)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+base_final_sociales %>%
+  filter(INSTRUMENTO == "REGULAR",
+         SEXO != "SIN INFORMACION") %>%
+  group_by(AGNO_FALLO, SEXO) %>%
+  summarise(
+    adjudicado = sum(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO"),
+    .groups = "drop"
+  ) %>%
+  group_by(AGNO_FALLO) %>%
+  mutate(pct = round(adjudicado / sum(adjudicado) * 100, 1)) %>%
+  ungroup() %>%
+  ggplot(aes(x = factor(AGNO_FALLO), y = pct, fill = SEXO)) +
+  geom_col(position = "stack") +
+  geom_text(
+    aes(label = paste0(adjudicado, "\n(", pct, "%)")),
+    position = position_stack(vjust = 0.5),
+    size = 3, fontface = "bold", color = "white"
+  ) +
+  scale_fill_manual(values = c("HOMBRE" = "#1a5276", "MUJER" = "#c0392b")) +
+  scale_y_continuous(labels = function(x) paste0(x, "%"),
+                     breaks = seq(0, 100, 25)) +
+  labs(
+    x       = NULL,
+    y       = "Adjudicaciones (%)",
+    fill    = NULL,
+    caption = "Fuente: ANID 2016-2025, elaboración propia\n*2021 sin concurso."
+  ) +
+  tema_anid +
+  theme(
+    legend.position = "top",
+    axis.text.x     = element_text(angle = 45, hjust = 1),
+    plot.caption    = element_text(
+      hjust  = 0,
+      size   = 8,
+      color  = "gray40",
+      face   = "italic",
+      margin = margin(t = 10)
+    )
+  )
+```
+
+La @fig-genero-regular-2 se enfoca en la tasa de adjudicación (%) por género en FONDECYT Regular para Ciencias Sociales entre 2016 y 2025. A 
+diferencia del análisis de postulaciones —donde se observaba una brecha estructural persistente a favor de los hombres—, las tasas de adjudicación presentan un patrón mucho más equilibrado e incluso favorable a las mujeres en varios años del periodo.
+
+Las mujeres en Ciencias Sociales han demostrado periodos de mayor eficiencia que sus pares hombres, especialmente en 2017 y el bienio 
+2023-2024, donde sus tasas de adjudicación superaron o igualaron la masculina en torno al 36%. Esto sugiere que, una vez que las investigadoras logran ingresar al universo de postulantes Regular, su capacidad competitiva en términos de éxito relativo no se ve mermada respecto a sus pares masculinos —e incluso supera a la de ellos en años específicos. 
+
+Sin embargo, esta paridad es frágil: en 2025 se observa una caída pronunciada en la tasa femenina al 26.8%, frente al 33.9% de los hombres, una brecha de 7 puntos porcentuales que rompe el patrón de los años previos. Este dato sugiere que la ventaja competitiva de las investigadoras en Ciencias Sociales fluctúa año tras año sin lograr establecer una tendencia de cierre de brecha permanente en el éxito de las adjudicaciones.
+
+La lectura conjunta con el gráfico anterior es relevante: si bien las mujeres representan solo el 38% de las postulaciones a Regular, **sus 
+tasas de adjudicación tienden a ser comparables o superiores a las masculinas en la mayoría de los años**. Esto refuerza la hipótesis de que 
+la brecha de género observada en Regular opera principalmente en la etapa de postulación —vinculada a las condiciones estructurales para 
+acceder a la categoría de investigador responsable senior— y no en la evaluación misma de los proyectos por parte del sistema FONDECYT.
+
+### Diferencias por grupo de estudio
+
+```{r}
+#| label: fig-adjudicaciones-sociales-2
+#| echo: false
+#| fig-cap: "Tasa de adjudicaciones Fondecyt Regular (2016–2025) por grupo de estudio. Los grupos siguen la clasificación ANID"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+df_soc <- base_final_sociales %>%
+  filter(
+    INSTRUMENTO == "REGULAR",
+    ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO",
+    !is.na(GRUPO_ESTUDIO),
+    GRUPO_ESTUDIO %in% c(
+      "Antropología y Arqueología",
+      "Sociología, Trabajo Social y Cs. de la Comunicación",
+      "Psicología",
+      "Ciencias Jurídicas y Políticas",
+      "Educación",
+      "Geografía y Urbanismo"
+    )
+  ) %>%
+  group_by(AGNO_FALLO, GRUPO_ESTUDIO) %>%
+  summarise(total = n(), .groups = "drop")
+
+colores <- c(
+  "Educación"                                           = "#44708b",
+  "Ciencias Jurídicas y Políticas"                      = "#c77972",
+  "Sociología, Trabajo Social y Cs. de la Comunicación" = "#499669",
+  "Psicología"                                          = "#8f6d9c",
+  "Antropología y Arqueología"                          = "#c9b97b",
+  "Geografía y Urbanismo"                               = "#d9a679"
+)
+
+df_soc %>%
+  ggplot(aes(x = factor(AGNO_FALLO), y = total, fill = GRUPO_ESTUDIO)) +
+  geom_col(position = "stack") +
+  scale_fill_manual(values = colores) +
+  labs(
+    x       = NULL,
+    y       = "N° adjudicaciones",
+    fill    = NULL,
+    caption = "Fuente: ANID 2016-2025, elaboración propia"
+  ) +
+  tema_anid +
+  theme(
+    axis.text.x  = element_text(angle = 45, hjust = 1),
+    legend.text  = element_text(size = 8),
+    plot.caption = element_text(hjust = 0, size = 9, color = "gray40", face = "italic", margin = margin(t = 10))
+  )
+```
+
+La @fig-adjudicaciones-sociales-2 presenta la evolución de las adjudicaciones FONDECYT Regular por grupo de estudio en Ciencias Sociales 
+entre 2016 y 2025. Se observa que el grueso de las adjudicaciones en el área está sostenido mayoritariamente por dos grupos: Educación y Ciencias Jurídicas y Políticas, que juntos representan el núcleo de mayor volumen de proyectos financiados durante todo el periodo. 
+Particularmente Educación muestra un crecimiento sostenido y consolidado, posicionándose como el grupo con mayor número de adjudicaciones 
+acumuladas hacia 2025.
+
+En un segundo nivel, Sociología, Trabajo Social y Cs. de la Comunicación junto con Psicología mantienen una presencia estable durante todo el 
+periodo, mostrando una expansión gradual pero menos pronunciada que la observada en los dos grupos líderes. Ciencias Económicas y administrativas sigue una trayectoria similar, mientras que disciplinas como Antropología y Arqueología y Geografía y Urbanismo ocupan un 
+espacio menor pero constante a lo largo de la serie, con niveles de adjudicación reducidos pero sin grandes oscilaciones.
+
+Hacia el final del periodo, el crecimiento de la disciplina es transversal: prácticamente todos los grupos muestran un aumento visible 
+en el volumen de proyectos financiados en 2024-2025. Esta expansión generalizada sugiere que el incremento de la demanda observado en años 
+recientes no se concentra en un solo subcampo, sino que refleja una dinámica de crecimiento del sistema en su conjunto, aunque la jerarquía 
+relativa entre grupos se mantiene estable. La consolidación de Educación como grupo de mayor volumen acumulado, en particular, es coherente con el patrón ya identificado en Iniciación, donde este grupo también lidera el ranking de adjudicaciones, lo que indica una demanda investigativa sostenida en torno a problemáticas educativas que se proyecta tanto en el tramo inicial como en el tramo senior del financiamiento concursable.
+
+```{r}
+#| label: fig-genero-grupo-regular
+#| echo: false
+#| fig-cap: "Tasa de adjudicación Fondecyt Regular por género según grupo de estudio en Ciencias Sociales (2016–2025)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+base_final_sociales %>%
+  filter(
+    INSTRUMENTO == "REGULAR",
+    ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO",
+    SEXO != "SIN INFORMACION",
+    !is.na(GRUPO_ESTUDIO)
+  ) %>%
+  count(AGNO_FALLO, GRUPO_ESTUDIO, SEXO, name = "adjudicados") %>%
+  complete(AGNO_FALLO, GRUPO_ESTUDIO, SEXO, fill = list(adjudicados = 0)) %>%
+  group_by(AGNO_FALLO, GRUPO_ESTUDIO) %>%
+  mutate(
+    total_grupo = sum(adjudicados),
+    pct = if_else(total_grupo > 0,
+                  round(adjudicados / total_grupo * 100, 1),
+                  NA_real_)
+  ) %>%
+  ungroup() %>%
+  ggplot(aes(x = factor(AGNO_FALLO), y = GRUPO_ESTUDIO, fill = pct)) +
+  geom_tile(color = "white", linewidth = 0.5) +
+  geom_text(aes(label = if_else(is.na(pct), "—", paste0(pct, "%"))),
+            size = 2.5, fontface = "bold", color = "white") +
+  facet_wrap(~ SEXO, ncol = 2) +
+  scale_fill_gradient(low = "#ebb0b0", high = "#420303",
+                      na.value = "gray90", limits = c(0, 100)) +
+  scale_y_discrete(labels = function(x) str_wrap(x, width = 30)) +
+  labs(
+    x       = NULL,
+    y       = NULL,
+    fill    = "% dentro de\nadjudicados",
+    caption = "Fuente: ANID 2016-2025, elaboración propia"
+  ) +
+  tema_anid +
+  theme(
+    axis.text.x  = element_text(angle = 45, hjust = 1, size = 7),
+    axis.text.y  = element_text(size = 8),
+    strip.text   = element_text(size = 10, face = "bold"),
+    plot.caption = element_text(
+      hjust = 0, size = 9, color = "gray40",
+      face = "italic", margin = margin(t = 10)
+    )
+  )
+```
+
+La @fig-genero-grupo-regular muestra la composición porcentual de adjudicaciones FONDECYT Regular por grupo de estudio y género entre 2016 
+y 2025. A diferencia de lo observado en Iniciación —donde la distribución por género dentro de cada grupo tendía a ser relativamente equilibrada—, en Regular se observan patrones de concentración masculina mucho más marcados en varios grupos de estudio, evidenciando que las brechas de género operan con mayor intensidad en el tramo senior del financiamiento.
+
+Los hombres dominan con particular fuerza las adjudicaciones en Ciencias Económicas y Administrativas y Ciencias Jurídicas y Políticas, con proporciones que superan frecuentemente el 80% e incluso alcanzan el 100% en algunos años. Este patrón es consistente con la composición de 
+estos campos disciplinares en el sistema universitario chileno, donde históricamente la presencia femenina en posiciones académicas senior ha 
+sido proporcionalmente menor. En el extremo opuesto, las mujeres presentan liderazgos específicos en Educación y Sociología, Trabajo Social y Cs. de la Comunicación, donde sus proporciones de adjudicación se acercan o superan el 50% en buena parte de la serie, con peaks por sobre el 60% en años específicos.
+
+Un patrón emergente interesante se observa en Investigación Inter y Transdisciplinaria hacia 2024-2025, donde las mujeres alcanzan una proporción de adjudicación significativa. Aunque la lectura de este grupo requiere cautela por su baja N en los primeros años de la serie, su crecimiento reciente sugiere que las investigadoras están encontrando espacios de adjudicación en campos emergentes que no responden a las estructuras disciplinarias tradicionales, donde las jerarquías de género están más sedimentadas.
+
+Estas trayectorias diferenciadas confirman que las Ciencias Sociales no constituyen un bloque homogéneo en términos de equidad de género, sino un campo donde la pertenencia a determinados subgrupos sigue mediando fuertemente las oportunidades de adjudicación. Mientras que en grupos como Educación y Sociología las mujeres han logrado consolidar liderazgos estables, en campos como Ciencias Jurídicas o Ciencias Económicas y Administrativas persisten patrones de concentración masculina extrema, configurando una geografía interna de la disciplina que refleja tanto la composición histórica.
+
+```{r}
+#| label: fig-grupo-monto-regular-1
+#| echo: false
+#| fig-cap: "Monto total promedio solicitado por grupo de estudio en Fondecyt Regular (2016–2025)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+df_plot <- base_final_sociales |>
+  filter(INSTRUMENTO == "REGULAR",
+         !is.na(GRUPO_ESTUDIO), !is.na(MONTO_SOLIC_PROM_GRUPO_ANIO), !is.na(AGNO_FALLO)) |>
+  group_by(GRUPO_ESTUDIO, AGNO_FALLO) |>
+  summarise(monto_solic = mean(MONTO_SOLIC_PROM_GRUPO_ANIO, na.rm = TRUE),
+            n = n(),
+            .groups = "drop")
+
+df_plot %>%
+  ggplot(aes(x = AGNO_FALLO, y = monto_solic, color = GRUPO_ESTUDIO, group = GRUPO_ESTUDIO)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2.5) +
+  scale_y_continuous(labels = scales::label_comma(prefix = "$")) +
+  scale_x_continuous(breaks = unique(df_plot$AGNO_FALLO)) +
+  labs(
+    x      = "Año de fallo",
+    y      = "Monto promedio solicitado (CLP)",
+    color  = "Grupo de estudio"
+  ) +
+  tema_anid +
+  theme(
+    axis.text.x  = element_text(angle = 45, hjust = 1),
+    legend.text  = element_text(size = 8)
+  )
+```
+
+```{r}
+#| label: fig-grupo-monto-regular-2
+#| echo: false
+#| fig-cap: "Monto promedio adjudicado por grupo de estudio para Fondecyt Regular (2016–2025)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+df_plot <- base_final_sociales |>
+  filter(INSTRUMENTO == "REGULAR", ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO",
+         !is.na(GRUPO_ESTUDIO), !is.na(MONTO_PROM_GRUPO_ANIO), !is.na(AGNO_FALLO)) |>
+  group_by(GRUPO_ESTUDIO, AGNO_FALLO) |>
+  summarise(monto_prom = mean(MONTO_PROM_GRUPO_ANIO, na.rm = TRUE),
+            n = n(),
+            .groups = "drop")
+
+df_plot %>%
+  ggplot(aes(x = AGNO_FALLO, y = monto_prom, color = GRUPO_ESTUDIO, group = GRUPO_ESTUDIO)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2.5) +
+  scale_y_continuous(labels = scales::label_comma(prefix = "$")) +
+  scale_x_continuous(breaks = unique(df_plot$AGNO_FALLO)) +
+  labs(
+    x      = "Año de fallo",
+    y      = "Monto promedio adjudicado (CLP)",
+    color  = "Grupo de estudio"
+  ) +
+  tema_anid +
+  theme(
+    axis.text.x  = element_text(angle = 45, hjust = 1),
+    legend.text  = element_text(size = 8)
+  )
+```
+
+La @fig-grupo-monto-regular-1 presenta la evolución del monto promedio solicitado por proyecto en FONDECYT Iniciación entre 2016 y 2025, desagregado por grupo de estudio. Este indicador permite observar cuánto pidió cada disciplina en promedio al momento de postular, lo que constituye una señal directa de la estructura de costos esperada por los investigadores en cada área y de cómo estas expectativas evolucionaron a lo largo del período.
+
+Se observa una tendencia ascendente generalizada a lo largo del período, consistente con el reajuste inflacionario y los aumentos en los topes de financiamiento establecidos por ANID en sus bases concursales. El grupo de Geografía y Urbanismo se posiciona consistentemente como el de mayor monto solicitado promedio, seguido por Antropología y Arqueología y Psicología, todos ellos campos cuya investigación suele requerir trabajo de terreno, instrumentos especializados o procesamiento de muestras, lo que encarece el presupuesto típico de un proyecto. En contraste, Ciencias Jurídicas y Políticas y Ciencias Económicas y Administrativas mantienen los montos solicitados más bajos a lo largo de todo el período —en algunos años por debajo de los $60 millones promedio—, lo que refleja una estructura de costos menor asociada a investigación predominantemente teórica, 
+documental o basada en datos secundarios.
+
+Un patrón interesante es que las brechas entre grupos se mantienen relativamente estables en el tiempo: los grupos que pedían más en 2016 siguen pidiendo más en 2025, sugiriendo que las diferencias responden a factores estructurales de cada disciplina (tipo de metodología, necesidad de equipamiento, costos de campo) y no a cambios coyunturales en las estrategias de postulación. Esta estabilidad es relevante porque sirve como referencia para interpretar las brechas observadas en los montos adjudicados.
+
+La @fig-grupo-monto-regular-2 presenta la evolución del monto promedio efectivamente adjudicado por proyecto en FONDECYT Iniciación entre 2016 y 2025, desagregado por grupo de estudio. A diferencia del monto solicitado, esta variable captura lo que ANID terminó entregando a cada disciplina por proyecto en cada año, una vez aplicados los recortes y ajustes presupuestarios del proceso de evaluación.
+
+Se observa una convergencia gradual de los montos adjudicados hacia el final del período, fenómeno que contrasta con la estabilidad de las brechas en los montos solicitados. Mientras que en 2016 la dispersión entre grupos era amplia (con diferencias de hasta $45 millones entre el grupo de mayor adjudicación promedio —Geografía y Urbanismo, $91M— y el de menor —Ciencias Jurídicas y Políticas, $46M—), hacia 2024-2025 los grupos se agrupan en una franja más estrecha que va desde los $57M (Ciencias Jurídicas) hasta los $98M (Geografía y Urbanismo). En este sentido, el grueso de las Ciencias Sociales tiende a recibir montos similares al final del período (entre $80M y $95M), salvo Ciencias Jurídicas y Políticas que 
+se mantiene como un caso aparte por su baja estructura de costos.
+
+Resalta el comportamiento de Ciencias Económicas y Administrativas, que parte siendo uno de los grupos con menor monto adjudicado promedio (~$66M en 2016) pero experimenta un crecimiento abrupto a partir de 2022, alcanzando $82M en 2023 y estabilizándose en torno a esa cifra. Antropología y Arqueología presenta el patrón opuesto: tras un peak en 2018 (~$96M), su trayectoria se mantiene oscilante hasta cerrar el período en niveles similares al promedio de la disciplina. Por su parte, Ciencias Jurídicas y Políticas muestra una persistencia notable en sus bajos montos adjudicados, con un único punto de inflexión en 2023 cuando alcanza $64M, pero rápidamente retorna a su nivel histórico cercano a los $57M en 2025.
+
+La comparación entre la @fig-grupo-monto-regular-1 y la @fig-grupo-monto-regular-2 permite calcular la brecha entre lo solicitado y lo adjudicado, indicador útil para entender cuánto recortó ANID en cada disciplina. Si bien la tendencia general muestra que los grupos reciben en promedio entre un 65% y un 80% de lo solicitado, la consistencia interna del sistema parece operar de forma similar entre todas las áreas de Ciencias Sociales: ningún grupo aparece sistemáticamente "castigado" o "favorecido" en el ajuste presupuestario. Esto sugiere que las brechas observadas en los montos adjudicados reflejan principalmente las brechas preexistentes en los montos solicitados.
+
+### Diferencias por institución patrocinante
+
+```{r}
+#| label: fig-institucion-regular-1
+#| echo: false
+#| fig-cap: "Número de adjudicaciones Fondecyt Regular por Institución Patroncinante (2016–2025)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+base_final_sociales %>%
+  filter(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO",
+         INSTRUMENTO == "REGULAR") %>%
+  count(INSTITUCION_PRINCIPAL, sort = TRUE) %>%
+  slice_max(n, n = 15) %>%
+  mutate(INSTITUCION_PRINCIPAL = fct_reorder(INSTITUCION_PRINCIPAL, n)) %>%
+  ggplot(aes(x = n, y = INSTITUCION_PRINCIPAL)) +
+  geom_col(fill = "#6e0c0c") +
+  geom_text(aes(label = n), hjust = -0.3, size = 3.5, fontface = "bold") +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.1))) +
+  labs(
+    x       = "Número de adjudicaciones",
+    y       = NULL,
+    caption = "Fuente: ANID 2016-2025, elaboración propia"
+  ) +
+  tema_anid
+```
+
+La @fig-institucion-regular-1 presenta el ranking de las instituciones con mayor número de adjudicaciones FONDECYT Regular en el área de Ciencias Sociales para el periodo 2016-2025. La distribución revela una jerarquía institucional fuertemente marcada, encabezada por la Pontificia Universidad Católica de Chile con 275 proyectos adjudicados, seguida por la Universidad de Chile con 208. Estas dos casas de estudio concentran un volumen de investigación que prácticamente triplica al de sus competidores más cercanos, marcando una brecha estructural respecto al resto del sistema universitario nacional.
+
+En un segundo nivel destacan la Pontificia Universidad Católica de Valparaíso y la Universidad Diego Portales, que se consolidan como las 
+principales instituciones del tramo intermedio, seguidas por la Universidad Austral de Chile y la Universidad Alberto Hurtado. El resto 
+de las instituciones del top 15 —que incluye a la USACH, U. de Concepción, PUC del Norte, UAH, UTalca, UCT, entre otras— se sitúan en un rango 
+relativamente homogéneo de entre 30 y 60 proyectos adjudicados durante todo el periodo, mostrando una competencia más equilibrada en la zona media de la distribución.
+
+La fuerte presencia de universidades con sede en la Región Metropolitana en los primeros lugares —PUC, U. de Chile, UDP, UAH y USACH— subraya que el financiamiento senior en Ciencias Sociales tiende a acumularse en los centros tradicionales de producción científica con base en Santiago. A diferencia de Iniciación, donde algunas instituciones regionales como la PUCV o la U. Austral logran ubicarse en posiciones competitivas, en Regular esta presencia regional es más limitada, evidenciando que el tramo senior del financiamiento concursable presenta una concentración territorial aún más pronunciada que la observada en el tramo de investigadores emergentes. Este patrón es coherente con los hallazgos previos sobre la asimetría estructural CRUCH/No CRUCH y refuerza la idea de que las dinámicas de capital académico acumulado operan con mayor fuerza en este instrumento.
+
+```{r}
+#| label: fig-cruch-adjudicaciones-regular
+#| echo: false
+#| fig-cap: "Adjudicaciones Fondecyt Regular en Ciencias Sociales según tipo de institución CRUCH vs No Tradicional (2016–2025)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+base_final_sociales %>%
+  filter(INSTRUMENTO == "REGULAR",
+         ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO") %>%
+  mutate(
+    TIPO_INSTITUCION = case_when(
+      INSTITUCION_PRINCIPAL %in% cruch    ~ "CRUCH",
+      INSTITUCION_PRINCIPAL %in% no_cruch ~ "No CRUCH",
+      TRUE                                ~ NA_character_
+    )
+  ) %>%
+  filter(!is.na(TIPO_INSTITUCION)) %>%
+  count(AGNO_FALLO, TIPO_INSTITUCION, name = "adjudicados") %>%
+  ggplot(aes(x = factor(AGNO_FALLO), y = adjudicados, fill = TIPO_INSTITUCION)) +
+  geom_col(position = position_dodge(width = 0.85), width = 0.75) +
+  geom_text(aes(label = adjudicados),
+            position = position_dodge(width = 0.85),
+            vjust = -0.4, size = 3, fontface = "bold") +
+  scale_fill_manual(values = c("CRUCH" = "#6e0c0c", "No CRUCH" = "#c77972")) +
+  labs(
+    x       = NULL,
+    y       = "N° adjudicaciones",
+    fill    = NULL,
+    caption = "Fuente: ANID 2016-2025, elaboración propia.\n*U. Alberto Hurtado, U. Diego Portales y U. de los Andes se clasifican como CRUCH para toda la serie, aunque ingresaron formalmente en 2018-2019.\n**Centros de investigación, fundaciones y museos excluidos del análisis."
+  ) +
+  tema_anid +
+  theme(
+    axis.text.x  = element_text(angle = 45, hjust = 1),
+    plot.caption = element_text(
+      hjust = 0, size = 8, color = "gray40",
+      face = "italic", margin = margin(t = 10)
+    )
+  )
+```
+
+La @fig-cruch-adjudicaciones-regular permite comparar el comportamiento agregado de las universidades pertenecientes al Consejo de Rectores (CRUCH) frente a las universidades privadas no tradicionales en la adjudicación de proyectos FONDECYT Regular en Ciencias Sociales durante el período 2016-2025. 
+El patrón más evidente es una brecha estructural más pronunciada que en Iniciación: las instituciones CRUCH concentran prácticamente la totalidad de las adjudicaciones cada año, pasando de 111 proyectos en 2016 a 147 en 2025 —un crecimiento del 32%, considerablemente menor al observado en el mismo grupo para Iniciación (160%). Las universidades no tradicionales, en cambio, parten desde una base muy baja (7 proyectos en 2016) y alcanzan apenas 35 adjudicaciones en 2025, manteniéndose en una escala marginal a lo largo de todo el período.
+
+A diferencia de Iniciación, donde se observaba un crecimiento sostenido de ambos grupos, en Regular la brecha relativa se mantiene prácticamente invariable durante toda la serie. En 2016 las CRUCH representaban aproximadamente el 94% del total de adjudicaciones, mientras que las no tradicionales el 6% restante. Hacia 2025, esta proporción es 81% para CRUCH y 19% para no tradicionales, un cierre leve pero insuficiente para hablar de un proceso de convergencia. La excepción notable es el bienio 2023-2025, donde las universidades no tradicionales experimentan un salto relativo significativo, pasando de 13-17 adjudicaciones promedio anuales entre 2016-2022 a 28-35 en los tres últimos años del período.
+
+Esta brecha más acentuada en Regular debe interpretarse a la luz de los mismos factores estructurales que diferencian a ambos tipos de instituciones —trayectoria investigativa consolidada, aportes basales del Estado, capital académico acumulado— pero con un agravante específico del instrumento. FONDECYT Regular exige que el investigador responsable cuente con una trayectoria robusta como Principal Investigator (PI), productividad científica acreditada y capacidad para liderar proyectos de mayor envergadura, requisitos que históricamente se concentran en académicos adscritos al sistema CRUCH. Mientras que Iniciación está pensado para investigadores emergentes —donde la brecha entre instituciones tiende a ser menor porque importa más el perfil individual del postulante—, Regular refuerza la ventaja acumulativa del sistema tradicional al privilegiar trayectorias consolidadas. Esto explica por qué la asimetría observada en este instrumento es más profunda que en Iniciación, y por qué los esfuerzos de las universidades no tradicionales por incrementar su participación encuentran un techo más rígido en el tramo senior del financiamiento concursable.
+
+```{r}
+#| label: fig-publica-adjudicaciones-regular
+#| echo: false
+#| fig-cap: "Adjudicaciones Fondecyt Regular en Ciencias Sociales según tipo de institución Pública vs Privada (2016–2025)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+base_final_sociales %>%
+  filter(INSTRUMENTO == "REGULAR",
+         ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO",
+         !is.na(INSTITUCION_PRINCIPAL),
+         (INSTITUCION_PRINCIPAL %in% cruch | INSTITUCION_PRINCIPAL %in% no_cruch)) %>%
+  mutate(
+    NATURALEZA = if_else(INSTITUCION_PRINCIPAL %in% publicas,
+                          "Pública", "Privada")
+  ) %>%
+  count(AGNO_FALLO, NATURALEZA, name = "adjudicados") %>%
+  ggplot(aes(x = factor(AGNO_FALLO), y = adjudicados, fill = NATURALEZA)) +
+  geom_col(position = position_dodge(width = 0.85), width = 0.75) +
+  geom_text(aes(label = adjudicados),
+            position = position_dodge(width = 0.85),
+            vjust = -0.4, size = 3, fontface = "bold") +
+  scale_fill_manual(values = c("Pública" = "#1a5276", "Privada" = "#c77972")) +
+  labs(
+    x       = NULL,
+    y       = "N° adjudicaciones",
+    fill    = NULL,
+    caption = "Fuente: ANID 2016-2025, elaboración propia.\n*Universidades públicas: 18 universidades estatales chilenas.\n**Centros de investigación, fundaciones y museos excluidos del análisis."
+  ) +
+  tema_anid +
+  theme(
+    axis.text.x  = element_text(angle = 45, hjust = 1),
+    plot.caption = element_text(
+      hjust = 0, size = 8, color = "gray40",
+      face = "italic", margin = margin(t = 10)
+    )
+  )
+```
+
+```{r}
+#| label: fig-institucion-regular-2
+#| echo: false
+#| fig-cap: "Evolución de adjudicaciones Fondecyt Regular del top 6 Instituciones Patroncinantes (2016–2025)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+top6 <- base_final_sociales %>%
+  filter(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO",
+         INSTRUMENTO == "REGULAR") %>%
+  count(INSTITUCION_PRINCIPAL, sort = TRUE) %>%
+  slice_max(n, n = 6) %>%
+  pull(INSTITUCION_PRINCIPAL)
+
+df_inst <- base_final_sociales %>%
+  filter(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO",
+         INSTITUCION_PRINCIPAL %in% top6,
+         INSTRUMENTO == "REGULAR") %>%
+  count(AGNO_FALLO, INSTITUCION_PRINCIPAL)
+
+colores_set2 <- c("#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3", "#a6d854", "#ffd92f")
+names(colores_set2) <- top6
+
+df_inst %>%
+  ggplot(aes(x = AGNO_FALLO, y = n, color = INSTITUCION_PRINCIPAL, group = INSTITUCION_PRINCIPAL)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2.5) +
+  scale_color_manual(values = colores_set2,
+                     labels = function(x) str_wrap(x, 25)) +
+  scale_x_continuous(breaks = unique(df_inst$AGNO_FALLO)) +
+  labs(
+    x       = NULL,
+    y       = "Adjudicaciones",
+    color   = NULL,
+    caption = "Fuente: ANID 2016-2025, elaboración propia"
+  ) +
+  tema_anid +
+  theme(
+    axis.text.x     = element_text(angle = 45, hjust = 1),
+    legend.text     = element_text(size = 7),
+    legend.position = "bottom",
+    plot.caption    = element_text(hjust = 0, size = 9, color = "gray40", face = "italic", margin = margin(t = 10))
+  ) +
+  guides(color = guide_legend(nrow = 3))
+```
+
+Al observar la serie de tiempo de la @fig-institucion-regular-2, la UC y la U. de Chile mantienen una disputa constante por el primer lugar, con ambas instituciones cerrando 2025 en niveles de adjudicación cercanos a sus picos históricos. En contraste, universidades como la Alberto Hurtado o la Austral muestran líneas de tiempo mucho más erráticas, con ciclos de éxito que no siempre logran proyectarse. Esta volatilidad en las instituciones de menor escala sugiere que la capacidad de retener y financiar proyectos Fondecyt Regular en Ciencias Sociales es un atributo que se consolida con mayor fuerza en las dos instituciones líderes del sistema.
+
+```{r}
+#| label: fig-adjudicaciones-institucion-genero-2
+#| fig-cap: "Tasa de adjudicación Fondecyt Regular por género en las 6 instituciones con más adjudicaciones en Ciencias Sociales (2016–2025)"
+#| fig-cap-location: top
+#| echo: false
+#| fig-width: 10
+#| fig-height: 6
+
+top6_inst <- base_final_sociales %>%
+  filter(
+    INSTRUMENTO == "REGULAR",
+    ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO",
+    SEXO != "SIN INFORMACION"
+  ) %>%
+  group_by(INSTITUCION_PRINCIPAL) %>%
+  summarise(total = n(), .groups = "drop") %>%
+  slice_max(total, n = 6) %>%
+  pull(INSTITUCION_PRINCIPAL)
+
+base_final_sociales %>%
+  filter(
+    INSTRUMENTO == "REGULAR",
+    ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO",
+    SEXO != "SIN INFORMACION",
+    INSTITUCION_PRINCIPAL %in% top6
+  ) %>%
+  group_by(AGNO_FALLO, INSTITUCION_PRINCIPAL, SEXO) %>%
+  summarise(total = n(), .groups = "drop") %>%
+  ggplot(aes(x = factor(AGNO_FALLO), y = total, fill = SEXO)) +
+  geom_col(position = "dodge") +
+  facet_wrap(~ INSTITUCION_PRINCIPAL, ncol = 2,
+             labeller = labeller(INSTITUCION_PRINCIPAL = label_wrap_gen(25))) +
+  scale_fill_manual(
+    values = c("MUJER" = "#c77972", "HOMBRE" = "#44708b"),
+    labels = c("MUJER" = "MUJER", "HOMBRE" = "HOMBRE")
+  ) +
+  labs(
+    x       = NULL,
+    y       = "N° adjudicaciones",
+    fill    = NULL,
+    caption = "Fuente: ANID 2016-2025, elaboración propia"
+  ) +
+  tema_anid +
+  theme(
+    axis.text.x  = element_text(angle = 45, hjust = 1, size = 7),
+    strip.text   = element_text(size = 9, face = "bold"),
+    plot.caption = element_text(
+      hjust  = 0,
+      size   = 9,
+      color  = "gray40",
+      face   = "italic",
+      margin = margin(t = 10)
+    )
+  )
+```
+
+La @fig-adjudicaciones-institucion-genero-2 muestra que, aunque la Pontificia Universidad Católica de Chile y la Universidad de Chile lideran en adjudicaciones tanto para hombres como para mujeres, la proporción de adjudicaciones femeninas es consistentemente más baja en ambas instituciones. En la UC, las mujeres representan entre el 20% y el 30% de las adjudicaciones anuales, mientras que en la U. de Chile esta proporción oscila entre el 25% y el 35%. En contraste, universidades como la Alberto Hurtado muestran una mayor paridad de género, con mujeres representando cerca del 40% de las adjudicaciones en algunos años. Esta disparidad sugiere que, incluso dentro de las instituciones líderes, persisten brechas de género significativas en el acceso a proyectos Fondecyt Regular en Ciencias Sociales.
+
+### Diferencias por macrozona
+
+```{r}
+#| label: fig-region-regular-1
+#| echo: false
+#| fig-cap: "Tasa de adjudicación Fondecyt Regular en Ciencias Sociales por macrozona (2016–2025)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+
+macrozona_regiones <- tibble(
+  MACROZONA_MINCIENCIA = c(
+    "NORTE", "NORTE", "NORTE",          # 3
+    "CENTRO", "CENTRO", "CENTRO",        # 3
+    "RM",                                # 1
+    "CENTRO SUR", "CENTRO SUR",          # 2
+    "SUR", "SUR", "SUR",                 # 3
+    "AUSTRAL", "AUSTRAL", "AUSTRAL", "AUSTRAL"  # 4
+  ),
+  codigo_region = c(
+    "15", "01", "02",          # Arica, Tarapacá, Antofagasta
+    "03", "04", "05",          # Atacama, Coquimbo, Valparaíso
+    "13",                      # RM
+    "06", "07",                # O'Higgins, Maule
+    "16", "08", "09",          # Ñuble, Biobío, Araucanía
+    "14", "10", "11", "12"     # Los Ríos, Los Lagos, Aysén, Magallanes
+  )
+)
+
+# Datos base con ambas métricas
+datos_mapa <- base_final_sociales %>%
+  filter(INSTRUMENTO == "REGULAR",
+         MACROZONA_MINCIENCIA != "SIN INFORMACION") %>%
+  group_by(MACROZONA_MINCIENCIA) %>%
+  summarise(
+    total      = n(),
+    adjudicado = sum(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO"),
+    tasa       = adjudicado / total * 100,
+    .groups = "drop"
+  ) %>%
+  mutate(pct_adj = adjudicado / sum(adjudicado) * 100) %>%
+  left_join(macrozona_regiones, by = "MACROZONA_MINCIENCIA")
+
+# Geometría base
+geo_base <- chilemapas::mapa_comunas %>%
+  group_by(codigo_region) %>%
+  summarise(geometry = st_union(geometry), .groups = "drop") %>%
+  st_as_sf() %>%
+  left_join(datos_mapa, by = "codigo_region")
+
+tema_leyenda <- theme(
+  legend.position  = "right",
+  legend.direction = "vertical",
+  legend.key.height = unit(2, "cm"),
+  legend.key.width  = unit(0.4, "cm"),
+  legend.text       = element_text(size = 9),
+  legend.title      = element_text(size = 10, face = "bold")
+)
+
+mapa1 <- ggplot(geo_base) +
+  geom_sf(aes(fill = total), color = "white", linewidth = 0.3) +
+  scale_fill_gradient(low = "#f0a3a3", high = "#5e0e0e", na.value = "gray90") +
+  labs(title = "Postulaciones", fill = "N") +
+  tema_anid + tema_leyenda +
+  theme(axis.text = element_blank(), axis.ticks = element_blank(), panel.grid = element_blank())
+
+mapa2 <- ggplot(geo_base) +
+  geom_sf(aes(fill = tasa), color = "white", linewidth = 0.3) +
+  scale_fill_gradient(
+    low = "#f0a3a3", high = "#5e0e0e", na.value = "gray90",
+    labels = scales::percent_format(scale = 1)
+  ) +
+  labs(title = "Tasa de adjudicación", fill = "%") +
+  tema_anid + tema_leyenda +
+  theme(axis.text = element_blank(), axis.ticks = element_blank(), panel.grid = element_blank())
+
+# Combinar
+mapa1 + mapa2 +
+  plot_annotation(
+    tag_levels = NULL,
+    caption    = "Fuente: ANID 2016-2025, elaboración propia.\nNota: casos sin información de macrozona excluidos.",
+    theme      = theme(
+      plot.caption = element_text(hjust = 0, size = 12, color = "gray40", face = "italic")
+    )
+  )
+```
+
+Por su parte, el mapa de la @fig-region-regular-1 muestra la Región Metropolitana concentra la inmensa mayoría de las postulaciones, dejando al resto del país en una posición marginal en términos de volumen. No obstante, al mirar la tasa de adjudicación, el panorama cambia: zonas del extremo norte y sur logran niveles de eficiencia superiores al 34%, superando a la RM en efectividad relativa. Esto indica que, si bien hay menos investigadores en regiones, los proyectos presentados desde la periferia son altamente competitivos y logran tasas de éxito que desafían la centralización del sistema de financiamiento.
+
+```{r}
+#| label: fig-region-regular-2
+#| echo: false
+#| fig-cap: "Evolución temporal de adjudicaciones Fondecyt Regular en Ciencias Sociales por macrozona (2016–2025)"
+#| fig-cap-location: top
+#| fig-width: 10
+#| fig-height: 6
+
+df_macro <- base_final_sociales %>%
+  filter(ESTADO_RESOLUCION_CONCURSO == "ADJUDICADO",
+         MACROZONA_MINCIENCIA != "SIN INFORMACION",
+         INSTRUMENTO == "REGULAR") %>%
+  count(AGNO_FALLO, MACROZONA_MINCIENCIA)
+
+macrozonas <- unique(df_macro$MACROZONA_MINCIENCIA)
+colores_set2 <- c("#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3",
+                  "#a6d854", "#ffd92f", "#e5c494", "#b3b3b3")[seq_along(macrozonas)]
+names(colores_set2) <- macrozonas
+
+df_macro %>%
+  ggplot(aes(x = AGNO_FALLO, y = n, color = MACROZONA_MINCIENCIA, group = MACROZONA_MINCIENCIA)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2.5) +
+  scale_color_manual(values = colores_set2) +
+  scale_x_continuous(breaks = unique(df_macro$AGNO_FALLO)) +
+  labs(
+    x       = NULL,
+    y       = "Adjudicaciones",
+    color   = NULL,
+    caption = "Fuente: ANID 2016-2025, elaboración propia"
+  ) +
+  tema_anid +
+  theme(
+    axis.text.x     = element_text(angle = 45, hjust = 1),
+    legend.position = "bottom",
+    plot.caption    = element_text(hjust = 0, size = 9, color = "gray40", face = "italic", margin = margin(t = 10))
+  )
+```
+
+Finalmente, la evolución por macrozonas de la @fig-region-regular-2 reafirma que el crecimiento de las Ciencias Sociales continua siendo un fenómeno predominantemente metropolitano. Mientras la RM muestra una tendencia ascendente que rompe la barrera de las 100 adjudicaciones en 2025, las macrozonas Centro, Sur y Norte se mantienen en un rango estancado de entre 10 y 25 proyectos anuales. La brecha entre Santiago y el resto de las regiones no se ha reducido en la última década; por el contrario, la capital ha capturado la mayor parte del incremento en el presupuesto de adjudicación del área.
+

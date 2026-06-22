@@ -1,0 +1,574 @@
+---
+title: "Análisis robustez"
+---
+
+
+
+En esta sección aplicaremos distintos análisis para las bases de estudiantes con el objetivo de despejar las dudas respecto a las diferencias de notas entre cohortes.
+
+# Comparación de notas entre cohortes
+
+```{r}
+#| echo: false
+
+pacman::p_load(knitr, digest, stargazer, sjPlot, codebook, summarytools, dplyr, tidyr,
+ tidyLPA, lme4, ggplot2, ggeffects, skimr, table1, patchwork, here, kableExtra, ggthemes, tidyverse,
+ ggbreak, texreg, coefplot, plotly)
+
+options(scipen = 999)
+```
+
+```{r}
+#| echo: false
+
+base_madre <- readRDS("../../../../input/data/proc_data/base_madre.rds")
+socio_e <- readRDS("../../../../input/data/proc_data/df_socio.rds")
+psico_e <- readRDS("../../../../input/data/proc_data/df_psico.rds")
+trabajo_e <- readRDS("../../../../input/data/proc_data/df_trabajo.rds")
+educa_e <- readRDS("../../../../input/data/proc_data/df_parvularia.rds")
+antropo_e <- readRDS("../../../../input/data/proc_data/df_antropo.rds")
+```
+
+```{r}
+#| echo: false
+
+base_madre <- base_madre %>%
+  filter(cohorte %in% c(2021, 2022, 2023, 2024))
+```
+
+## Comparación del top 40
+
+```{r}
+#| echo: false
+
+top40_socio <- socio_e %>%
+  group_by(cohorte) %>%                # Agrupar por cohorte
+  arrange(desc(promedio_calculado)) %>% # Ordenar de mayor a menor nota
+  slice_head(n = 40) %>%               # Tomar las 80 mejores por grupo
+  ungroup()
+
+top40_psico <- psico_e %>%
+  group_by(cohorte) %>%                # Agrupar por cohorte
+  arrange(desc(promedio_calculado)) %>% # Ordenar de mayor a menor nota
+  slice_head(n = 40) %>%               # Tomar las 80 mejores por grupo
+  ungroup()
+
+top40_trabajo <- trabajo_e %>%
+  group_by(cohorte) %>%                # Agrupar por cohorte
+  arrange(desc(promedio_calculado)) %>% # Ordenar de mayor a menor nota
+  slice_head(n = 40) %>%               # Tomar las 80 mejores por grupo
+  ungroup()
+
+top40_antropo <- antropo_e %>%
+  group_by(cohorte) %>%                # Agrupar por cohorte
+  arrange(desc(promedio_calculado)) %>% # Ordenar de mayor a menor nota
+  slice_head(n = 40) %>%               # Tomar las 80 mejores por grupo
+  ungroup()
+
+top40_educa <- educa_e %>%
+  group_by(cohorte) %>%                # Agrupar por cohorte
+  arrange(desc(promedio_calculado)) %>% # Ordenar de mayor a menor nota
+  slice_head(n = 40) %>%               # Tomar las 80 mejores por grupo
+  ungroup()
+```
+
+
+```{r}
+#| echo: false
+
+bottom40_socio <- socio_e %>%
+  group_by(cohorte) %>%                
+  arrange(promedio_calculado) %>% 
+  slice_head(n = 40) %>%               
+  ungroup()
+
+bottom40_psico <- psico_e %>%
+  group_by(cohorte) %>%                
+  arrange(promedio_calculado) %>% 
+  slice_head(n = 40) %>%               
+  ungroup()
+
+bottom40_trabajo <- trabajo_e %>%
+  group_by(cohorte) %>%                
+  arrange(promedio_calculado) %>% 
+  slice_head(n = 40) %>%               
+  ungroup()
+
+bottom40_antropo <- antropo_e %>%
+  group_by(cohorte) %>%                
+  arrange(promedio_calculado) %>% 
+  slice_head(n = 40) %>%               
+  ungroup()
+
+bottom40_educa <- educa_e %>%
+  group_by(cohorte) %>%                
+  arrange(promedio_calculado) %>% 
+  slice_head(n = 40) %>%               
+  ungroup()
+```
+
+```{r}
+#| echo: false
+#| label: fig-socio-top
+#| fig-cap: Comparación de las mejores 40 notas de Sociología por cohorte
+#| fig-cap-location: top
+
+ggplot(top40_socio, aes(x = factor(cohorte), y = promedio_calculado)) +
+  geom_boxplot(fill = "#970000ff", width = 0.7) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Cohorte",
+    y = "Promedio de notas"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| echo: false
+#| label: fig-psi-top
+#| fig-cap: Comparación de las mejores 40 notas de Psicología por cohorte
+#| fig-cap-location: top
+
+ggplot(top40_psico, aes(x = factor(cohorte), y = promedio_calculado)) +
+  geom_boxplot(fill = "#970000ff", width = 0.7) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Cohorte",
+    y = "Promedio de notas"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| echo: false
+#| label: fig-trabajo-top
+#| fig-cap: Comparación de las mejores 40 notas de Trabajo Social por cohorte
+#| fig-cap-location: top
+
+ggplot(top40_trabajo, aes(x = factor(cohorte), y = promedio_calculado)) +
+  geom_boxplot(fill = "#970000ff", width = 0.7) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Cohorte",
+    y = "Promedio de notas"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| echo: false
+#| label: fig-antropo-top
+#| fig-cap: Comparación de las mejores 40 notas de Antropología por cohorte
+#| fig-cap-location: top
+
+ggplot(top40_antropo, aes(x = factor(cohorte), y = promedio_calculado)) +
+  geom_boxplot(fill = "#970000ff", width = 0.7) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Cohorte",
+    y = "Promedio de notas"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| echo: false
+#| label: fig-educa-top
+#| fig-cap: Comparación de las mejores 40 notas de Educación Parvularia por cohorte
+#| fig-cap-location: top
+
+ggplot(top40_educa, aes(x = factor(cohorte), y = promedio_calculado)) +
+  geom_boxplot(fill = "#970000ff", width = 0.7) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Cohorte",
+    y = "Promedio de notas"
+  ) +
+  theme_minimal()
+```
+
+## Comparación del bottom 40
+
+```{r}
+#| echo: false
+#| label: fig-socio-bottom
+#| fig-cap: Comparación de las 40 notas más bajas de Sociología por cohorte
+#| fig-cap-location: top
+
+ggplot(bottom40_socio, aes(x = factor(cohorte), y = promedio_calculado)) +
+  geom_boxplot(fill = "#970000ff", width = 0.7) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Cohorte",
+    y = "Promedio de notas"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| echo: false
+#| label: fig-psi-bottom
+#| fig-cap: Comparación de las 40 notas más bajas de Psicología por cohorte
+#| fig-cap-location: top
+
+ggplot(bottom40_psico, aes(x = factor(cohorte), y = promedio_calculado)) +
+  geom_boxplot(fill = "#970000ff", width = 0.7) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Cohorte",
+    y = "Promedio de notas"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| echo: false
+#| label: fig-trabajo-bottom
+#| fig-cap: Comparación de las 40 notas más bajas de Trabajo Social por cohorte
+#| fig-cap-location: top
+
+ggplot(bottom40_trabajo, aes(x = factor(cohorte), y = promedio_calculado)) +
+  geom_boxplot(fill = "#970000ff", width = 0.7) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Cohorte",
+    y = "Promedio de notas"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| echo: false
+#| label: fig-antropo-bottom
+#| fig-cap: Comparación de las 40 notas más bajas de Antropología por cohorte
+#| fig-cap-location: top
+
+ggplot(bottom40_antropo, aes(x = factor(cohorte), y = promedio_calculado)) +
+  geom_boxplot(fill = "#970000ff", width = 0.7) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Cohorte",
+    y = "Promedio de notas"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| echo: false
+#| label: fig-educa-bottom
+#| fig-cap: Comparación de las 40 notas más bajas de Educación Parvularia por cohorte
+#| fig-cap-location: top
+
+ggplot(bottom40_educa, aes(x = factor(cohorte), y = promedio_calculado)) +
+  geom_boxplot(fill = "#970000ff", width = 0.7) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Cohorte",
+    y = "Promedio de notas"
+  ) +
+  theme_minimal()
+```
+
+
+
+# Análisis de notas a través del tiempo
+
+Se adjunta el código con el cual se construyeron las bases de los cursos de primer año. Este código fue ejecutado en `proc-bbdd.qmd`, el cual se encuentra en la carpeta `proc`.
+
+```{r}
+#| eval: false
+
+# socio_primero <- c("Filosofía Social", "Historia de la Sociedad Moderna", "Introducción a la Sociología", "Antropología", "Psicología Social", "Teoría Sociológica Clásica", "Historia Social de América Latina", "Epistemología", "Diseños de Investigación", "Población y Sociedad")
+# 
+# psico_primero <- c("Filosofía", "Psicología", "Métodos de la Investigación Social", "Historia Social de Chile", "Psicobiología", "Epistemología de las Ciencias Sociales", "Psicología de la Personalidad", "Procesos Psicológicos Básicos", "Estadística 1", "Procesos Básicos de Aprendizaje")
+# 
+# antropo_primero <- c("Evolución Humana", "Formación de la Sociedad Moderna", "Problemas Fundamentales de la Antropología I", "Filosofía de las Ciencias Sociales", "Cazadores Recolectores", "Formación de la Sociedad Chilena", "Problemas Fundamentales de la Antropología II", "Teoría Social", "Taller I: El Quehacer del Antropólogo", "Taller II: Materialidad y Bioantropología")
+# 
+# trabajo_primero <- c("Fundamentos Históricos y Políticos del Trabajo Social", "Filosofía", "Historia Social Contemporánea", "Teoría Sociológica I", "Metodología de la Investigación Social I", "Enfoques Críticos en Trabajo Social", "Estado y Sociedad Contemporánea", "Historia Social de Chile", "Teoría Sociológica II", "Estadística I")
+# 
+# educa_primero <- c("Bases del Desarrollo y Aprendizaje", "Construcciones Sociales sobre la Infancia", "Historia y Fundamentos de la Educación", "Salud y Cuidado del Niño", "Filosofía y Epistemología de las Ciencias Sociales", "Práctica 1: Aproximaciones al Campo Profesional", "Teorías desarrollo y aprendizaje", "Metodología de la investigación", "Pedagogía de la Diversidad e Inclusión Social", "Currículo y Didáctica en la Educación Parvularia", "Familia, Comunidad y Territorio", "Práctica 2: Aproximaciones al Escenario Pedagógico")
+# 
+# notas_cursos_ct <- notas_cursos %>%
+#   rename(cursos = CARRERA) %>%
+#   arrange(cursos) %>%
+#   arrange(ANO)
+# 
+# notas_cursos_socio <- notas_cursos_ct %>%
+#   filter(NOMBRE2 == "Licenciatura en Sociología") %>%
+#   mutate(NOTA.FINAL.CURSO = as.numeric(NOTA.FINAL.CURSO))
+# 
+# notas_cursos_socio <- notas_cursos_socio %>%
+#   filter(cursos %in% socio_primero) %>%
+#   group_by(cursos, ANO) %>%
+#   summarise(
+#     nota_promedio = mean(NOTA.FINAL.CURSO, na.rm = TRUE),
+#     n_estudiantes = n(),
+#     n_aprobados = sum(NOTA.FINAL.CURSO >= 4, na.rm = TRUE),
+#     n_reprobados = sum(NOTA.FINAL.CURSO < 4, na.rm = TRUE),
+#     porcentaje_aprobacion = (sum(NOTA.FINAL.CURSO >= 4, na.rm = TRUE) / n()) * 100,
+#     carrera = "Sociología",
+#     .groups = "drop"
+#   )
+# 
+# notas_cursos_psico <- notas_cursos_ct %>%
+#   filter(NOMBRE2 == "Licenciatura en Psicología") %>%
+#   mutate(NOTA.FINAL.CURSO = as.numeric(NOTA.FINAL.CURSO))
+# 
+# notas_cursos_psico <- notas_cursos_psico %>%
+#   filter(cursos %in% psico_primero) %>%
+#   group_by(cursos, ANO) %>%
+#   summarise(
+#     nota_promedio = mean(NOTA.FINAL.CURSO, na.rm = TRUE),
+#     n_estudiantes = n(),
+#     n_aprobados = sum(NOTA.FINAL.CURSO >= 4, na.rm = TRUE),
+#     n_reprobados = sum(NOTA.FINAL.CURSO < 4, na.rm = TRUE),
+#     porcentaje_aprobacion = (sum(NOTA.FINAL.CURSO >= 4, na.rm = TRUE) / n()) * 100,
+#     carrera = "Psicología",
+#     .groups = "drop"
+#   )
+# 
+# notas_cursos_trabajo <- notas_cursos_ct %>%
+#   filter(NOMBRE2 == "Licenciatura en Trabajo Social") %>%
+#   mutate(NOTA.FINAL.CURSO = as.numeric(NOTA.FINAL.CURSO))
+# 
+# notas_cursos_trabajo <- notas_cursos_trabajo %>%
+#   filter(cursos %in% trabajo_primero) %>%
+#   group_by(cursos, ANO) %>%
+#   summarise(
+#     nota_promedio = mean(NOTA.FINAL.CURSO, na.rm = TRUE),
+#     n_estudiantes = n(),
+#     n_aprobados = sum(NOTA.FINAL.CURSO >= 4, na.rm = TRUE),
+#     n_reprobados = sum(NOTA.FINAL.CURSO < 4, na.rm = TRUE),
+#     porcentaje_aprobacion = (sum(NOTA.FINAL.CURSO >= 4, na.rm = TRUE) / n()) * 100,
+#     carrera = "Trabajo Social",
+#     .groups = "drop"
+#   )
+# 
+# notas_cursos_educa <- notas_cursos_ct %>%
+#   filter(NOMBRE2 == "Licenciatura en Educación [Pedagogía en Educación Parvularia]") %>%
+#   mutate(NOTA.FINAL.CURSO = as.numeric(NOTA.FINAL.CURSO))
+# 
+# notas_cursos_educa <- notas_cursos_educa %>%
+#   filter(cursos %in% educa_primero) %>%
+#   group_by(cursos, ANO) %>%
+#   summarise(
+#     nota_promedio = mean(NOTA.FINAL.CURSO, na.rm = TRUE),
+#     n_estudiantes = n(),
+#     n_aprobados = sum(NOTA.FINAL.CURSO >= 4, na.rm = TRUE),
+#     n_reprobados = sum(NOTA.FINAL.CURSO < 4, na.rm = TRUE),
+#     porcentaje_aprobacion = (sum(NOTA.FINAL.CURSO >= 4, na.rm = TRUE) / n()) * 100,
+#     carrera = "Educación Parvularia",
+#     .groups = "drop"
+#   )
+# 
+# notas_cursos_antropo <- notas_cursos_ct %>%
+#   filter(NOMBRE2 == "Ciclo Básico de Antropología") %>%
+#   mutate(NOTA.FINAL.CURSO = as.numeric(NOTA.FINAL.CURSO)) %>%
+#   filter(ANO != 2025)
+# 
+# notas_cursos_antropo <- notas_cursos_antropo %>%
+#   filter(cursos %in% antropo_primero) %>%
+#   group_by(cursos, ANO) %>%
+#   summarise(
+#     nota_promedio = mean(NOTA.FINAL.CURSO, na.rm = TRUE),
+#     n_estudiantes = n(),
+#     n_aprobados = sum(NOTA.FINAL.CURSO >= 4, na.rm = TRUE),
+#     n_reprobados = sum(NOTA.FINAL.CURSO < 4, na.rm = TRUE),
+#     porcentaje_aprobacion = (sum(NOTA.FINAL.CURSO >= 4, na.rm = TRUE) / n()) * 100,
+#     carrera = "Antropología",
+#     .groups = "drop"
+#   )
+```
+
+```{r}
+#| echo: false
+
+
+socio <- readRDS("../../../../input/data/proc_data/primeros_socio.rds")
+psico <- readRDS("../../../../input/data/proc_data/primeros_psico.rds")
+antropo <- readRDS("../../../../input/data/proc_data/primeros_antropo.rds")
+educa <- readRDS("../../../../input/data/proc_data/primeros_educa.rds")
+trabajo <- readRDS("../../../../input/data/proc_data/primeros_trabajo.rds")
+```
+
+## Promedio de la Facultad a través del tiempo
+
+```{r}
+facso <- bind_rows(
+  socio,
+  psico,
+  antropo,
+  educa,
+  trabajo
+)
+```
+
+```{r}
+promedio_facso <- facso %>%
+  group_by(ANO) %>%
+  summarise(
+    promedio_general = mean(nota_promedio, na.rm = TRUE),
+    n_cursos = n(),
+    .groups = "drop"
+  )
+
+promedio_socio <- socio %>%
+  group_by(ANO) %>%
+  summarise(
+    promedio_general = mean(nota_promedio, na.rm = TRUE),
+    n_cursos = n(),
+    .groups = "drop"
+  )
+
+promedio_psico <- psico %>%
+  group_by(ANO) %>%
+  summarise(
+    promedio_general = mean(nota_promedio, na.rm = TRUE),
+    n_cursos = n(),
+    .groups = "drop"
+  )
+
+promedio_antropo <- antropo %>%
+  group_by(ANO) %>%
+  summarise(
+    promedio_general = mean(nota_promedio, na.rm = TRUE),
+    n_cursos = n(),
+    .groups = "drop"
+  )
+
+promedio_educa <- educa %>%
+  group_by(ANO) %>%
+  summarise(
+    promedio_general = mean(nota_promedio, na.rm = TRUE),
+    n_cursos = n(),
+    .groups = "drop"
+  )
+
+promedio_trabajo <- trabajo %>%
+  group_by(ANO) %>%
+  summarise(
+    promedio_general = mean(nota_promedio, na.rm = TRUE),
+    n_cursos = n(),
+    .groups = "drop"
+  )
+```
+
+```{r}
+#| echo: false
+#| label: fig-año-facso
+#| fig-cap: Promedio de notas por año 2021 - 2024 FACSO
+#| fig-cap-location: top
+
+ggplot(promedio_facso, aes(x = factor(ANO), y = promedio_general)) +
+  geom_col(fill = "#970000ff", width = 0.7) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Año",
+    y = "Promedio de notas",
+  ) +
+  theme_minimal()
+```
+
+
+## Promedios de carrera a través del tiempo
+```{r}
+#| echo: false
+#| label: fig-año-socio
+#| fig-cap: Promedio de notas por año 2021 - 2024 Sociología
+#| fig-cap-location: top
+
+ggplot(promedio_socio, aes(x = factor(ANO), y = promedio_general)) +
+  geom_col(fill = "#970000ff", width = 0.7) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Año",
+    y = "Promedio de notas",
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| echo: false
+#| label: fig-año-psico
+#| fig-cap: Promedio de notas por año 2021 - 2024 Psicología
+#| fig-cap-location: top
+
+ggplot(promedio_psico, aes(x = factor(ANO), y = promedio_general)) +
+  geom_col(fill = "#970000ff", width = 0.7) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Año",
+    y = "Promedio de notas",
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| echo: false
+#| label: fig-año-antropo
+#| fig-cap: Promedio de notas por año 2021 - 2024 Antropología
+#| fig-cap-location: top
+
+ggplot(promedio_antropo, aes(x = factor(ANO), y = promedio_general)) +
+  geom_col(fill = "#970000ff", width = 0.7) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Año",
+    y = "Promedio de notas",
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| echo: false
+#| label: fig-año-educa
+#| fig-cap: Promedio de notas por año 2021 - 2024 Educación Parvularia
+#| fig-cap-location: top
+
+ggplot(promedio_educa, aes(x = factor(ANO), y = promedio_general)) +
+  geom_col(fill = "#970000ff", width = 0.7) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Año",
+    y = "Promedio de notas",
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| echo: false
+#| label: fig-año-trabajo
+#| fig-cap: Promedio de notas por año 2021 - 2024 Trabajo Social
+#| fig-cap-location: top
+
+ggplot(promedio_trabajo, aes(x = factor(ANO), y = promedio_general)) +
+  geom_col(fill = "#970000ff", width = 0.7) +
+  coord_cartesian(ylim = c(1, 7)) +
+  labs(
+    x = "Año",
+    y = "Promedio de notas",
+  ) +
+  theme_minimal()
+```
+
+```{r}
+plot_ly(
+  data = promedio_facso,
+  x = ~factor(ANO),
+  y = ~promedio_general,
+  type = "scatter",
+  mode = "lines+markers",
+  line = list(color = "#272727", width = 1),
+  marker = list(color = "#272727", size = 6)
+) %>%
+  plotly::layout(
+    title = "Evolución del promedio de notas por año",
+    xaxis = list(title = "Año", type = "category"),
+    yaxis = list(
+      title = "Promedio de notas",
+      range = c(1, 7)
+    )
+  )
+```
+
+
