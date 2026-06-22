@@ -19,6 +19,8 @@ pacman::p_load(tidyverse,
 
 rm(list = ls())
 
+knitr::opts_chunk$set(screenshot.opts = list(delay = 3))
+
 here::i_am("reports/book-fondos-css/03-resultados-fondecyt.qmd")
 ```
 
@@ -146,6 +148,7 @@ plot_ly() %>%
       ticksuffix = "%"
     ),
     legend = list(title = list(text = "Disciplina OCDE")),
+    margin = list(b = 100, t = 50, l = 60, r = 60),
     annotations = list(
       list(
         text      = "Fuente: ANID 2016-2025, elaboración propia.\n*2021 sin concurso.",
@@ -326,6 +329,7 @@ p %>%
     xaxis   = list(title = ""),
     yaxis   = list(title = "N° adjudicaciones"),
     legend  = list(title = list(text = "")),
+    margin  = list(b = 100, t = 50, l = 60, r = 60),
     annotations = list(
       list(
         text      = "Fuente: ANID 2016-2025, elaboración propia",
@@ -461,7 +465,8 @@ fig <- fig |>
     ),
     legend = list(
       title = list(text = "Grupo de estudio")
-    )
+    ),
+    margin = list(b = 80, t = 50, l = 60, r = 60)
   )
 
 fig
@@ -521,7 +526,8 @@ fig <- fig |>
     ),
     legend = list(
       title = list(text = "Grupo de estudio")
-    )
+    ),
+    margin = list(b = 80, t = 50, l = 60, r = 60)
   )
 
 fig
@@ -1017,7 +1023,8 @@ fig %>%
       title       = list(text = ""),
       orientation = "h",
       y           = -0.2
-    )
+    ),
+    margin = list(b = 150, t = 50, l = 60, r = 60)
   )
 ```
 
@@ -1229,7 +1236,8 @@ fig %>%
   layout(
     xaxis  = list(title = "", tickmode = "linear", dtick = 1),
     yaxis  = list(title = "Adjudicaciones"),
-    legend = list(title = list(text = ""), orientation = "h", y = -0.2)
+    legend = list(title = list(text = ""), orientation = "h", y = -0.2),
+    margin = list(b = 150, t = 50, l = 60, r = 60)
   )
 ```
 
@@ -1333,6 +1341,7 @@ plot_ly() %>%
       ticksuffix = "%"
     ),
     legend = list(title = list(text = "Disciplina OCDE")),
+    margin = list(b = 100, t = 50, l = 60, r = 60),
     annotations = list(
       list(
         text      = "Fuente: ANID 2016-2025, elaboración propia",
@@ -1533,6 +1542,7 @@ p %>%
     xaxis   = list(title = ""),
     yaxis   = list(title = "N° adjudicaciones"),
     legend  = list(title = list(text = "")),
+    margin  = list(b = 100, t = 50, l = 60, r = 60),
     annotations = list(
       list(
         text      = "Fuente: ANID 2016-2025, elaboración propia",
@@ -1675,7 +1685,8 @@ fig |>
     ),
     legend = list(
       title = list(text = "Grupo de estudio")
-    )
+    ),
+    margin = list(b = 80, t = 50, l = 60, r = 60)
   )
 ```
 
@@ -1732,8 +1743,9 @@ fig_2 <- fig |>
     ),
     legend = list(
       title = list(text = "Grupo de estudio")
-    )  
-)
+    ),
+    margin = list(b = 80, t = 50, l = 60, r = 60)
+  )
 
 fig_2
 ```
@@ -1932,7 +1944,8 @@ fig %>%
   layout(
     xaxis  = list(title = "", tickmode = "linear", dtick = 1),
     yaxis  = list(title = "Adjudicaciones"),
-    legend = list(title = list(text = ""), orientation = "h", y = -0.2)
+    legend = list(title = list(text = ""), orientation = "h", y = -0.2),
+    margin = list(b = 150, t = 50, l = 60, r = 60)
   )
 ```
 
@@ -2134,7 +2147,8 @@ fig %>%
   layout(
     xaxis  = list(title = "", tickmode = "linear", dtick = 1),
     yaxis  = list(title = "Adjudicaciones"),
-    legend = list(title = list(text = ""), orientation = "h", y = -0.2)
+    legend = list(title = list(text = ""), orientation = "h", y = -0.2),
+    margin = list(b = 150, t = 50, l = 60, r = 60)
   )
 ```
 
