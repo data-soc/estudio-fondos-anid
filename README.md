@@ -48,6 +48,4 @@ In the web page it is possible to see/download the paper in html and pdf formats
 
 ## Files
 
-- [Informe final: Book](https://renejcanales.github.io/fondos-css/docs/index.html)
-
-- [Informe final: PDF](https://renejcanales.github.io/fondos-css/reports/pdf-version/paper.pdf)
+- [Informe final](https://data-soc.github.io/fondos-css/docs/index.html)
