@@ -48,4 +48,4 @@ In the web page it is possible to see/download the paper in html and pdf formats
 
 ## Files
 
-- [Informe final](https://data-soc.github.io/fondos-css/docs/index.html)
+- [Informe final](https://data-soc.github.io/estudio-fondos-anid/docs/index.html)
