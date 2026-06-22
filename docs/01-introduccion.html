@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.33">
+<meta name="generator" content="quarto-1.8.23">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -89,14 +89,15 @@ div.csl-indent {
 <link href="./assets/favicon-2025-20251031.svg" rel="icon" type="image/svg+xml">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-1fe81d0376b2c50856e68e651e390326.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-1b3e849c328d1c20ca73d0173a910f06.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-a6a7c621afd7e1954e2c0d2f2e37e052.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -111,7 +112,7 @@ div.csl-indent {
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "Sin resultados",
+    "search-no-results-text": "No se han encontrado resultados",
     "search-matching-documents-text": "documentos encontrados",
     "search-copy-link-title": "Copiar el enlace en la búsqueda",
     "search-hide-matches-text": "Ocultar resultados adicionales",
@@ -165,12 +166,13 @@ p {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
       <a href="./index.html" class="sidebar-logo-link">
-      <img src="./assets/cover.jpg" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      <img src="./assets/cover.jpg" alt="" class="sidebar-logo light-content py-0 d-lg-inline d-none">
+      <img src="./assets/cover.jpg" alt="" class="sidebar-logo dark-content py-0 d-lg-inline d-none">
       </a>
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Estudio sobre fuentes de financiamiento para la investigación en Ciencias Sociales en Chile</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/renejcanales/fondos-css" title="Ejecutar el código" class="quarto-navigation-tool px-1" aria-label="Ejecutar el código"><i class="bi bi-github"></i></a>
+    <a href="https://github.com/data-soc/estudio-fondos-anid" title="Ejecutar el código" class="quarto-navigation-tool px-1" aria-label="Ejecutar el código"><i class="bi bi-github"></i></a>
     <a href="./reporte-fondos.pdf" title="Descargar PDF" class="quarto-navigation-tool px-1" aria-label="Descargar PDF"><i class="bi bi-file-pdf"></i></a>
 </div>
     </div>
@@ -340,7 +342,7 @@ window.addEventListener('load', function () {
     return textarea.value.trim();
   };
 
-  const metaRepoUrl = decodeMeta('https://github.com/renejcanales/fondos-css');
+  const metaRepoUrl = decodeMeta('https://github.com/data-soc/estudio-fondos-anid');
   const metaRepoUrlNormalized = metaRepoUrl ? metaRepoUrl.replace(/\/+$/g, '') : '';
 
   const computeArchiveUrl = (hrefHint) => {
@@ -1079,13 +1081,14 @@ document.addEventListener("DOMContentLoaded", () => {
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
@@ -1495,7 +1498,7 @@ document.addEventListener("DOMContentLoaded", () => {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Introducción"</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">numbered:</span><span class="co"> true</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span> </span>
@@ -1536,7 +1539,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>Como complemento al análisis FONDECYT, el estudio incorpora una sección sobre Núcleos e Institutos Milenio, instrumento de investigación asociativa donde las Ciencias Sociales tienen una presencia significativa aunque marginal en comparación con otras áreas. Esta sección se presenta como un apartado complementario al análisis principal, dado que la base de datos pública disponible para Milenio presenta limitaciones sustantivas que restringen el alcance del análisis: no incluye información sobre institución patrocinante, grupo de evaluación ni montos adjudicados, y su cobertura temporal es discontinua. Por estas razones, los resultados de Milenio deben interpretarse como una mirada exploratoria y complementaria, no como un análisis equivalente al de FONDECYT en términos de profundidad o sistematicidad.</span>
 <span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>El informe se estructura en tres secciones. La Metodología presenta en detalle las bases de datos utilizadas, los procedimientos de reconstrucción de variables, las decisiones de procesamiento y la estrategia analítica. Los Resultados contienen la totalidad de los análisis descriptivos, organizados secuencialmente por instrumento (FONDECYT Iniciación, FONDECYT Regular y, complementariamente, Núcleos e Institutos Milenio) y dentro de cada uno por dimensión de desagregación (perspectiva comparada, género, grupo de estudio, institución patrocinante y macrozona). Finalmente, las Conclusiones sintetizan los principales hallazgos de la investigación, proponen lineamientos para el debate sobre la política científica nacional y delinean rutas para profundizar esta agenda de estudio.</span></code><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>El informe se estructura en tres secciones. La Metodología presenta en detalle las bases de datos utilizadas, los procedimientos de reconstrucción de variables, las decisiones de procesamiento y la estrategia analítica. Los Resultados contienen la totalidad de los análisis descriptivos, organizados secuencialmente por instrumento (FONDECYT Iniciación, FONDECYT Regular y, complementariamente, Núcleos e Institutos Milenio) y dentro de cada uno por dimensión de desagregación (perspectiva comparada, género, grupo de estudio, institución patrocinante y macrozona). Finalmente, las Conclusiones sintetizan los principales hallazgos de la investigación, proponen lineamientos para el debate sobre la política científica nacional y delinean rutas para profundizar esta agenda de estudio.</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 
