@@ -11,7 +11,7 @@ book:
   title: Estudio sobre fuentes de financiamiento para la investigación en Ciencias Sociales en Chile
   subtitle: Diagnóstico y análisis de concursos ANID
   output-file: reporte-fondos  # Nombre base del archivo de salida (sin extension)
-  repo-url: https://github.com/renejcanales/fondos-css  #URL del repositorio del libro (cambia segun tu repo)
+  repo-url: https://github.com/data-soc/estudio-fondos-anid  #URL del repositorio del libro (cambia segun tu repo)
   author:
     - name: René Canales Sellés
       affiliation: Departamento de Sociología, Universidad de Chile

@@ -28,7 +28,7 @@ div[data-when-format="pdf"] { display: none !important; }
 
 Esta investigación fue desarrollada por René Canales, Juan Carlos Castillo y Gabriel Cortés, del Departamento de Sociología y de la Dirección de Investigación y Publicaciones de la Facultad de Ciencias Sociales, Universidad de Chile.
 
-El informe se encuentra disponible en versión web en [https://renejcanales.github.io/fondos-css/docs/](https://renejcanales.github.io/fondos-css/docs/) y en formato PDF en [https://renejcanales.github.io/fondos-css/docs/reporte-fondos.pdf](https://renejcanales.github.io/fondos-css/docs/reporte-fondos.pdf).
+El informe se encuentra disponible en versión web en [https://data-soc.github.io/estudio-fondos-anid/docs/](https://data-soc.github.io/estudio-fondos-anid/docs/) y en formato PDF en [https://data-soc.github.io/estudio-fondos-anid/docs/reporte-fondos.pdf](https://data-soc.github.io/estudio-fondos-anid/docs/reporte-fondos.pdf).
 
 **Citar de la siguiente manera:**
 
