@@ -108,7 +108,8 @@ if (knitr::is_latex_output()) {
   kableExtra::kbl(bbdd, format = "latex", booktabs = TRUE, align = "l") %>%
     kableExtra::kable_styling(
       latex_options = c("striped", "hold_position", "scale_down"),
-      full_width = TRUE
+      full_width = TRUE,
+      font_size = 9
     )
 } else {
   kableExtra::kbl(bbdd, format = "html", align = "l") %>%

@@ -976,6 +976,8 @@ Tabla~\ref{tbl-clasificacion-publica-privada}).
 
 \centering{
 
+\begingroup\fontsize{9}{11}\selectfont
+
 \resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
 \begin{tabu} to \linewidth {>{\raggedright}X>{\raggedright}X>{\raggedright}X>{\raggedright}X>{\raggedright}X}
 \toprule
@@ -986,6 +988,7 @@ base\_fondecyt\_sociales\_merge\_monto & Postulaciones + adjudicaciones FONDECYT
 \cellcolor{gray!10}{adjudicacion\_milenio\_limpia\_sociales} & \cellcolor{gray!10}{Adjudicaciones Milenio en Ciencias Sociales} & \cellcolor{gray!10}{2016, 2017, 2020, 2021, 2022} & \cellcolor{gray!10}{Adjudicación Núcleo/Instituto Milenio} & \cellcolor{gray!10}{59 adjudicaciones (26 en CS Sociales)}\\
 \bottomrule
 \end{tabu}}
+\endgroup{}
 
 }
 
@@ -1166,9 +1169,7 @@ postulantes.
 
 \chapter{Resultados: Fondecyt}\label{resultados-fondecyt}
 
-\bookmarksetup{startatroot}
-
-\chapter{Proyectos FONDECYT: Un panorama
+\section{Proyectos FONDECYT: Un panorama
 general}\label{proyectos-fondecyt-un-panorama-general}
 
 En la siguiente sección se presentan los análisis descriptivos del
@@ -1382,7 +1383,7 @@ estudio por género en adjudicaciones Fondecyt de Iniciación
 
 \end{figure}%
 
-\begin{tcolorbox}[enhanced jigsaw, toptitle=1mm, leftrule=.75mm, colback=white, toprule=.15mm, breakable, left=2mm, colbacktitle=quarto-callout-tip-color!10!white, bottomtitle=1mm, opacitybacktitle=0.6, rightrule=.15mm, arc=.35mm, coltitle=black, titlerule=0mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Cómo leer el gráfico heatmap}, bottomrule=.15mm, opacityback=0, colframe=quarto-callout-tip-color-frame]
+\begin{tcolorbox}[enhanced jigsaw, titlerule=0mm, leftrule=.75mm, toprule=.15mm, coltitle=black, toptitle=1mm, colbacktitle=quarto-callout-tip-color!10!white, rightrule=.15mm, arc=.35mm, colframe=quarto-callout-tip-color-frame, left=2mm, colback=white, bottomtitle=1mm, bottomrule=.15mm, opacityback=0, opacitybacktitle=0.6, breakable, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Cómo leer el gráfico heatmap}]
 
 Cada celda muestra el \textbf{porcentaje de adjudicaciones de un grupo
 de estudio que correspondió a hombres o mujeres en un año específico}.

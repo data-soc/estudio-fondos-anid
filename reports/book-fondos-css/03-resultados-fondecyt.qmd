@@ -46,7 +46,7 @@ tema_anid <- theme_minimal(base_size = 12) +
 
 ```
 
-# Proyectos FONDECYT: Un panorama general
+## Proyectos FONDECYT: Un panorama general
 
 En la siguiente sección se presentan los análisis descriptivos del análisis de la participación de las Ciencias Sociales en concursos FONDECYT entre 2016 y 2025. Estos resultados examinan las tendencias generales para cada instrumento -Iniciación y Regular- en términos de volumen de postulaciones y adjudicaciones, así como las diferencias por género, grupo de estudio e institución patrocinante. Este análisis busca ofrecer una visión integral sobre la dinámica de financiamiento en esta disciplina, identificando patrones relevantes y posibles áreas de mejora para futuras convocatorias.
 
