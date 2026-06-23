@@ -6,7 +6,9 @@ El estudio estuvo a cargo de René Canales, Juan Carlos Castillo y Gabriel Cort�
 
 
 ::: {.callout-note}
+
 La estructura del repositorio es la siguiente (basada en el protocolo [https://lisacoes.com/protocolos/a-ipo-rep/](IPO)):
+
 :::
 
 ```
@@ -54,7 +56,9 @@ La estructura del repositorio es la siguiente (basada en el protocolo [https://l
 ```
 
 ::: {.callout-tip}
+
 El informe se encuentra disponible en versión web y con opción de descarga en formato PDF dentro del mismo reporte a continuación.
+
 :::
 
 ## Files
