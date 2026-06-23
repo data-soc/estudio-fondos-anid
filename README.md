@@ -2,7 +2,8 @@
 
 Este repositorio contiene el estudio de Fondos Anid para Ciencias Sociales.
 
-El estudio estuvo a cargo de [https://datasoc.cl](DATASOC), centro de datos sociales de FACSO.
+El estudio estuvo a cargo de René Canales, Juan Carlos Castillo y Gabriel Cortés, del Departamento de Sociología y de la Dirección de Investigación y Publicaciones de la Facultad de Ciencias Sociales, Universidad de Chile.
+
 
 ::: {.callout-note}
 La estructura del repositorio es la siguiente (basada en el protocolo [https://lisacoes.com/protocolos/a-ipo-rep/](IPO)):
