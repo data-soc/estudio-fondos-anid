@@ -1,3 +1,13 @@
+# Estudio de notas de pregrado FACSO UChile
+
+Este repositorio contiene el estudio de las notas de pregrado de la Facultad de Ciencias Sociales de la Universidad de Chile (FACSO UChile).
+
+El estudio estuvo a cargo de [https://datasoc.cl](DATASOC), centro de datos sociales de FACSO.
+
+::: {.callout-note}
+La estructura del repositorio es la siguiente (basada en el protocolo [https://lisacoes.com/protocolos/a-ipo-rep/](IPO)):
+:::
+
 ```
 │   README.md
 │
@@ -42,9 +52,9 @@
 └───
 ```
 
-## Repository and reproducibility:
-
-In the web page it is possible to see/download the paper in html and pdf formats. The data and analysis files are in the Github repo repo-name and follow the logic of the IPO protocol for academic workflows, based on three main components = Input -> Processing -> Output.
+::: {.callout-tip}
+El informe se encuentra disponible en versión web y con opción de descarga en formato PDF dentro del mismo reporte a continuación.
+:::
 
 ## Files
 
