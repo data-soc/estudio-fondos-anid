@@ -296,7 +296,7 @@ window.Quarto = {
 </section>
 <section id="universo-de-análisis" class="level3" data-number="3.1.3">
 <h3 data-number="3.1.3" class="anchored" data-anchor-id="universo-de-análisis"><span class="header-section-number">3.1.3</span> Universo de análisis</h3>
-<p>El universo de análisis fue delimitado aplicando dos filtros fundamentales: en primer lugar, se seleccionaron únicamente postulaciones clasificadas como “Ciencias Sociales” según la taxonomía OCDE; en segundo lugar, se conservaron exclusivamente aquellas cuyo proceso de evaluación finalizó en condición de “Adjudicado” o “No Adjudicado”, excluyendo postulaciones inadmisibles o fuera de bases. El período temporal abarca los años 2016 a 2025, garantizando la consistencia longitudinal entre todas las bases. Para los análisis comparativos entre tipos de institución, se excluyeron centros de investigación, fundaciones, museos e instituciones extranjeras presentes en la base, manteniendo únicamente universidades chilenas. El listado completo de instituciones y su clasificación se presenta en la sección de resultados (ver <a href="03-resultados-fondecyt.html#tbl-clasificacion-instituciones" class="quarto-xref">Tabla&nbsp;<span>5.1</span></a> y <a href="03-resultados-fondecyt.html#tbl-clasificacion-publica-privada" class="quarto-xref">Tabla&nbsp;<span>5.2</span></a>).</p>
+<p>El universo de análisis fue delimitado aplicando dos filtros fundamentales: en primer lugar, se seleccionaron únicamente postulaciones clasificadas como “Ciencias Sociales” según la taxonomía OCDE; en segundo lugar, se conservaron exclusivamente aquellas cuyo proceso de evaluación finalizó en condición de “Adjudicado” o “No Adjudicado”, excluyendo postulaciones inadmisibles o fuera de bases. El período temporal abarca los años 2016 a 2025, garantizando la consistencia longitudinal entre todas las bases. Para los análisis comparativos entre tipos de institución, se excluyeron centros de investigación, fundaciones, museos e instituciones extranjeras presentes en la base, manteniendo únicamente universidades chilenas. El listado completo de instituciones y su clasificación se presenta en la sección de resultados (ver <a href="03-resultados-fondecyt.html#tbl-clasificacion-instituciones" class="quarto-xref">Tabla&nbsp;<span>4.1</span></a> y <a href="03-resultados-fondecyt.html#tbl-clasificacion-publica-privada" class="quarto-xref">Tabla&nbsp;<span>4.2</span></a>).</p>
 <div class="cell" data-tbl-cap-location="top">
 <div id="tbl-bbdd" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-tbl-cap-location="top">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1784,165 +1784,163 @@ document.addEventListener("DOMContentLoaded", () => {
 <span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">kbl</span>(bbdd, <span class="at">format =</span> <span class="st">"latex"</span>, <span class="at">booktabs =</span> <span class="cn">TRUE</span>, <span class="at">align =</span> <span class="st">"l"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>    kableExtra<span class="sc">::</span><span class="fu">kable_styling</span>(</span>
 <span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>      <span class="at">latex_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hold_position"</span>, <span class="st">"scale_down"</span>),</span>
-<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>      <span class="at">full_width =</span> <span class="cn">TRUE</span></span>
-<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">kbl</span>(bbdd, <span class="at">format =</span> <span class="st">"html"</span>, <span class="at">align =</span> <span class="st">"l"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>    kableExtra<span class="sc">::</span><span class="fu">kable_styling</span>(</span>
-<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>      <span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>, <span class="st">"condensed"</span>),</span>
-<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>      <span class="at">full_width =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>      <span class="at">position =</span> <span class="st">"center"</span></span>
-<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a><span class="fu">## Variables</span></span>
-<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-var</span></span>
-<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: Variables disponibles</span></span>
-<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap-location: top</span></span>
-<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a>codebook <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
-<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Variable</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
-<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ESTADO_RESOLUCION_CONCURSO"</span>,</span>
-<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SEXO"</span>,</span>
-<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a>    <span class="st">"REGION_EJECUCION"</span>,</span>
-<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MACROZONA_MINCIENCIA"</span>,</span>
-<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>    <span class="st">"INSTRUMENTO"</span>,</span>
-<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DISCIPLINA_OECD"</span>,</span>
-<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a>    <span class="st">"GRUPO_ESTUDIO"</span>,</span>
-<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a>    <span class="st">"INSTITUCION_PRINCIPAL"</span>,</span>
-<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MONTO_ADJUDICADO"</span>,</span>
-<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MONTO_PROM_GRUPO_ANIO (reconstruida)"</span>,</span>
-<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MONTO_SOLIC_PROM_GRUPO_ANIO (creada)"</span>,</span>
-<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a>    <span class="st">"AGNO_FALLO"</span></span>
-<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Naturaleza</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
-<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Categórica"</span>, <span class="st">"Categórica"</span>, <span class="st">"Categórica"</span>, <span class="st">"Categórica"</span>,</span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>      <span class="at">full_width =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>      <span class="at">font_size =</span> <span class="dv">9</span></span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">kbl</span>(bbdd, <span class="at">format =</span> <span class="st">"html"</span>, <span class="at">align =</span> <span class="st">"l"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>    kableExtra<span class="sc">::</span><span class="fu">kable_styling</span>(</span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>      <span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>, <span class="st">"condensed"</span>),</span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>      <span class="at">full_width =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a>      <span class="at">position =</span> <span class="st">"center"</span></span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a><span class="fu">## Variables</span></span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-var</span></span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: Variables disponibles</span></span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap-location: top</span></span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a>codebook <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Variable</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ESTADO_RESOLUCION_CONCURSO"</span>,</span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SEXO"</span>,</span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a>    <span class="st">"REGION_EJECUCION"</span>,</span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MACROZONA_MINCIENCIA"</span>,</span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a>    <span class="st">"INSTRUMENTO"</span>,</span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DISCIPLINA_OECD"</span>,</span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a>    <span class="st">"GRUPO_ESTUDIO"</span>,</span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a>    <span class="st">"INSTITUCION_PRINCIPAL"</span>,</span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MONTO_ADJUDICADO"</span>,</span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MONTO_PROM_GRUPO_ANIO (reconstruida)"</span>,</span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MONTO_SOLIC_PROM_GRUPO_ANIO (creada)"</span>,</span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>    <span class="st">"AGNO_FALLO"</span></span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Naturaleza</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
 <span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Categórica"</span>, <span class="st">"Categórica"</span>, <span class="st">"Categórica"</span>, <span class="st">"Categórica"</span>,</span>
-<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Numérica continua"</span>, <span class="st">"Numérica continua"</span>, <span class="st">"Numérica continua"</span>,</span>
-<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Numérica discreta"</span></span>
-<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Disponibilidad</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
-<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Todas las postulaciones"</span>,</span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Categórica"</span>, <span class="st">"Categórica"</span>, <span class="st">"Categórica"</span>, <span class="st">"Categórica"</span>,</span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Numérica continua"</span>, <span class="st">"Numérica continua"</span>, <span class="st">"Numérica continua"</span>,</span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Numérica discreta"</span></span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Disponibilidad</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
 <span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Todas las postulaciones"</span>,</span>
-<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Solo adjudicadas"</span>,</span>
+<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Todas las postulaciones"</span>,</span>
 <span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Solo adjudicadas"</span>,</span>
-<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Todas las postulaciones"</span>,</span>
+<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Solo adjudicadas"</span>,</span>
 <span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Todas las postulaciones"</span>,</span>
-<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Solo adjudicadas"</span>,</span>
+<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Todas las postulaciones"</span>,</span>
 <span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Solo adjudicadas"</span>,</span>
 <span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Solo adjudicadas"</span>,</span>
-<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Por grupo-año-instrumento"</span>,</span>
+<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Solo adjudicadas"</span>,</span>
 <span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Por grupo-año-instrumento"</span>,</span>
-<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Todas las postulaciones"</span></span>
-<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Descripción</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
-<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Resultado del concurso: ADJUDICADO / NO ADJUDICADO"</span>,</span>
-<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Sexo del/la investigador/a principal: HOMBRE / MUJER / SIN INFORMACIÓN"</span>,</span>
-<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Región de ejecución del proyecto"</span>,</span>
-<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Macrozona Minciencia de ejecución (Norte / Centro / RM / Centro Sur / Sur / Austral)"</span>,</span>
-<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Instrumento FONDECYT: REGULAR / INICIACION"</span>,</span>
-<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Área disciplinar según clasificación OCDE (Ciencias Sociales, Humanidades, Ciencias Naturales, etc.)"</span>,</span>
-<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Grupo de evaluación al que postuló el proyecto (clasificación ANID)"</span>,</span>
-<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Universidad o entidad patrocinante del proyecto"</span>,</span>
-<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Monto en pesos chilenos efectivamente adjudicado al proyecto"</span>,</span>
-<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Monto promedio adjudicado por grupo-año-instrumento, reconstruido desde PDFs ANID"</span>,</span>
-<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Monto promedio solicitado por grupo-año-instrumento, calculado desde PDFs ANID"</span>,</span>
-<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Año de resolución del concurso"</span></span>
-<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (knitr<span class="sc">::</span><span class="fu">is_latex_output</span>()) {</span>
-<span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a>  codebook_latex <span class="ot">&lt;-</span> codebook <span class="sc">%&gt;%</span></span>
-<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Variable =</span> <span class="fu">str_replace_all</span>(Variable, <span class="st">"_"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">_</span><span class="sc">\\</span><span class="st">allowbreak{}"</span>))</span>
-<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">kbl</span>(codebook_latex, <span class="at">format =</span> <span class="st">"latex"</span>, <span class="at">booktabs =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb1-193"><a href="#cb1-193" aria-hidden="true" tabindex="-1"></a>                  <span class="at">align =</span> <span class="st">"l"</span>, <span class="at">escape =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a>    kableExtra<span class="sc">::</span><span class="fu">kable_styling</span>(</span>
-<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a>      <span class="at">latex_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hold_position"</span>, <span class="st">"scale_down"</span>),</span>
-<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a>      <span class="at">full_width =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a>      <span class="at">font_size =</span> <span class="dv">9</span></span>
-<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb1-200"><a href="#cb1-200" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">kbl</span>(codebook, <span class="at">format =</span> <span class="st">"html"</span>, <span class="at">align =</span> <span class="st">"l"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-201"><a href="#cb1-201" aria-hidden="true" tabindex="-1"></a>    kableExtra<span class="sc">::</span><span class="fu">kable_styling</span>(</span>
-<span id="cb1-202"><a href="#cb1-202" aria-hidden="true" tabindex="-1"></a>      <span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>, <span class="st">"condensed"</span>),</span>
-<span id="cb1-203"><a href="#cb1-203" aria-hidden="true" tabindex="-1"></a>      <span class="at">full_width =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb1-204"><a href="#cb1-204" aria-hidden="true" tabindex="-1"></a>      <span class="at">position =</span> <span class="st">"center"</span></span>
-<span id="cb1-205"><a href="#cb1-205" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb1-206"><a href="#cb1-206" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-207"><a href="#cb1-207" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Por grupo-año-instrumento"</span>,</span>
+<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Todas las postulaciones"</span></span>
+<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Descripción</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
+<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Resultado del concurso: ADJUDICADO / NO ADJUDICADO"</span>,</span>
+<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Sexo del/la investigador/a principal: HOMBRE / MUJER / SIN INFORMACIÓN"</span>,</span>
+<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Región de ejecución del proyecto"</span>,</span>
+<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Macrozona Minciencia de ejecución (Norte / Centro / RM / Centro Sur / Sur / Austral)"</span>,</span>
+<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Instrumento FONDECYT: REGULAR / INICIACION"</span>,</span>
+<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Área disciplinar según clasificación OCDE (Ciencias Sociales, Humanidades, Ciencias Naturales, etc.)"</span>,</span>
+<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Grupo de evaluación al que postuló el proyecto (clasificación ANID)"</span>,</span>
+<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Universidad o entidad patrocinante del proyecto"</span>,</span>
+<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Monto en pesos chilenos efectivamente adjudicado al proyecto"</span>,</span>
+<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Monto promedio adjudicado por grupo-año-instrumento, reconstruido desde PDFs ANID"</span>,</span>
+<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Monto promedio solicitado por grupo-año-instrumento, calculado desde PDFs ANID"</span>,</span>
+<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Año de resolución del concurso"</span></span>
+<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (knitr<span class="sc">::</span><span class="fu">is_latex_output</span>()) {</span>
+<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">kbl</span>(codebook, <span class="at">format =</span> <span class="st">"latex"</span>, <span class="at">booktabs =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a>                  <span class="at">align =</span> <span class="st">"l"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a>    kableExtra<span class="sc">::</span><span class="fu">kable_styling</span>(</span>
+<span id="cb1-193"><a href="#cb1-193" aria-hidden="true" tabindex="-1"></a>      <span class="at">latex_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hold_position"</span>, <span class="st">"scale_down"</span>),</span>
+<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a>      <span class="at">full_width =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a>      <span class="at">font_size =</span> <span class="dv">9</span></span>
+<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">kbl</span>(codebook, <span class="at">format =</span> <span class="st">"html"</span>, <span class="at">align =</span> <span class="st">"l"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a>    kableExtra<span class="sc">::</span><span class="fu">kable_styling</span>(</span>
+<span id="cb1-200"><a href="#cb1-200" aria-hidden="true" tabindex="-1"></a>      <span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>, <span class="st">"condensed"</span>),</span>
+<span id="cb1-201"><a href="#cb1-201" aria-hidden="true" tabindex="-1"></a>      <span class="at">full_width =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb1-202"><a href="#cb1-202" aria-hidden="true" tabindex="-1"></a>      <span class="at">position =</span> <span class="st">"center"</span></span>
+<span id="cb1-203"><a href="#cb1-203" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-204"><a href="#cb1-204" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-205"><a href="#cb1-205" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-206"><a href="#cb1-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-207"><a href="#cb1-207" aria-hidden="true" tabindex="-1"></a><span class="fu">### Indicadores derivados</span></span>
 <span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-209"><a href="#cb1-209" aria-hidden="true" tabindex="-1"></a><span class="fu">### Indicadores derivados</span></span>
+<span id="cb1-209"><a href="#cb1-209" aria-hidden="true" tabindex="-1"></a>A partir de las variables originales y reconstruidas, el análisis utiliza los siguientes indicadores:</span>
 <span id="cb1-210"><a href="#cb1-210" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-211"><a href="#cb1-211" aria-hidden="true" tabindex="-1"></a>A partir de las variables originales y reconstruidas, el análisis utiliza los siguientes indicadores:</span>
-<span id="cb1-212"><a href="#cb1-212" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-213"><a href="#cb1-213" aria-hidden="true" tabindex="-1"></a>**Tasa de adjudicación**: proporción de postulaciones que resultaron adjudicadas sobre el total de postulaciones evaluadas en un grupo </span>
-<span id="cb1-214"><a href="#cb1-214" aria-hidden="true" tabindex="-1"></a>determinado. Formalmente:</span>
+<span id="cb1-211"><a href="#cb1-211" aria-hidden="true" tabindex="-1"></a>**Tasa de adjudicación**: proporción de postulaciones que resultaron adjudicadas sobre el total de postulaciones evaluadas en un grupo </span>
+<span id="cb1-212"><a href="#cb1-212" aria-hidden="true" tabindex="-1"></a>determinado. Formalmente:</span>
+<span id="cb1-213"><a href="#cb1-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-214"><a href="#cb1-214" aria-hidden="true" tabindex="-1"></a>$$\text{Tasa de adjudicación} = \frac{N_{\text{adjudicado}}}{N_{\text{adjudicado}} + N_{\text{no adjudicado}}}$$</span>
 <span id="cb1-215"><a href="#cb1-215" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-216"><a href="#cb1-216" aria-hidden="true" tabindex="-1"></a>$$\text{Tasa de adjudicación} = \frac{N_{\text{adjudicado}}}{N_{\text{adjudicado}} + N_{\text{no adjudicado}}}$$</span>
+<span id="cb1-216"><a href="#cb1-216" aria-hidden="true" tabindex="-1"></a>Esta definición excluye por construcción las postulaciones inadmisibles o fuera de bases, que fueron eliminadas durante el procesamiento inicial. El denominador corresponde, por tanto, al universo de postulaciones que efectivamente entraron al proceso de evaluación.</span>
 <span id="cb1-217"><a href="#cb1-217" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-218"><a href="#cb1-218" aria-hidden="true" tabindex="-1"></a>Esta definición excluye por construcción las postulaciones inadmisibles o fuera de bases, que fueron eliminadas durante el procesamiento inicial. El denominador corresponde, por tanto, al universo de postulaciones que efectivamente entraron al proceso de evaluación.</span>
-<span id="cb1-219"><a href="#cb1-219" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-220"><a href="#cb1-220" aria-hidden="true" tabindex="-1"></a>**Composición porcentual por género dentro de grupos de estudio**: </span>
-<span id="cb1-221"><a href="#cb1-221" aria-hidden="true" tabindex="-1"></a>proporción de adjudicaciones de hombres y mujeres en cada combinación de grupo de estudio y año, calculada como:</span>
+<span id="cb1-218"><a href="#cb1-218" aria-hidden="true" tabindex="-1"></a>**Composición porcentual por género dentro de grupos de estudio**: </span>
+<span id="cb1-219"><a href="#cb1-219" aria-hidden="true" tabindex="-1"></a>proporción de adjudicaciones de hombres y mujeres en cada combinación de grupo de estudio y año, calculada como:</span>
+<span id="cb1-220"><a href="#cb1-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-221"><a href="#cb1-221" aria-hidden="true" tabindex="-1"></a>$$\text{Composición}_{ij} = \frac{N_{\text{adjudicadas}_{ij}}}{N_{\text{adjudicadas total grupo}_{i}}} \times 100$$</span>
 <span id="cb1-222"><a href="#cb1-222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-223"><a href="#cb1-223" aria-hidden="true" tabindex="-1"></a>$$\text{Composición}_{ij} = \frac{N_{\text{adjudicadas}_{ij}}}{N_{\text{adjudicadas total grupo}_{i}}} \times 100$$</span>
+<span id="cb1-223"><a href="#cb1-223" aria-hidden="true" tabindex="-1"></a>donde $i$ corresponde al grupo-año y $j$ al género.</span>
 <span id="cb1-224"><a href="#cb1-224" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-225"><a href="#cb1-225" aria-hidden="true" tabindex="-1"></a>donde $i$ corresponde al grupo-año y $j$ al género.</span>
-<span id="cb1-226"><a href="#cb1-226" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-227"><a href="#cb1-227" aria-hidden="true" tabindex="-1"></a>Monto promedio solicitado y adjudicado por grupo: los promedios por grupo-año-instrumento se calculan a partir de los totales agregados </span>
-<span id="cb1-228"><a href="#cb1-228" aria-hidden="true" tabindex="-1"></a>publicados por ANID, dividiendo recursos totales (en miles de pesos) por el número de proyectos concursados (para solicitado) o aprobados (para </span>
-<span id="cb1-229"><a href="#cb1-229" aria-hidden="true" tabindex="-1"></a>adjudicado).</span>
+<span id="cb1-225"><a href="#cb1-225" aria-hidden="true" tabindex="-1"></a>Monto promedio solicitado y adjudicado por grupo: los promedios por grupo-año-instrumento se calculan a partir de los totales agregados </span>
+<span id="cb1-226"><a href="#cb1-226" aria-hidden="true" tabindex="-1"></a>publicados por ANID, dividiendo recursos totales (en miles de pesos) por el número de proyectos concursados (para solicitado) o aprobados (para </span>
+<span id="cb1-227"><a href="#cb1-227" aria-hidden="true" tabindex="-1"></a>adjudicado).</span>
+<span id="cb1-228"><a href="#cb1-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-229"><a href="#cb1-229" aria-hidden="true" tabindex="-1"></a><span class="fu">### Decisión metodológica sobre la unidad de análisis</span></span>
 <span id="cb1-230"><a href="#cb1-230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-231"><a href="#cb1-231" aria-hidden="true" tabindex="-1"></a><span class="fu">### Decisión metodológica sobre la unidad de análisis</span></span>
-<span id="cb1-232"><a href="#cb1-232" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-233"><a href="#cb1-233" aria-hidden="true" tabindex="-1"></a>Una decisión metodológica central fue calcular la tasa de adjudicación a nivel de postulación y no a nivel de proyecto único. Dado que el </span>
-<span id="cb1-234"><a href="#cb1-234" aria-hidden="true" tabindex="-1"></a>interés es caracterizar el proceso competitivo tal como lo experimentan los/as postulantes —incluyendo las repostulaciones—, se optó por esta </span>
-<span id="cb1-235"><a href="#cb1-235" aria-hidden="true" tabindex="-1"></a>unidad de análisis. Esto implica que un mismo investigador/a puede contribuir con múltiples observaciones al denominador si postuló en </span>
-<span id="cb1-236"><a href="#cb1-236" aria-hidden="true" tabindex="-1"></a>distintos años o instrumentos.</span>
+<span id="cb1-231"><a href="#cb1-231" aria-hidden="true" tabindex="-1"></a>Una decisión metodológica central fue calcular la tasa de adjudicación a nivel de postulación y no a nivel de proyecto único. Dado que el </span>
+<span id="cb1-232"><a href="#cb1-232" aria-hidden="true" tabindex="-1"></a>interés es caracterizar el proceso competitivo tal como lo experimentan los/as postulantes —incluyendo las repostulaciones—, se optó por esta </span>
+<span id="cb1-233"><a href="#cb1-233" aria-hidden="true" tabindex="-1"></a>unidad de análisis. Esto implica que un mismo investigador/a puede contribuir con múltiples observaciones al denominador si postuló en </span>
+<span id="cb1-234"><a href="#cb1-234" aria-hidden="true" tabindex="-1"></a>distintos años o instrumentos.</span>
+<span id="cb1-235"><a href="#cb1-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-236"><a href="#cb1-236" aria-hidden="true" tabindex="-1"></a><span class="fu">### Procesamiento de variables</span></span>
 <span id="cb1-237"><a href="#cb1-237" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-238"><a href="#cb1-238" aria-hidden="true" tabindex="-1"></a><span class="fu">### Procesamiento de variables</span></span>
-<span id="cb1-239"><a href="#cb1-239" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-240"><a href="#cb1-240" aria-hidden="true" tabindex="-1"></a>Respecto al procesamiento de variables, se aplicaron las siguientes decisiones: los nombres de las regiones fueron abreviados para mejorar la </span>
-<span id="cb1-241"><a href="#cb1-241" aria-hidden="true" tabindex="-1"></a>legibilidad (e.g., "REGION METROPOLITANA DE SANTIAGO" → "RM"); se corrigió un error tipográfico de origen en la variable <span class="in">`DISCIPLINA_DETALLE`</span> de la base oficial ("CIENICAS" → "CIENCIAS"); y se unificó un error en el nombre "PONTIFICA UNIVERSIDAD CATOLICA DE VALPARAISO" (sin la "I") con su nombre oficial. Todas las variables categóricas fueron transformadas a tipo <span class="in">`factor`</span> para optimizar el uso de memoria y facilitar los análisis estadísticos posteriores. Los registros con categorías problemáticas en variables clave —como "SIN INFORMACION" en <span class="in">`SEXO`</span> o <span class="in">`MACROZONA_MINCIENCIA`</span>— fueron excluidos de los análisis comparativos respectivos, explicitando el criterio en cada caso.</span>
+<span id="cb1-238"><a href="#cb1-238" aria-hidden="true" tabindex="-1"></a>Respecto al procesamiento de variables, se aplicaron las siguientes decisiones: los nombres de las regiones fueron abreviados para mejorar la </span>
+<span id="cb1-239"><a href="#cb1-239" aria-hidden="true" tabindex="-1"></a>legibilidad (e.g., "REGION METROPOLITANA DE SANTIAGO" → "RM"); se corrigió un error tipográfico de origen en la variable <span class="in">`DISCIPLINA_DETALLE`</span> de la base oficial ("CIENICAS" → "CIENCIAS"); y se unificó un error en el nombre "PONTIFICA UNIVERSIDAD CATOLICA DE VALPARAISO" (sin la "I") con su nombre oficial. Todas las variables categóricas fueron transformadas a tipo <span class="in">`factor`</span> para optimizar el uso de memoria y facilitar los análisis estadísticos posteriores. Los registros con categorías problemáticas en variables clave —como "SIN INFORMACION" en <span class="in">`SEXO`</span> o <span class="in">`MACROZONA_MINCIENCIA`</span>— fueron excluidos de los análisis comparativos respectivos, explicitando el criterio en cada caso.</span>
+<span id="cb1-240"><a href="#cb1-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-241"><a href="#cb1-241" aria-hidden="true" tabindex="-1"></a>Para los análisis comparativos por tipo de institución, se definieron dos clasificaciones complementarias construidas al vuelo desde la variable <span class="in">`INSTITUCION_PRINCIPAL`</span>:</span>
 <span id="cb1-242"><a href="#cb1-242" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-243"><a href="#cb1-243" aria-hidden="true" tabindex="-1"></a>Para los análisis comparativos por tipo de institución, se definieron dos clasificaciones complementarias construidas al vuelo desde la variable <span class="in">`INSTITUCION_PRINCIPAL`</span>:</span>
-<span id="cb1-244"><a href="#cb1-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-245"><a href="#cb1-245" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**CRUCH vs No CRUCH**: las 30 universidades pertenecientes al Consejo de Rectores de las Universidades Chilenas vs. universidades privadas no </span>
-<span id="cb1-246"><a href="#cb1-246" aria-hidden="true" tabindex="-1"></a>tradicionales. Las universidades incorporadas tardíamente al CRUCH (Alberto Hurtado, Diego Portales y de los Andes, que ingresaron en 2018-2019) se clasifican como CRUCH para toda la serie 2016-2025 por criterio sustantivo de trayectoria investigativa, decisión explicitada </span>
-<span id="cb1-247"><a href="#cb1-247" aria-hidden="true" tabindex="-1"></a>en las notas al pie de los gráficos correspondientes.</span>
+<span id="cb1-243"><a href="#cb1-243" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**CRUCH vs No CRUCH**: las 30 universidades pertenecientes al Consejo de Rectores de las Universidades Chilenas vs. universidades privadas no </span>
+<span id="cb1-244"><a href="#cb1-244" aria-hidden="true" tabindex="-1"></a>tradicionales. Las universidades incorporadas tardíamente al CRUCH (Alberto Hurtado, Diego Portales y de los Andes, que ingresaron en 2018-2019) se clasifican como CRUCH para toda la serie 2016-2025 por criterio sustantivo de trayectoria investigativa, decisión explicitada </span>
+<span id="cb1-245"><a href="#cb1-245" aria-hidden="true" tabindex="-1"></a>en las notas al pie de los gráficos correspondientes.</span>
+<span id="cb1-246"><a href="#cb1-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-247"><a href="#cb1-247" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Pública vs Privada**: las 18 universidades estatales chilenas vs. el resto de universidades privadas (incluyendo G9, UAH, UDP, U. de los Andes y privadas no tradicionales). En ambas clasificaciones se excluyeron centros de investigación, fundaciones, museos e instituciones extranjeras.</span>
 <span id="cb1-248"><a href="#cb1-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-249"><a href="#cb1-249" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Pública vs Privada**: las 18 universidades estatales chilenas vs. el resto de universidades privadas (incluyendo G9, UAH, UDP, U. de los Andes y privadas no tradicionales). En ambas clasificaciones se excluyeron centros de investigación, fundaciones, museos e instituciones extranjeras.</span>
+<span id="cb1-249"><a href="#cb1-249" aria-hidden="true" tabindex="-1"></a><span class="fu">## Métodos</span></span>
 <span id="cb1-250"><a href="#cb1-250" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-251"><a href="#cb1-251" aria-hidden="true" tabindex="-1"></a><span class="fu">## Métodos</span></span>
-<span id="cb1-252"><a href="#cb1-252" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-253"><a href="#cb1-253" aria-hidden="true" tabindex="-1"></a>El análisis se desarrolla en tres secciones temáticas, organizadas por instrumento FONDECYT (Iniciación y Regular) y complementadas con un </span>
-<span id="cb1-254"><a href="#cb1-254" aria-hidden="true" tabindex="-1"></a>apartado sobre el programa Milenio. En cada sección se sigue una estructura analítica común que va de lo más general a lo más específico.</span>
+<span id="cb1-251"><a href="#cb1-251" aria-hidden="true" tabindex="-1"></a>El análisis se desarrolla en tres secciones temáticas, organizadas por instrumento FONDECYT (Iniciación y Regular) y complementadas con un </span>
+<span id="cb1-252"><a href="#cb1-252" aria-hidden="true" tabindex="-1"></a>apartado sobre el programa Milenio. En cada sección se sigue una estructura analítica común que va de lo más general a lo más específico.</span>
+<span id="cb1-253"><a href="#cb1-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-254"><a href="#cb1-254" aria-hidden="true" tabindex="-1"></a>En primer lugar, se presenta una **perspectiva comparada** que sitúa a las Ciencias Sociales frente a las demás áreas OCDE, calculando volúmenes absolutos de postulación, adjudicación y tasas relativas de éxito. Esta línea base permite contextualizar la posición relativa de la disciplina en el sistema FONDECYT y establecer un punto de referencia para las desagregaciones posteriores.</span>
 <span id="cb1-255"><a href="#cb1-255" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-256"><a href="#cb1-256" aria-hidden="true" tabindex="-1"></a>En primer lugar, se presenta una **perspectiva comparada** que sitúa a las Ciencias Sociales frente a las demás áreas OCDE, calculando volúmenes absolutos de postulación, adjudicación y tasas relativas de éxito. Esta línea base permite contextualizar la posición relativa de la disciplina en el sistema FONDECYT y establecer un punto de referencia para las desagregaciones posteriores.</span>
-<span id="cb1-257"><a href="#cb1-257" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-258"><a href="#cb1-258" aria-hidden="true" tabindex="-1"></a>En segundo lugar, se analiza el **interior de la disciplina** mediante tres dimensiones de desagregación: género (variable <span class="in">`SEXO`</span>), grupo de </span>
-<span id="cb1-259"><a href="#cb1-259" aria-hidden="true" tabindex="-1"></a>estudio (<span class="in">`GRUPO_ESTUDIO`</span>) e institución patrocinante (<span class="in">`INSTITUCION_PRINCIPAL`</span>, junto con las clasificaciones derivadas CRUCH/No </span>
-<span id="cb1-260"><a href="#cb1-260" aria-hidden="true" tabindex="-1"></a>CRUCH y Pública/Privada). Para cada dimensión se examinan tanto los volúmenes absolutos como las tasas relativas y la evolución temporal de </span>
-<span id="cb1-261"><a href="#cb1-261" aria-hidden="true" tabindex="-1"></a>las brechas. En el caso de los grupos de estudio se incorpora adicionalmente el análisis de montos —solicitado y adjudicado— por grupo </span>
-<span id="cb1-262"><a href="#cb1-262" aria-hidden="true" tabindex="-1"></a>y año, aprovechando la información reconstruida desde los PDFs ANID.</span>
-<span id="cb1-263"><a href="#cb1-263" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-264"><a href="#cb1-264" aria-hidden="true" tabindex="-1"></a>En tercer lugar, se presenta la **distribución territorial** del financiamiento a nivel de macrozonas, permitiendo identificar la </span>
-<span id="cb1-265"><a href="#cb1-265" aria-hidden="true" tabindex="-1"></a>concentración o descentralización de los recursos a lo largo del territorio nacional. Esta dimensión se analiza tanto a través de mapas </span>
-<span id="cb1-266"><a href="#cb1-266" aria-hidden="true" tabindex="-1"></a>coropléticos como mediante la evolución temporal de las adjudicaciones por macrozona.</span>
-<span id="cb1-267"><a href="#cb1-267" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-268"><a href="#cb1-268" aria-hidden="true" tabindex="-1"></a>Para el caso del programa Milenio, dadas las limitaciones de la base disponible, el análisis se restringe a tres dimensiones factibles </span>
-<span id="cb1-269"><a href="#cb1-269" aria-hidden="true" tabindex="-1"></a>—comparación con otras áreas OCDE, distribución por género y distribución territorial—, complementadas con un listado descriptivo del universo </span>
-<span id="cb1-270"><a href="#cb1-270" aria-hidden="true" tabindex="-1"></a>completo de proyectos en Ciencias Sociales.</span>
-<span id="cb1-271"><a href="#cb1-271" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-272"><a href="#cb1-272" aria-hidden="true" tabindex="-1"></a>Todos los gráficos del análisis siguen un tema visual homogéneo (<span class="in">`tema_anid`</span>) y utilizan paletas de color diferenciadas y consistentes por </span>
-<span id="cb1-273"><a href="#cb1-273" aria-hidden="true" tabindex="-1"></a>variable de desagregación (género en azul/rojo, instrumentos en granate, naturaleza jurídica en azul/rojo), incluyendo etiquetas con los valores para facilitar la lectura directa. Para los gráficos interactivos se utiliza la librería <span class="in">`plotly`</span> con tooltips informativos que muestran el nombre completo de la categoría, año y valor exacto al pasar el cursor. </span>
-<span id="cb1-274"><a href="#cb1-274" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-275"><a href="#cb1-275" aria-hidden="true" tabindex="-1"></a>La comparación entre programas (FONDECYT vs. Milenio) se realiza solo de manera descriptiva y con las cautelas necesarias, dado que sus estructuras competitivas son estructuralmente distintas en términos de escala, frecuencia de convocatoria y perfiles institucionales de los postulantes.</span>
+<span id="cb1-256"><a href="#cb1-256" aria-hidden="true" tabindex="-1"></a>En segundo lugar, se analiza el **interior de la disciplina** mediante tres dimensiones de desagregación: género (variable <span class="in">`SEXO`</span>), grupo de </span>
+<span id="cb1-257"><a href="#cb1-257" aria-hidden="true" tabindex="-1"></a>estudio (<span class="in">`GRUPO_ESTUDIO`</span>) e institución patrocinante (<span class="in">`INSTITUCION_PRINCIPAL`</span>, junto con las clasificaciones derivadas CRUCH/No </span>
+<span id="cb1-258"><a href="#cb1-258" aria-hidden="true" tabindex="-1"></a>CRUCH y Pública/Privada). Para cada dimensión se examinan tanto los volúmenes absolutos como las tasas relativas y la evolución temporal de </span>
+<span id="cb1-259"><a href="#cb1-259" aria-hidden="true" tabindex="-1"></a>las brechas. En el caso de los grupos de estudio se incorpora adicionalmente el análisis de montos —solicitado y adjudicado— por grupo </span>
+<span id="cb1-260"><a href="#cb1-260" aria-hidden="true" tabindex="-1"></a>y año, aprovechando la información reconstruida desde los PDFs ANID.</span>
+<span id="cb1-261"><a href="#cb1-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-262"><a href="#cb1-262" aria-hidden="true" tabindex="-1"></a>En tercer lugar, se presenta la **distribución territorial** del financiamiento a nivel de macrozonas, permitiendo identificar la </span>
+<span id="cb1-263"><a href="#cb1-263" aria-hidden="true" tabindex="-1"></a>concentración o descentralización de los recursos a lo largo del territorio nacional. Esta dimensión se analiza tanto a través de mapas </span>
+<span id="cb1-264"><a href="#cb1-264" aria-hidden="true" tabindex="-1"></a>coropléticos como mediante la evolución temporal de las adjudicaciones por macrozona.</span>
+<span id="cb1-265"><a href="#cb1-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-266"><a href="#cb1-266" aria-hidden="true" tabindex="-1"></a>Para el caso del programa Milenio, dadas las limitaciones de la base disponible, el análisis se restringe a tres dimensiones factibles </span>
+<span id="cb1-267"><a href="#cb1-267" aria-hidden="true" tabindex="-1"></a>—comparación con otras áreas OCDE, distribución por género y distribución territorial—, complementadas con un listado descriptivo del universo </span>
+<span id="cb1-268"><a href="#cb1-268" aria-hidden="true" tabindex="-1"></a>completo de proyectos en Ciencias Sociales.</span>
+<span id="cb1-269"><a href="#cb1-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-270"><a href="#cb1-270" aria-hidden="true" tabindex="-1"></a>Todos los gráficos del análisis siguen un tema visual homogéneo (<span class="in">`tema_anid`</span>) y utilizan paletas de color diferenciadas y consistentes por </span>
+<span id="cb1-271"><a href="#cb1-271" aria-hidden="true" tabindex="-1"></a>variable de desagregación (género en azul/rojo, instrumentos en granate, naturaleza jurídica en azul/rojo), incluyendo etiquetas con los valores para facilitar la lectura directa. Para los gráficos interactivos se utiliza la librería <span class="in">`plotly`</span> con tooltips informativos que muestran el nombre completo de la categoría, año y valor exacto al pasar el cursor. </span>
+<span id="cb1-272"><a href="#cb1-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-273"><a href="#cb1-273" aria-hidden="true" tabindex="-1"></a>La comparación entre programas (FONDECYT vs. Milenio) se realiza solo de manera descriptiva y con las cautelas necesarias, dado que sus estructuras competitivas son estructuralmente distintas en términos de escala, frecuencia de convocatoria y perfiles institucionales de los postulantes.</span>
 </code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
