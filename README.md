@@ -1,3 +1,13 @@
+# Estudio Fondos Anid para Ciencias Sociales
+
+Este repositorio contiene el estudio de Fondos Anid para Ciencias Sociales.
+
+El estudio estuvo a cargo de René Canales, Juan Carlos Castillo y Gabriel Cortés, del Departamento de Sociología y de la Dirección de Investigación y Publicaciones de la Facultad de Ciencias Sociales, Universidad de Chile.
+
+> [!NOTE]  
+> La estructura del repositorio es la siguiente (basada en el protocolo IPO):
+
+
 ```
 │   README.md
 │
@@ -42,9 +52,9 @@
 └───
 ```
 
-## Repository and reproducibility:
 
-In the web page it is possible to see/download the paper in html and pdf formats. The data and analysis files are in the Github repo repo-name and follow the logic of the IPO protocol for academic workflows, based on three main components = Input -> Processing -> Output.
+> [!IMPORTANT]  
+> El informe se encuentra disponible en versión web y con opción de descarga en formato PDF dentro del mismo reporte a continuación.
 
 ## Files
 
