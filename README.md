@@ -1,6 +1,6 @@
-# Estudio de notas de pregrado FACSO UChile
+# Estudio Fondos Anid para Ciencias Sociales
 
-Este repositorio contiene el estudio de las notas de pregrado de la Facultad de Ciencias Sociales de la Universidad de Chile (FACSO UChile).
+Este repositorio contiene el estudio de Fondos Anid para Ciencias Sociales.
 
 El estudio estuvo a cargo de [https://datasoc.cl](DATASOC), centro de datos sociales de FACSO.
 
