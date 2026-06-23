@@ -113,7 +113,6 @@ execute:
   warning: false
   message: false
   freeze: auto                  # Usa true para congelar resultados, false para ejecutar siempre
-  fig-path: "docs/figures/"
 
 lang: es
 

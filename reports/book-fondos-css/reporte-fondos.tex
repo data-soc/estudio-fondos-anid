@@ -421,7 +421,7 @@ Ciencias Sociales en Chile}
 \subtitle{Diagnóstico y análisis de concursos ANID}
 \author{René Canales Sellés \and Juan Carlos Castillo \and Gabriel
 Cortés}
-\date{19 de junio de 2026}
+\date{23 de junio de 2026}
 \begin{document}
 \frontmatter
 \maketitle
@@ -976,8 +976,8 @@ Tabla~\ref{tbl-clasificacion-publica-privada}).
 
 \centering{
 
-\centering
-\begin{tabular}[t]{lllll}
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
+\begin{tabu} to \linewidth {>{\raggedright}X>{\raggedright}X>{\raggedright}X>{\raggedright}X>{\raggedright}X}
 \toprule
 Base de datos & Origen & Periodo & Unidad de análisis & N° observaciones\\
 \midrule
@@ -985,7 +985,7 @@ Base de datos & Origen & Periodo & Unidad de análisis & N° observaciones\\
 base\_fondecyt\_sociales\_merge\_monto & Postulaciones + adjudicaciones FONDECYT Ciencias Sociales + reconstrucción de montos desde PDFs ANID & 2016–2025 & Postulación FONDECYT en Ciencias Sociales & 8.603 postulaciones\\
 \cellcolor{gray!10}{adjudicacion\_milenio\_limpia\_sociales} & \cellcolor{gray!10}{Adjudicaciones Milenio en Ciencias Sociales} & \cellcolor{gray!10}{2016, 2017, 2020, 2021, 2022} & \cellcolor{gray!10}{Adjudicación Núcleo/Instituto Milenio} & \cellcolor{gray!10}{59 adjudicaciones (26 en CS Sociales)}\\
 \bottomrule
-\end{tabular}
+\end{tabu}}
 
 }
 
@@ -999,8 +999,10 @@ base\_fondecyt\_sociales\_merge\_monto & Postulaciones + adjudicaciones FONDECYT
 
 \centering{
 
-\centering
-\begin{tabular}[t]{llll}
+\begingroup\fontsize{9}{11}\selectfont
+
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
+\begin{tabu} to \linewidth {>{\raggedright}X>{\raggedright}X>{\raggedright}X>{\raggedright}X}
 \toprule
 Variable & Naturaleza & Disponibilidad & Descripción\\
 \midrule
@@ -1019,7 +1021,8 @@ MONTO\_PROM\_GRUPO\_ANIO (reconstruida) & Numérica continua & Por grupo-año-in
 \cellcolor{gray!10}{MONTO\_SOLIC\_PROM\_GRUPO\_ANIO (creada)} & \cellcolor{gray!10}{Numérica continua} & \cellcolor{gray!10}{Por grupo-año-instrumento} & \cellcolor{gray!10}{Monto promedio solicitado por grupo-año-instrumento, calculado desde PDFs ANID}\\
 AGNO\_FALLO & Numérica discreta & Todas las postulaciones & Año de resolución del concurso\\
 \bottomrule
-\end{tabular}
+\end{tabu}}
+\endgroup{}
 
 }
 
@@ -1379,7 +1382,7 @@ estudio por género en adjudicaciones Fondecyt de Iniciación
 
 \end{figure}%
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, arc=.35mm, colback=white, rightrule=.15mm, breakable, colframe=quarto-callout-tip-color-frame, left=2mm, opacitybacktitle=0.6, titlerule=0mm, toprule=.15mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Cómo leer el gráfico heatmap}, toptitle=1mm, colbacktitle=quarto-callout-tip-color!10!white, bottomtitle=1mm, leftrule=.75mm, bottomrule=.15mm, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, toptitle=1mm, leftrule=.75mm, colback=white, toprule=.15mm, breakable, left=2mm, colbacktitle=quarto-callout-tip-color!10!white, bottomtitle=1mm, opacitybacktitle=0.6, rightrule=.15mm, arc=.35mm, coltitle=black, titlerule=0mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Cómo leer el gráfico heatmap}, bottomrule=.15mm, opacityback=0, colframe=quarto-callout-tip-color-frame]
 
 Cada celda muestra el \textbf{porcentaje de adjudicaciones de un grupo
 de estudio que correspondió a hombres o mujeres en un año específico}.
@@ -1618,8 +1621,9 @@ instituciones según pertenencia al Consejo de Rectores (CRUCH)}
 
 \centering{
 
-\begingroup\fontsize{11}{13}\selectfont
+\begingroup\fontsize{10}{12}\selectfont
 
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
 \begin{tabu} to \linewidth {>{\raggedright}X>{\raggedright}X}
 \toprule
 \textbf{CRUCH (n = 30)} & \textbf{No CRUCH (n = 15)}\\
@@ -1663,7 +1667,7 @@ U. Tecnológica Metropolitana & \\
 \multicolumn{2}{l}{\rule{0pt}{1em}\textit{Notas:}}\\
 \multicolumn{2}{l}{\rule{0pt}{1em}U. Alberto Hurtado, U. Diego Portales y U. de los Andes ingresaron al CRUCH en 2018-2019; se clasifican como CRUCH para toda la serie 2016-2025.}\\
 \multicolumn{2}{l}{\rule{0pt}{1em}Listado de instituciones presentes en la base FONDECYT 2016-2025 para Ciencias Sociales. Excluye centros de investigación, fundaciones y museos.}\\
-\end{tabu}
+\end{tabu}}
 \endgroup{}
 
 }
@@ -1738,8 +1742,9 @@ instituciones según naturaleza jurídica: estatales vs privadas}
 
 \centering{
 
-\begingroup\fontsize{11}{13}\selectfont
+\begingroup\fontsize{10}{12}\selectfont
 
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
 \begin{tabu} to \linewidth {>{\raggedright}X>{\raggedright}X}
 \toprule
 \textbf{Públicas (n = 18)} & \textbf{Privadas (n = 27)}\\
@@ -1780,7 +1785,7 @@ U. Tecnológica Metropolitana & U. del Desarrollo\\
 \multicolumn{2}{l}{\rule{0pt}{1em}\textit{Notas:}}\\
 \multicolumn{2}{l}{\rule{0pt}{1em}Las 18 universidades estatales chilenas se clasifican como 'Públicas'. El resto (27 instituciones, incluyendo G9, privadas tradicionales recientemente incorporadas al CRUCH como UAH, UDP, U. de los Andes, y privadas no tradicionales) se clasifican como 'Privadas'.}\\
 \multicolumn{2}{l}{\rule{0pt}{1em}Listado de instituciones presentes en la base FONDECYT 2016-2025 para Ciencias Sociales. Excluye centros de investigación, fundaciones y museos.}\\
-\end{tabu}
+\end{tabu}}
 \endgroup{}
 
 }
@@ -2637,55 +2642,61 @@ naturalmente restringe el número de proyectos adjudicables por concurso.
 \section{Detalle de proyectos adjudicados en Ciencias
 Sociales}\label{detalle-de-proyectos-adjudicados-en-ciencias-sociales}
 
-\begin{table}
+\begingroup\fontsize{9}{11}\selectfont
+
+\begin{longtable}[t]{>{\centering\arraybackslash}p{1cm}>{\centering\arraybackslash}p{1.5cm}>{\raggedright\arraybackslash}p{5cm}>{\raggedright\arraybackslash}p{3.5cm}>{\centering\arraybackslash}p{1cm}>{\centering\arraybackslash}p{2cm}}
 
 \caption{\label{tbl-milenio-detalle}Listado completo de Núcleos e
 Institutos Milenio adjudicados en Ciencias Sociales (2016--2022)}
 
-\centering{
+\tabularnewline
 
-\begingroup\fontsize{11}{13}\selectfont
-
-\begin{tabu} to \linewidth {>{\centering}X>{\centering}X>{\raggedright\arraybackslash}p{30em}>{\raggedright}X>{\centering}X>{\centering}X}
 \toprule
 Año & Tipo & Nombre del proyecto & Responsable & Sexo & Macrozona\\
 \midrule
-2017 & Núcleo & Nucleo Milenio El Ejercicio De La Autoridad En La Sociedad Chilena. Rearticulaciones De La Gestion De Las Asimetrias De Poder En Las Relaciones Sociales. & Kathya Araujo Kakiuchi & Mujer & RM\\
-2017 & Núcleo & Nucleo Milenio En Desarrollo Social & Fabian Rolando Duarte Vasquez & Hombre & RM\\
-2017 & Núcleo & Nucleo Milenio Movilidades Y Territorios & Paola Andrea Jiron Martinez & Mujer & RM\\
-2017 & Núcleo & Nucleo Milenio Para El Estudio Del Curso De Vida Y La Vulnerabilidad (Mliv) & Viviana Monzerratt Salinas Ulloa & Mujer & RM\\
-2017 & Núcleo & Nucleo Milenio Para Mejorar La Salud Mental De Adolescentes Y Jovenes & Vania Angelica Martinez Nahuel & Mujer & RM\\
-\addlinespace
-2017 & Núcleo & Nucleo Milenio, Experiencias De Los Estudiantes De La Educacion Superior En Chile: ?Por Que Y Para Que? & Carlos Gonzalez Ugalde & Hombre & RM\\
-2020 & Instituto & Millenimum Institute On Violence And Democracy Research & Helene Risor Risor & Mujer & RM\\
-2020 & Instituto & Millennium Institute For Caregiving Research & Claudia Miranda Castillo & Mujer & RM\\
-2021 & Núcleo & Center For The Study Of Politics, Public Opinion And Media In Chile & Patricio Daniel Navia Lucero & Hombre & RM\\
-2021 & Núcleo & Millenium Nucleus Ocean, Heritage And Culture & Maria Isabel Cartajena Fasting & Mujer & RM\\
-\addlinespace
-2021 & Núcleo & Millennium Nucleus For The Evaluation And Analysis Of Drug Policies & Alvaro Ernesto Castillo Carniglia & Hombre & RM\\
-2021 & Núcleo & Millennium Nucleus For The Study Of The Development Of Early Math Skills & Maria Ines Susperreguy Jorquera & Mujer & RM\\
-2021 & Núcleo & Millennium Nucleus On Intergenerational Mobility: From Modelling To Policy & Ernesto Javier San Martin Gutierrez & Hombre & RM\\
-2021 & Núcleo & Millennium Nucleus On The Evolution Of Work & Jeanne Lafortune . & Mujer & RM\\
-2021 & Núcleo & Nucleo Milenio De Sociomedicina & Esteban Calvo Bralic & Hombre & RM\\
-\addlinespace
-2022 & Núcleo & Millenium Nucleus For Labor Market Mismatch: Causes And Consequences & Felipe Balmaceda Mahns & Hombre & RM\\
-2022 & Núcleo & Millenium Nucleus For The Study Of The Consequences Of Immigration, The Drivers Of Public Perceptions, And Potential Mismatches Between Reality And Perceptions About Migration In Chile & Raimundo Undurraga Riesco & Hombre & RM\\
-2022 & Núcleo & Millenium Nucleus In Andean Peatlands & Manuel Jose Prieto Montt & Hombre & NORTE\\
-2022 & Núcleo & Millenium Nucleus On The Impacts Of China In Lac & Francisco Urdinez Gaviot & Hombre & RM\\
-2022 & Núcleo & Millennium Nucleus For The Integrated Development Of Territories & William Ellis Foster Bonnette & Hombre & RM\\
-\addlinespace
-2022 & Núcleo & Millennium Nucleus For The Science Of Learning & Roberto Andres Ferreira Campos & Hombre & CENTRO SUR\\
-2022 & Núcleo & Millennium Nucleus In Digital Inequalities And Opportunities & Ingrid Andrea Bachmann Caceres & Mujer & RM\\
-2022 & Núcleo & Millennium Nucleus In Musical And Sound Cultures & Christian Spencer Espinosa & Hombre & RM\\
-2022 & Núcleo & Millennium Nucleus Studies On Disability And Citizenship & Maria Florencia Herrera Oesterheld & Mujer & RM\\
+\endfirsthead
+\multicolumn{6}{@{}l}{\textit{(continued)}}\\
+\toprule
+Año & Tipo & Nombre del proyecto & Responsable & Sexo & Macrozona\\
+\midrule
+\endhead
+
+\endfoot
 \bottomrule
 \multicolumn{6}{l}{\rule{0pt}{1em}Fuente: ANID 2016-2022, elaboración propia.}\\
-\end{tabu}
+\endlastfoot
+\cellcolor{gray!10}{2017} & \cellcolor{gray!10}{Núcleo} & \cellcolor{gray!10}{Nucleo Milenio El Ejercicio De La Autoridad En La Sociedad Chilena. Rearticulaciones De La Gestion De Las Asimetrias De Poder En Las Relaciones Sociales.} & \cellcolor{gray!10}{Kathya Araujo Kakiuchi} & \cellcolor{gray!10}{Mujer} & \cellcolor{gray!10}{RM}\\
+2017 & Núcleo & Nucleo Milenio En Desarrollo Social & Fabian Rolando Duarte Vasquez & Hombre & RM\\
+\cellcolor{gray!10}{2017} & \cellcolor{gray!10}{Núcleo} & \cellcolor{gray!10}{Nucleo Milenio Movilidades Y Territorios} & \cellcolor{gray!10}{Paola Andrea Jiron Martinez} & \cellcolor{gray!10}{Mujer} & \cellcolor{gray!10}{RM}\\
+2017 & Núcleo & Nucleo Milenio Para El Estudio Del Curso De Vida Y La Vulnerabilidad (Mliv) & Viviana Monzerratt Salinas Ulloa & Mujer & RM\\
+\cellcolor{gray!10}{2017} & \cellcolor{gray!10}{Núcleo} & \cellcolor{gray!10}{Nucleo Milenio Para Mejorar La Salud Mental De Adolescentes Y Jovenes} & \cellcolor{gray!10}{Vania Angelica Martinez Nahuel} & \cellcolor{gray!10}{Mujer} & \cellcolor{gray!10}{RM}\\
+\addlinespace
+2017 & Núcleo & Nucleo Milenio, Experiencias De Los Estudiantes De La Educacion Superior En Chile: ?Por Que Y Para Que? & Carlos Gonzalez Ugalde & Hombre & RM\\
+\cellcolor{gray!10}{2020} & \cellcolor{gray!10}{Instituto} & \cellcolor{gray!10}{Millenimum Institute On Violence And Democracy Research} & \cellcolor{gray!10}{Helene Risor Risor} & \cellcolor{gray!10}{Mujer} & \cellcolor{gray!10}{RM}\\
+2020 & Instituto & Millennium Institute For Caregiving Research & Claudia Miranda Castillo & Mujer & RM\\
+\cellcolor{gray!10}{2021} & \cellcolor{gray!10}{Núcleo} & \cellcolor{gray!10}{Center For The Study Of Politics, Public Opinion And Media In Chile} & \cellcolor{gray!10}{Patricio Daniel Navia Lucero} & \cellcolor{gray!10}{Hombre} & \cellcolor{gray!10}{RM}\\
+2021 & Núcleo & Millenium Nucleus Ocean, Heritage And Culture & Maria Isabel Cartajena Fasting & Mujer & RM\\
+\addlinespace
+\cellcolor{gray!10}{2021} & \cellcolor{gray!10}{Núcleo} & \cellcolor{gray!10}{Millennium Nucleus For The Evaluation And Analysis Of Drug Policies} & \cellcolor{gray!10}{Alvaro Ernesto Castillo Carniglia} & \cellcolor{gray!10}{Hombre} & \cellcolor{gray!10}{RM}\\
+2021 & Núcleo & Millennium Nucleus For The Study Of The Development Of Early Math Skills & Maria Ines Susperreguy Jorquera & Mujer & RM\\
+\cellcolor{gray!10}{2021} & \cellcolor{gray!10}{Núcleo} & \cellcolor{gray!10}{Millennium Nucleus On Intergenerational Mobility: From Modelling To Policy} & \cellcolor{gray!10}{Ernesto Javier San Martin Gutierrez} & \cellcolor{gray!10}{Hombre} & \cellcolor{gray!10}{RM}\\
+2021 & Núcleo & Millennium Nucleus On The Evolution Of Work & Jeanne Lafortune . & Mujer & RM\\
+\cellcolor{gray!10}{2021} & \cellcolor{gray!10}{Núcleo} & \cellcolor{gray!10}{Nucleo Milenio De Sociomedicina} & \cellcolor{gray!10}{Esteban Calvo Bralic} & \cellcolor{gray!10}{Hombre} & \cellcolor{gray!10}{RM}\\
+\addlinespace
+2022 & Núcleo & Millenium Nucleus For Labor Market Mismatch: Causes And Consequences & Felipe Balmaceda Mahns & Hombre & RM\\
+\cellcolor{gray!10}{2022} & \cellcolor{gray!10}{Núcleo} & \cellcolor{gray!10}{Millenium Nucleus For The Study Of The Consequences Of Immigration, The Drivers Of Public Perceptions, And Potential Mismatches Between Reality And Perceptions About Migration In Chile} & \cellcolor{gray!10}{Raimundo Undurraga Riesco} & \cellcolor{gray!10}{Hombre} & \cellcolor{gray!10}{RM}\\
+2022 & Núcleo & Millenium Nucleus In Andean Peatlands & Manuel Jose Prieto Montt & Hombre & NORTE\\
+\cellcolor{gray!10}{2022} & \cellcolor{gray!10}{Núcleo} & \cellcolor{gray!10}{Millenium Nucleus On The Impacts Of China In Lac} & \cellcolor{gray!10}{Francisco Urdinez Gaviot} & \cellcolor{gray!10}{Hombre} & \cellcolor{gray!10}{RM}\\
+2022 & Núcleo & Millennium Nucleus For The Integrated Development Of Territories & William Ellis Foster Bonnette & Hombre & RM\\
+\addlinespace
+\cellcolor{gray!10}{2022} & \cellcolor{gray!10}{Núcleo} & \cellcolor{gray!10}{Millennium Nucleus For The Science Of Learning} & \cellcolor{gray!10}{Roberto Andres Ferreira Campos} & \cellcolor{gray!10}{Hombre} & \cellcolor{gray!10}{CENTRO SUR}\\
+2022 & Núcleo & Millennium Nucleus In Digital Inequalities And Opportunities & Ingrid Andrea Bachmann Caceres & Mujer & RM\\
+\cellcolor{gray!10}{2022} & \cellcolor{gray!10}{Núcleo} & \cellcolor{gray!10}{Millennium Nucleus In Musical And Sound Cultures} & \cellcolor{gray!10}{Christian Spencer Espinosa} & \cellcolor{gray!10}{Hombre} & \cellcolor{gray!10}{RM}\\
+2022 & Núcleo & Millennium Nucleus Studies On Disability And Citizenship & Maria Florencia Herrera Oesterheld & Mujer & RM\\*
+
+\end{longtable}
+
 \endgroup{}
-
-}
-
-\end{table}%
 
 La Tabla~\ref{tbl-milenio-detalle} presenta el listado completo del
 universo analizado: los 24 Núcleos e Institutos Milenio adjudicados en

@@ -135,8 +135,8 @@ if (knitr::is_latex_output()) {
   ) %>%
   column_spec(1, width = "1cm") %>%
   column_spec(2, width = "1.5cm") %>%
-  column_spec(3, width = "4.5cm") %>%
-  column_spec(4, width = "3cm") %>%
+  column_spec(3, width = "5cm") %>%
+  column_spec(4, width = "3.5cm") %>%
   column_spec(5, width = "1cm") %>%
   column_spec(6, width = "2cm") %>%
   footnote(

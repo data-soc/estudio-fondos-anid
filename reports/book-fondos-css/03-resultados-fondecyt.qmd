@@ -123,43 +123,52 @@ df_adj <- base_final_completa %>%
 
 disciplinas <- unique(df_adj$DISCIPLINA_OECD)
 
-plot_ly() %>%
-  add_trace(
-    data       = df_adj,
-    x          = ~AGNO_FALLO,
-    y          = ~tasa,
-    color      = ~DISCIPLINA_OECD,
-    type       = "scatter",
-    mode       = "lines+markers",
-    text       = ~paste0(DISCIPLINA_OECD, "<br>", AGNO_FALLO, ": ", round(tasa, 1), "%"),
-    hoverinfo  = "text",
-    line       = list(width = 2),
-    marker     = list(size = 7)
-  ) %>%
-  layout(
-    xaxis = list(
-      title      = "",
-      tickvals   = unique(df_adj$AGNO_FALLO),
-      tickformat = "d"
-    ),
-    yaxis = list(
-      title      = "Tasa de adjudicación (%)",
-      range      = c(0, 100),
-      ticksuffix = "%"
-    ),
-    legend = list(title = list(text = "Disciplina OCDE")),
-    margin = list(b = 100, t = 50, l = 60, r = 60),
-    annotations = list(
-      list(
-        text      = "Fuente: ANID 2016-2025, elaboración propia.\n*2021 sin concurso.",
-        xref      = "paper", yref = "paper",
-        x = 0, y = -0.15,
-        showarrow = FALSE,
-        font      = list(size = 9, color = "gray40"),
-        xanchor   = "left"
-      )
+if (knitr::is_latex_output()) {
+  df_adj %>%
+    ggplot(aes(x = AGNO_FALLO, y = tasa, color = DISCIPLINA_OECD)) +
+    geom_line(linewidth = 0.8) +
+    geom_point(size = 2) +
+    scale_y_continuous(limits = c(0, 100), labels = function(x) paste0(x, "%")) +
+    scale_x_continuous(breaks = unique(df_adj$AGNO_FALLO)) +
+    labs(
+      x       = NULL,
+      y       = "Tasa de adjudicación (%)",
+      color   = "Disciplina OCDE",
+      caption = "Fuente: ANID 2016-2025, elaboración propia.\n*2021 sin concurso."
+    ) +
+    tema_anid +
+    theme(
+      axis.text.x     = element_text(angle = 45, hjust = 1),
+      legend.position = "right",
+      plot.caption    = element_text(hjust = 0, size = 8, color = "gray40",
+                                     face = "italic", margin = margin(t = 10))
     )
-  )
+} else {
+  plot_ly() %>%
+    add_trace(
+      data       = df_adj,
+      x          = ~AGNO_FALLO,
+      y          = ~tasa,
+      color      = ~DISCIPLINA_OECD,
+      type       = "scatter",
+      mode       = "lines+markers",
+      text       = ~paste0(DISCIPLINA_OECD, "<br>", AGNO_FALLO, ": ", round(tasa, 1), "%"),
+      hoverinfo  = "text",
+      line       = list(width = 2),
+      marker     = list(size = 7)
+    ) %>%
+    layout(
+      xaxis = list(title = "", tickvals = unique(df_adj$AGNO_FALLO), tickformat = "d"),
+      yaxis = list(title = "Tasa de adjudicación (%)", range = c(0, 100), ticksuffix = "%"),
+      legend = list(title = list(text = "Disciplina OCDE")),
+      margin = list(b = 100, t = 50, l = 60, r = 60),
+      annotations = list(list(
+        text = "Fuente: ANID 2016-2025, elaboración propia.\n*2021 sin concurso.",
+        xref = "paper", yref = "paper", x = 0, y = -0.15,
+        showarrow = FALSE, font = list(size = 9, color = "gray40"), xanchor = "left"
+      ))
+    )
+}
 ```
 
 Por su parte, la @fig-adjudicaciones-global se concentra en la evolución del porcentaje de proyectos adjudicados (%) por disciplina OECD para el instrumento FONDECYT de Iniciación en el mismo periodo (2016-2025). Se observa que las Ciencias Sociales mantienen niveles de adjudicación relativamente estables durante la mayor parte del periodo (entre el 20 y el 30% de las postulaciones resultan adjudicadas), salvo por un pico marcado en 2023 alcanzando casi un 50%, pero hay que mencionar que, tal como se mencionó anteriormente, fue el año con menos postulaciones en todo el periodo para todas las disciplinas, volviendo a niveles similares a los años anteriores en 2024 y 2025%. Comparativamente, Ciencias Sociales supera sistemáticamente a la mayoría de las otras disciplinas, siendo el aumento de 2023 el evento más destacado del periodo. Mientras que otras disciplinas como Humanidades o Ciencias Agrícolas muestran tasas más bajas y estables, las Ciencias Sociales evidencian una mayor volatilidad, especialmente en el contexto de la recuperación post-2023.
@@ -301,46 +310,54 @@ colores <- c(
   "Geografía y Urbanismo"                               = "#d9a679"
 )
 
-p <- plot_ly()
-
-for (grp in unique(df_soc$GRUPO_ESTUDIO)) {
-  df_grp <- df_soc %>% filter(GRUPO_ESTUDIO == grp)
-  
-  p <- p %>%
-    add_trace(
-      data   = df_grp,
-      x      = ~factor(AGNO_FALLO),
-      y      = ~total,
-      type   = "bar",
-      name   = grp,
-      marker = list(color = colores[[grp]]),
-      hovertemplate = paste0(
-        "<b>", grp, "</b><br>",
-        "Año: %{x}<br>",
-        "Adjudicados: %{y}",
-        "<extra></extra>"
+if (knitr::is_latex_output()) {
+  ggplot(df_soc, aes(x = factor(AGNO_FALLO), y = total, fill = GRUPO_ESTUDIO)) +
+    geom_col(position = "stack") +
+    scale_fill_manual(values = colores) +
+    labs(
+      x       = NULL,
+      y       = "N° adjudicaciones",
+      fill    = NULL,
+      caption = "Fuente: ANID 2016-2025, elaboración propia"
+    ) +
+    tema_anid +
+    theme(
+      axis.text.x     = element_text(angle = 45, hjust = 1),
+      legend.position = "bottom",
+      legend.text     = element_text(size = 7),
+      plot.caption    = element_text(hjust = 0, size = 8, color = "gray40",
+                                     face = "italic", margin = margin(t = 10))
+    ) +
+    guides(fill = guide_legend(nrow = 3))
+} else {
+  p <- plot_ly()
+  for (grp in unique(df_soc$GRUPO_ESTUDIO)) {
+    df_grp <- df_soc %>% filter(GRUPO_ESTUDIO == grp)
+    p <- p %>%
+      add_trace(
+        data   = df_grp,
+        x      = ~factor(AGNO_FALLO),
+        y      = ~total,
+        type   = "bar",
+        name   = grp,
+        marker = list(color = colores[[grp]]),
+        hovertemplate = paste0("<b>", grp, "</b><br>Año: %{x}<br>Adjudicados: %{y}<extra></extra>")
       )
+  }
+  p %>%
+    layout(
+      barmode = "stack",
+      xaxis   = list(title = ""),
+      yaxis   = list(title = "N° adjudicaciones"),
+      legend  = list(title = list(text = "")),
+      margin  = list(b = 100, t = 50, l = 60, r = 60),
+      annotations = list(list(
+        text = "Fuente: ANID 2016-2025, elaboración propia",
+        xref = "paper", yref = "paper", x = 0, y = -0.15,
+        showarrow = FALSE, font = list(size = 9, color = "gray40"), xanchor = "left"
+      ))
     )
 }
-
-p %>%
-  layout(
-    barmode = "stack",
-    xaxis   = list(title = ""),
-    yaxis   = list(title = "N° adjudicaciones"),
-    legend  = list(title = list(text = "")),
-    margin  = list(b = 100, t = 50, l = 60, r = 60),
-    annotations = list(
-      list(
-        text      = "Fuente: ANID 2016-2025, elaboración propia",
-        xref      = "paper", yref = "paper",
-        x = 0, y = -0.15,
-        showarrow = FALSE,
-        font      = list(size = 9, color = "gray40"),
-        xanchor   = "left"
-      )
-    )
-  )
 ```
 
 La @fig-grupo-estudio-iniciacion presenta la evolución de las adjudicaciones Fondecyt Iniciación por grupo de estudio dentro de la disciplina de Ciencias Sociales entre 2016 y 2025. Se observa que el grupo de "Educación" es el más destacado, con un crecimiento sostenido, aunque esto posiblemente se deba a que a partir del año 2023 el grupo de estudio contemplaba tres áreas diferentes. A este le siguen, "Ciencias Jurídicas y Políticas" y "Sociología, Trabajo Social y Cs. de la Comunicación", que también muestran incrementos significativos a lo largo del periodo. Otros grupos como "Ciencias Económicas y Administrativas" y "Psicología" presentan una tendencia más estable pero con un aumento gradual hacia los años finales. En contraste, grupos como "Geografía y Urbanismo" y "Antropología y Arqueología" mantienen niveles más bajos de adjudicación, aunque con cierta variabilidad a lo largo del tiempo. Este comportamiento sugiere una concentración de adjudicaciones en ciertos grupos de estudio dentro de las Ciencias Sociales, reflejando posiblemente áreas de mayor interés o demanda dentro del sistema de financiamiento FONDECYT Iniciación.
@@ -430,46 +447,45 @@ df_plot <- base_final_sociales |>
 
 grupos <- unique(df_plot$GRUPO_ESTUDIO)
 
-fig <- plot_ly()
-
-for (g in grupos) {
-  d <- df_plot |> filter(GRUPO_ESTUDIO == g)
-  
-  fig <- fig |>
-    add_trace(
-      data = d,
-      x = ~AGNO_FALLO,
-      y = ~monto_solic,
-      type = "scatter",
-      mode = "lines+markers",
-      name = g,
-      hovertemplate = paste0(
-        "<b>", g, "</b><br>",
-        "Año: %{x}<br>",
-        "Monto solic.: $%{y:,.0f}",
-        "<extra></extra>"
+if (knitr::is_latex_output()) {
+  ggplot(df_plot, aes(x = AGNO_FALLO, y = monto_solic, color = GRUPO_ESTUDIO)) +
+    geom_line(linewidth = 0.8) +
+    geom_point(size = 2) +
+    scale_x_continuous(breaks = unique(df_plot$AGNO_FALLO)) +
+    scale_y_continuous(labels = scales::label_number(prefix = "$", big.mark = ".")) +
+    labs(
+      x       = "Año de fallo",
+      y       = "Monto promedio solicitado (CLP)",
+      color   = "Grupo de estudio",
+      caption = "Fuente: ANID 2016-2025, elaboración propia"
+    ) +
+    tema_anid +
+    theme(
+      axis.text.x     = element_text(angle = 45, hjust = 1),
+      legend.position = "right",
+      legend.text     = element_text(size = 7),
+      plot.caption    = element_text(hjust = 0, size = 8, color = "gray40",
+                                     face = "italic", margin = margin(t = 10))
+    )
+} else {
+  fig <- plot_ly()
+  for (g in grupos) {
+    d <- df_plot |> filter(GRUPO_ESTUDIO == g)
+    fig <- fig |>
+      add_trace(
+        data = d, x = ~AGNO_FALLO, y = ~monto_solic,
+        type = "scatter", mode = "lines+markers", name = g,
+        hovertemplate = paste0("<b>", g, "</b><br>Año: %{x}<br>Monto solic.: $%{y:,.0f}<extra></extra>")
       )
+  }
+  fig |>
+    layout(
+      xaxis  = list(title = "Año de fallo", tickmode = "linear", dtick = 1),
+      yaxis  = list(title = "Monto promedio solicitado (CLP)", tickformat = "$,.0f"),
+      legend = list(title = list(text = "Grupo de estudio")),
+      margin = list(b = 80, t = 50, l = 60, r = 60)
     )
 }
-
-fig <- fig |>
-  layout(
-    xaxis = list(
-      title = "Año de fallo",
-      tickmode = "linear",
-      dtick = 1
-    ),
-    yaxis = list(
-      title = "Monto promedio solicitado (CLP)",
-      tickformat = "$,.0f"
-    ),
-    legend = list(
-      title = list(text = "Grupo de estudio")
-    ),
-    margin = list(b = 80, t = 50, l = 60, r = 60)
-  )
-
-fig
 ```
 
 ```{r}
@@ -491,46 +507,45 @@ df_plot <- base_final_sociales |>
 
 grupos <- unique(df_plot$GRUPO_ESTUDIO)
 
-fig <- plot_ly()
-
-for (g in grupos) {
-  d <- df_plot |> filter(GRUPO_ESTUDIO == g)
-  
-  fig <- fig |>
-    add_trace(
-      data = d,
-      x = ~AGNO_FALLO,
-      y = ~monto_prom,
-      type = "scatter",
-      mode = "lines+markers",
-      name = g,
-      hovertemplate = paste0(
-        "<b>", g, "</b><br>",
-        "Año: %{x}<br>",
-        "Monto prom.: $%{y:,.0f}",
-        "<extra></extra>"
+if (knitr::is_latex_output()) {
+  ggplot(df_plot, aes(x = AGNO_FALLO, y = monto_prom, color = GRUPO_ESTUDIO)) +
+    geom_line(linewidth = 0.8) +
+    geom_point(size = 2) +
+    scale_x_continuous(breaks = unique(df_plot$AGNO_FALLO)) +
+    scale_y_continuous(labels = scales::label_number(prefix = "$", big.mark = ".")) +
+    labs(
+      x       = "Año de fallo",
+      y       = "Monto promedio adjudicado (CLP)",
+      color   = "Grupo de estudio",
+      caption = "Fuente: ANID 2016-2025, elaboración propia"
+    ) +
+    tema_anid +
+    theme(
+      axis.text.x     = element_text(angle = 45, hjust = 1),
+      legend.position = "right",
+      legend.text     = element_text(size = 7),
+      plot.caption    = element_text(hjust = 0, size = 8, color = "gray40",
+                                     face = "italic", margin = margin(t = 10))
+    )
+} else {
+  fig <- plot_ly()
+  for (g in grupos) {
+    d <- df_plot |> filter(GRUPO_ESTUDIO == g)
+    fig <- fig |>
+      add_trace(
+        data = d, x = ~AGNO_FALLO, y = ~monto_prom,
+        type = "scatter", mode = "lines+markers", name = g,
+        hovertemplate = paste0("<b>", g, "</b><br>Año: %{x}<br>Monto prom.: $%{y:,.0f}<extra></extra>")
       )
+  }
+  fig |>
+    layout(
+      xaxis  = list(title = "Año de fallo", tickmode = "linear", dtick = 1),
+      yaxis  = list(title = "Monto promedio adjudicado (CLP)", tickformat = "$,.0f"),
+      legend = list(title = list(text = "Grupo de estudio")),
+      margin = list(b = 80, t = 50, l = 60, r = 60)
     )
 }
-
-fig <- fig |>
-  layout(
-    xaxis = list(
-      title = "Año de fallo",
-      tickmode = "linear",
-      dtick = 1
-    ),
-    yaxis = list(
-      title = "Monto promedio adjudicado (CLP)",
-      tickformat = "$,.0f"
-    ),
-    legend = list(
-      title = list(text = "Grupo de estudio")
-    ),
-    margin = list(b = 80, t = 50, l = 60, r = 60)
-  )
-
-fig
 ```
 
 La @fig-grupo-monto presenta la evolución del monto promedio solicitado proyecto en FONDECYT Iniciación entre 2016 y 2025, desagregado por grupo de estudio. Este indicador permite observar cuánto se solicitó en promedio por cada grupo de estudio al momento de postular, lo que constituye una señal directa de la estructura de costos esperada por los investigadores en cada área y de cómo estas expectativas evolucionaron a lo largo del período.
@@ -744,11 +759,8 @@ if (knitr::is_latex_output()) {
     kable_styling(
       latex_options = c("striped", "hold_position", "scale_down"),
       font_size = 10,
-      full_width = FALSE,
-      position = "center"
+      full_width = TRUE
     ) %>%
-    column_spec(1, width = "7cm") %>%
-    column_spec(2, width = "7cm") %>%
     row_spec(0, bold = TRUE) %>%
     footnote(
       general = c(
@@ -917,11 +929,8 @@ if (knitr::is_latex_output()) {
     kable_styling(
       latex_options = c("striped", "hold_position", "scale_down"),
       font_size = 10,
-      full_width = FALSE,
-      position = "center"
+      full_width = TRUE
     ) %>%
-    column_spec(1, width = "7cm") %>%
-    column_spec(2, width = "7cm") %>%
     row_spec(0, bold = TRUE) %>%
     footnote(
       general = c(
@@ -985,47 +994,49 @@ df_inst <- base_final_sociales %>%
 colores_set2 <- c("#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3", "#a6d854", "#ffd92f")
 names(colores_set2) <- top6
 
-fig <- plot_ly()
-
-for (inst in top6) {
-  d <- df_inst %>% filter(INSTITUCION_PRINCIPAL == inst)
-  
-  fig <- fig %>%
-    add_trace(
-      data   = d,
-      x      = ~AGNO_FALLO,
-      y      = ~n,
-      type   = "scatter",
-      mode   = "lines+markers",
-      name   = inst,
-      line   = list(width = 2, color = colores_set2[[inst]]),
-      marker = list(size = 8, color = colores_set2[[inst]]),
-      hovertemplate = paste0(
-        "<b>", inst, "</b><br>",
-        "Año: %{x}<br>",
-        "Adjudicaciones: %{y}",
-        "<extra></extra>"
+if (knitr::is_latex_output()) {
+  ggplot(df_inst, aes(x = AGNO_FALLO, y = n, color = INSTITUCION_PRINCIPAL)) +
+    geom_line(linewidth = 0.8) +
+    geom_point(size = 2) +
+    scale_color_manual(values = colores_set2,
+                       labels = function(x) str_wrap(x, width = 25)) +
+    scale_x_continuous(breaks = unique(df_inst$AGNO_FALLO)) +
+    labs(
+      x       = NULL,
+      y       = "Adjudicaciones",
+      color   = NULL,
+      caption = "Fuente: ANID 2016-2025, elaboración propia"
+    ) +
+    tema_anid +
+    theme(
+      axis.text.x     = element_text(angle = 45, hjust = 1),
+      legend.position = "bottom",
+      legend.text     = element_text(size = 7),
+      plot.caption    = element_text(hjust = 0, size = 8, color = "gray40",
+                                     face = "italic", margin = margin(t = 10))
+    ) +
+    guides(color = guide_legend(nrow = 3))
+} else {
+  fig <- plot_ly()
+  for (inst in top6) {
+    d <- df_inst %>% filter(INSTITUCION_PRINCIPAL == inst)
+    fig <- fig %>%
+      add_trace(
+        data = d, x = ~AGNO_FALLO, y = ~n,
+        type = "scatter", mode = "lines+markers", name = inst,
+        line = list(width = 2, color = colores_set2[[inst]]),
+        marker = list(size = 8, color = colores_set2[[inst]]),
+        hovertemplate = paste0("<b>", inst, "</b><br>Año: %{x}<br>Adjudicaciones: %{y}<extra></extra>")
       )
+  }
+  fig %>%
+    layout(
+      xaxis  = list(title = "", tickmode = "linear", dtick = 1),
+      yaxis  = list(title = "Adjudicaciones"),
+      legend = list(title = list(text = ""), orientation = "h", y = -0.2),
+      margin = list(b = 150, t = 50, l = 60, r = 60)
     )
 }
-
-fig %>%
-  layout(
-    xaxis = list(
-      title    = "",
-      tickmode = "linear",
-      dtick    = 1
-    ),
-    yaxis = list(
-      title = "Adjudicaciones"
-    ),
-    legend = list(
-      title       = list(text = ""),
-      orientation = "h",
-      y           = -0.2
-    ),
-    margin = list(b = 150, t = 50, l = 60, r = 60)
-  )
 ```
 
 La @fig-institucion-iniciación-3 permite observar la evolución temporal de las adjudicaciones en Ciencias Sociales para las instituciones líderes vistas en el gráfico anterior, revelando patrones de estabilidad y volatilidad diferenciados entre 2016 y 2025. La Pontificia Universidad Católica de Chile se mantiene consistentemente en la parte superior de la distribución, logrando un crecimiento que culmina en su punto más alto hacia 2025, a pesar de experimentar una caída excepcional y profunda en 2021. Por su parte, la Universidad de Chile muestra una trayectoria de mayor fluctuación; tras un descenso marcado en los primeros años y el impacto de 2021, presenta una recuperación robusta hacia el final del periodo, consolidándose como la segunda institución con mayor volumen de proyectos.
@@ -1208,37 +1219,46 @@ colores_set2 <- c("#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3",
                   "#a6d854", "#ffd92f", "#e5c494", "#b3b3b3")[seq_along(macrozonas)]
 names(colores_set2) <- macrozonas
 
-fig <- plot_ly()
-
-for (mz in macrozonas) {
-  d <- df_macro %>% filter(MACROZONA_MINCIENCIA == mz)
-  
-  fig <- fig %>%
-    add_trace(
-      data   = d,
-      x      = ~AGNO_FALLO,
-      y      = ~n,
-      type   = "scatter",
-      mode   = "lines+markers",
-      name   = mz,
-      line   = list(width = 2, color = colores_set2[[mz]]),
-      marker = list(size = 8, color = colores_set2[[mz]]),
-      hovertemplate = paste0(
-        "<b>", mz, "</b><br>",
-        "Año: %{x}<br>",
-        "Adjudicaciones: %{y}",
-        "<extra></extra>"
+if (knitr::is_latex_output()) {
+  ggplot(df_macro, aes(x = AGNO_FALLO, y = n, color = MACROZONA_MINCIENCIA)) +
+    geom_line(linewidth = 0.8) +
+    geom_point(size = 2) +
+    scale_color_manual(values = colores_set2) +
+    scale_x_continuous(breaks = unique(df_macro$AGNO_FALLO)) +
+    labs(
+      x       = NULL,
+      y       = "Adjudicaciones",
+      color   = NULL,
+      caption = "Fuente: ANID 2016-2025, elaboración propia"
+    ) +
+    tema_anid +
+    theme(
+      axis.text.x     = element_text(angle = 45, hjust = 1),
+      legend.position = "bottom",
+      plot.caption    = element_text(hjust = 0, size = 8, color = "gray40",
+                                     face = "italic", margin = margin(t = 10))
+    )
+} else {
+  fig <- plot_ly()
+  for (mz in macrozonas) {
+    d <- df_macro %>% filter(MACROZONA_MINCIENCIA == mz)
+    fig <- fig %>%
+      add_trace(
+        data = d, x = ~AGNO_FALLO, y = ~n,
+        type = "scatter", mode = "lines+markers", name = mz,
+        line = list(width = 2, color = colores_set2[[mz]]),
+        marker = list(size = 8, color = colores_set2[[mz]]),
+        hovertemplate = paste0("<b>", mz, "</b><br>Año: %{x}<br>Adjudicaciones: %{y}<extra></extra>")
       )
+  }
+  fig %>%
+    layout(
+      xaxis  = list(title = "", tickmode = "linear", dtick = 1),
+      yaxis  = list(title = "Adjudicaciones"),
+      legend = list(title = list(text = ""), orientation = "h", y = -0.2),
+      margin = list(b = 150, t = 50, l = 60, r = 60)
     )
 }
-
-fig %>%
-  layout(
-    xaxis  = list(title = "", tickmode = "linear", dtick = 1),
-    yaxis  = list(title = "Adjudicaciones"),
-    legend = list(title = list(text = ""), orientation = "h", y = -0.2),
-    margin = list(b = 150, t = 50, l = 60, r = 60)
-  )
 ```
 
 La @fig-region-iniciación-2 muestra la evolución temporal de las adjudicaciones FONDECYT de Iniciación en Ciencias Sociales entre 2016 y 2025 confirma el predominio sostenido de la macrozona Metropolitana, que creció de 48 proyectos adjudicados en 2016 a 97 en 2025, consolidándose como la única macrozona con una tendencia clara al alza durante el período. El resto de las macrozonas se mantiene en niveles notoriamente más bajos y relativamente estables: Centro Sur y Sur oscilan entre 10 y 26 adjudicaciones, mientras que Centro se mueve en un rango similar. Norte y Austral presentan los valores más bajos del período, con Austral bordeando consistentemente el cero a lo largo de toda la serie. Destaca la ausencia de datos para 2021, probablemente asociada a las disrupciones del concurso durante la pandemia. En conjunto, la brecha entre la Región Metropolitana y el resto del país no solo persiste sino que se amplía en el tiempo, lo que plantea interrogantes sobre la distribución territorial de las capacidades de investigación en ciencias sociales.
@@ -1316,43 +1336,52 @@ df_adj <- base_final_completa %>%
 
 disciplinas <- unique(df_adj$DISCIPLINA_OECD)
 
-plot_ly() %>%
-  add_trace(
-    data       = df_adj,
-    x          = ~AGNO_FALLO,
-    y          = ~tasa,
-    color      = ~DISCIPLINA_OECD,
-    type       = "scatter",
-    mode       = "lines+markers",
-    text       = ~paste0(DISCIPLINA_OECD, "<br>", AGNO_FALLO, ": ", round(tasa, 1), "%"),
-    hoverinfo  = "text",
-    line       = list(width = 2),
-    marker     = list(size = 7)
-  ) %>%
-  layout(
-    xaxis = list(
-      title      = "",
-      tickvals   = unique(df_adj$AGNO_FALLO),
-      tickformat = "d"
-    ),
-    yaxis = list(
-      title      = "Tasa de adjudicación (%)",
-      range      = c(0, 100),
-      ticksuffix = "%"
-    ),
-    legend = list(title = list(text = "Disciplina OCDE")),
-    margin = list(b = 100, t = 50, l = 60, r = 60),
-    annotations = list(
-      list(
-        text      = "Fuente: ANID 2016-2025, elaboración propia",
-        xref      = "paper", yref = "paper",
-        x = 0, y = -0.15,
-        showarrow = FALSE,
-        font      = list(size = 9, color = "gray40"),
-        xanchor   = "left"
-      )
+if (knitr::is_latex_output()) {
+  df_adj %>%
+    ggplot(aes(x = AGNO_FALLO, y = tasa, color = DISCIPLINA_OECD)) +
+    geom_line(linewidth = 0.8) +
+    geom_point(size = 2) +
+    scale_y_continuous(limits = c(0, 100), labels = function(x) paste0(x, "%")) +
+    scale_x_continuous(breaks = unique(df_adj$AGNO_FALLO)) +
+    labs(
+      x       = NULL,
+      y       = "Tasa de adjudicación (%)",
+      color   = "Disciplina OCDE",
+      caption = "Fuente: ANID 2016-2025, elaboración propia"
+    ) +
+    tema_anid +
+    theme(
+      axis.text.x     = element_text(angle = 45, hjust = 1),
+      legend.position = "right",
+      plot.caption    = element_text(hjust = 0, size = 8, color = "gray40",
+                                     face = "italic", margin = margin(t = 10))
     )
-  )
+} else {
+  plot_ly() %>%
+    add_trace(
+      data      = df_adj,
+      x         = ~AGNO_FALLO,
+      y         = ~tasa,
+      color     = ~DISCIPLINA_OECD,
+      type      = "scatter",
+      mode      = "lines+markers",
+      text      = ~paste0(DISCIPLINA_OECD, "<br>", AGNO_FALLO, ": ", round(tasa, 1), "%"),
+      hoverinfo = "text",
+      line      = list(width = 2),
+      marker    = list(size = 7)
+    ) %>%
+    layout(
+      xaxis = list(title = "", tickvals = unique(df_adj$AGNO_FALLO), tickformat = "d"),
+      yaxis = list(title = "Tasa de adjudicación (%)", range = c(0, 100), ticksuffix = "%"),
+      legend = list(title = list(text = "Disciplina OCDE")),
+      margin = list(b = 100, t = 50, l = 60, r = 60),
+      annotations = list(list(
+        text = "Fuente: ANID 2016-2025, elaboración propia",
+        xref = "paper", yref = "paper", x = 0, y = -0.15,
+        showarrow = FALSE, font = list(size = 9, color = "gray40"), xanchor = "left"
+      ))
+    )
+}
 ```
 
 Por su parte, la @fig-adjudicaciones-global-regular-2 se concentra en la evolución de la tasa de adjudicación (%) por disciplina OECD para FONDECYT Regular entre 2016 y 2025.
@@ -1515,45 +1544,54 @@ colores <- c(
   "Geografía y Urbanismo"                               = "#d9a679"
 )
 
-p <- plot_ly()
-
-for (grp in unique(df_soc$GRUPO_ESTUDIO)) {
-  df_grp <- df_soc %>% filter(GRUPO_ESTUDIO == grp)
-  
-  p <- p %>%
-    add_trace(
-      data   = df_grp,
-      x      = ~factor(AGNO_FALLO),
-      y      = ~total,
-      type   = "bar",
-      name   = grp,
-      marker = list(color = colores[[grp]]),
-      hovertemplate = paste0(           # ← AGREGAR
-       "<b>", grp, "</b><br>",
-        "Año: %{x}<br>",
-        "Adjudicados: %{y}",
-        "<extra></extra>")
-)
-}
-
-p %>%
-  layout(
-    barmode = "stack",
-    xaxis   = list(title = ""),
-    yaxis   = list(title = "N° adjudicaciones"),
-    legend  = list(title = list(text = "")),
-    margin  = list(b = 100, t = 50, l = 60, r = 60),
-    annotations = list(
-      list(
-        text      = "Fuente: ANID 2016-2025, elaboración propia",
-        xref      = "paper", yref = "paper",
-        x = 0, y = -0.15,
-        showarrow = FALSE,
-        font      = list(size = 9, color = "gray40"),
-        xanchor   = "left"
+if (knitr::is_latex_output()) {
+  ggplot(df_soc, aes(x = factor(AGNO_FALLO), y = total, fill = GRUPO_ESTUDIO)) +
+    geom_col(position = "stack") +
+    scale_fill_manual(values = colores) +
+    labs(
+      x       = NULL,
+      y       = "N° adjudicaciones",
+      fill    = NULL,
+      caption = "Fuente: ANID 2016-2025, elaboración propia"
+    ) +
+    tema_anid +
+    theme(
+      axis.text.x     = element_text(angle = 45, hjust = 1),
+      legend.position = "bottom",
+      legend.text     = element_text(size = 7),
+      plot.caption    = element_text(hjust = 0, size = 8, color = "gray40",
+                                     face = "italic", margin = margin(t = 10))
+    ) +
+    guides(fill = guide_legend(nrow = 3))
+} else {
+  p <- plot_ly()
+  for (grp in unique(df_soc$GRUPO_ESTUDIO)) {
+    df_grp <- df_soc %>% filter(GRUPO_ESTUDIO == grp)
+    p <- p %>%
+      add_trace(
+        data   = df_grp,
+        x      = ~factor(AGNO_FALLO),
+        y      = ~total,
+        type   = "bar",
+        name   = grp,
+        marker = list(color = colores[[grp]]),
+        hovertemplate = paste0("<b>", grp, "</b><br>Año: %{x}<br>Adjudicados: %{y}<extra></extra>")
       )
+  }
+  p %>%
+    layout(
+      barmode = "stack",
+      xaxis   = list(title = ""),
+      yaxis   = list(title = "N° adjudicaciones"),
+      legend  = list(title = list(text = "")),
+      margin  = list(b = 100, t = 50, l = 60, r = 60),
+      annotations = list(list(
+        text = "Fuente: ANID 2016-2025, elaboración propia",
+        xref = "paper", yref = "paper", x = 0, y = -0.15,
+        showarrow = FALSE, font = list(size = 9, color = "gray40"), xanchor = "left"
+      ))
     )
-  )
+}
 ```
 
 La @fig-adjudicaciones-sociales-2 presenta la evolución de las adjudicaciones FONDECYT Regular por grupo de estudio en Ciencias Sociales 
@@ -1650,44 +1688,45 @@ df_plot <- base_final_sociales |>
 
 grupos <- unique(df_plot$GRUPO_ESTUDIO)
 
-fig <- plot_ly()
-
-for (g in grupos) {
-  d <- df_plot |> filter(GRUPO_ESTUDIO == g)
-  
-  fig <- fig |>
-    add_trace(
-      data = d,
-      x = ~AGNO_FALLO,
-      y = ~monto_solic,
-      type = "scatter",
-      mode = "lines+markers",
-      name = g,
-      hovertemplate = paste0(
-        "<b>", g, "</b><br>",
-        "Año: %{x}<br>",
-        "Monto solic.: $%{y:,.0f}",
-        "<extra></extra>"
+if (knitr::is_latex_output()) {
+  ggplot(df_plot, aes(x = AGNO_FALLO, y = monto_solic, color = GRUPO_ESTUDIO)) +
+    geom_line(linewidth = 0.8) +
+    geom_point(size = 2) +
+    scale_x_continuous(breaks = unique(df_plot$AGNO_FALLO)) +
+    scale_y_continuous(labels = scales::label_number(prefix = "$", big.mark = ".")) +
+    labs(
+      x       = "Año de fallo",
+      y       = "Monto promedio solicitado (CLP)",
+      color   = "Grupo de estudio",
+      caption = "Fuente: ANID 2016-2025, elaboración propia"
+    ) +
+    tema_anid +
+    theme(
+      axis.text.x     = element_text(angle = 45, hjust = 1),
+      legend.position = "right",
+      legend.text     = element_text(size = 7),
+      plot.caption    = element_text(hjust = 0, size = 8, color = "gray40",
+                                     face = "italic", margin = margin(t = 10))
+    )
+} else {
+  fig <- plot_ly()
+  for (g in grupos) {
+    d <- df_plot |> filter(GRUPO_ESTUDIO == g)
+    fig <- fig |>
+      add_trace(
+        data = d, x = ~AGNO_FALLO, y = ~monto_solic,
+        type = "scatter", mode = "lines+markers", name = g,
+        hovertemplate = paste0("<b>", g, "</b><br>Año: %{x}<br>Monto solic.: $%{y:,.0f}<extra></extra>")
       )
+  }
+  fig |>
+    layout(
+      xaxis  = list(title = "Año de fallo", tickmode = "linear", dtick = 1),
+      yaxis  = list(title = "Monto promedio solicitado (CLP)", tickformat = "$,.0f"),
+      legend = list(title = list(text = "Grupo de estudio")),
+      margin = list(b = 80, t = 50, l = 60, r = 60)
     )
 }
-
-fig |>
-  layout(
-    xaxis = list(
-      title = "Año de fallo",
-      tickmode = "linear",
-      dtick = 1
-    ),
-    yaxis = list(
-      title = "Monto promedio solicitado (CLP)",
-      tickformat = "$,.0f"
-    ),
-    legend = list(
-      title = list(text = "Grupo de estudio")
-    ),
-    margin = list(b = 80, t = 50, l = 60, r = 60)
-  )
 ```
 
 ```{r}
@@ -1708,46 +1747,45 @@ df_plot <- base_final_sociales |>
 
 grupos <- unique(df_plot$GRUPO_ESTUDIO)
 
-fig <- plot_ly()
-
-for (g in grupos) {
-  d <- df_plot |> filter(GRUPO_ESTUDIO == g)
-  
-  fig <- fig |>
-    add_trace(
-      data = d,
-      x = ~AGNO_FALLO,
-      y = ~monto_prom,
-      type = "scatter",
-      mode = "lines+markers",
-      name = g,
-      hovertemplate = paste0(
-        "<b>", g, "</b><br>",
-        "Año: %{x}<br>",
-        "Monto prom.: $%{y:,.0f}<br>",
-        "<extra></extra>"
+if (knitr::is_latex_output()) {
+  ggplot(df_plot, aes(x = AGNO_FALLO, y = monto_prom, color = GRUPO_ESTUDIO)) +
+    geom_line(linewidth = 0.8) +
+    geom_point(size = 2) +
+    scale_x_continuous(breaks = unique(df_plot$AGNO_FALLO)) +
+    scale_y_continuous(labels = scales::label_number(prefix = "$", big.mark = ".")) +
+    labs(
+      x       = "Año de fallo",
+      y       = "Monto promedio adjudicado (CLP)",
+      color   = "Grupo de estudio",
+      caption = "Fuente: ANID 2016-2025, elaboración propia"
+    ) +
+    tema_anid +
+    theme(
+      axis.text.x     = element_text(angle = 45, hjust = 1),
+      legend.position = "right",
+      legend.text     = element_text(size = 7),
+      plot.caption    = element_text(hjust = 0, size = 8, color = "gray40",
+                                     face = "italic", margin = margin(t = 10))
+    )
+} else {
+  fig <- plot_ly()
+  for (g in grupos) {
+    d <- df_plot |> filter(GRUPO_ESTUDIO == g)
+    fig <- fig |>
+      add_trace(
+        data = d, x = ~AGNO_FALLO, y = ~monto_prom,
+        type = "scatter", mode = "lines+markers", name = g,
+        hovertemplate = paste0("<b>", g, "</b><br>Año: %{x}<br>Monto prom.: $%{y:,.0f}<extra></extra>")
       )
+  }
+  fig |>
+    layout(
+      xaxis  = list(title = "Año de fallo", tickmode = "linear", dtick = 1),
+      yaxis  = list(title = "Monto promedio adjudicado (CLP)", tickformat = "$,.0f"),
+      legend = list(title = list(text = "Grupo de estudio")),
+      margin = list(b = 80, t = 50, l = 60, r = 60)
     )
 }
-
-fig_2 <- fig |>
-  layout(
-    xaxis = list(
-      title = "Año de fallo",
-      tickmode = "linear",
-      dtick = 1
-    ),
-    yaxis = list(
-      title = "Monto promedio adjudicado (CLP)",
-      tickformat = "$,.0f"
-    ),
-    legend = list(
-      title = list(text = "Grupo de estudio")
-    ),
-    margin = list(b = 80, t = 50, l = 60, r = 60)
-  )
-
-fig_2
 ```
 
 La @fig-grupo-monto-regular-1 presenta la evolución del monto promedio solicitado por proyecto en FONDECYT Iniciación entre 2016 y 2025, desagregado por grupo de estudio. Este indicador permite observar cuánto pidió cada disciplina en promedio al momento de postular, lo que constituye una señal directa de la estructura de costos esperada por los investigadores en cada área y de cómo estas expectativas evolucionaron a lo largo del período.
@@ -1916,37 +1954,49 @@ df_inst <- base_final_sociales %>%
 colores_set2 <- c("#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3", "#a6d854", "#ffd92f")
 names(colores_set2) <- top6
 
-fig <- plot_ly()
-
-for (inst in top6) {
-  d <- df_inst %>% filter(INSTITUCION_PRINCIPAL == inst)
-  
-  fig <- fig %>%
-    add_trace(
-      data   = d,
-      x      = ~AGNO_FALLO,
-      y      = ~n,
-      type   = "scatter",
-      mode   = "lines+markers",
-      name   = inst,
-      line   = list(width = 2, color = colores_set2[[inst]]),
-      marker = list(size = 8, color = colores_set2[[inst]]),
-      hovertemplate = paste0(
-        "<b>", inst, "</b><br>",
-        "Año: %{x}<br>",
-        "Adjudicaciones: %{y}",
-        "<extra></extra>"
+if (knitr::is_latex_output()) {
+  ggplot(df_inst, aes(x = AGNO_FALLO, y = n, color = INSTITUCION_PRINCIPAL)) +
+    geom_line(linewidth = 0.8) +
+    geom_point(size = 2) +
+    scale_color_manual(values = colores_set2,
+                       labels = function(x) str_wrap(x, width = 25)) +
+    scale_x_continuous(breaks = unique(df_inst$AGNO_FALLO)) +
+    labs(
+      x       = NULL,
+      y       = "Adjudicaciones",
+      color   = NULL,
+      caption = "Fuente: ANID 2016-2025, elaboración propia"
+    ) +
+    tema_anid +
+    theme(
+      axis.text.x     = element_text(angle = 45, hjust = 1),
+      legend.position = "bottom",
+      legend.text     = element_text(size = 7),
+      plot.caption    = element_text(hjust = 0, size = 8, color = "gray40",
+                                     face = "italic", margin = margin(t = 10))
+    ) +
+    guides(color = guide_legend(nrow = 3))
+} else {
+  fig <- plot_ly()
+  for (inst in top6) {
+    d <- df_inst %>% filter(INSTITUCION_PRINCIPAL == inst)
+    fig <- fig %>%
+      add_trace(
+        data = d, x = ~AGNO_FALLO, y = ~n,
+        type = "scatter", mode = "lines+markers", name = inst,
+        line = list(width = 2, color = colores_set2[[inst]]),
+        marker = list(size = 8, color = colores_set2[[inst]]),
+        hovertemplate = paste0("<b>", inst, "</b><br>Año: %{x}<br>Adjudicaciones: %{y}<extra></extra>")
       )
+  }
+  fig %>%
+    layout(
+      xaxis  = list(title = "", tickmode = "linear", dtick = 1),
+      yaxis  = list(title = "Adjudicaciones"),
+      legend = list(title = list(text = ""), orientation = "h", y = -0.2),
+      margin = list(b = 150, t = 50, l = 60, r = 60)
     )
 }
-
-fig %>%
-  layout(
-    xaxis  = list(title = "", tickmode = "linear", dtick = 1),
-    yaxis  = list(title = "Adjudicaciones"),
-    legend = list(title = list(text = ""), orientation = "h", y = -0.2),
-    margin = list(b = 150, t = 50, l = 60, r = 60)
-  )
 ```
 
 Al observar la serie de tiempo de la @fig-institucion-regular-2, la UC y la U. de Chile mantienen una disputa constante por el primer lugar, con ambas instituciones cerrando 2025 en niveles de adjudicación cercanos a sus picos históricos. En contraste, universidades como la Alberto Hurtado o la Austral muestran líneas de tiempo mucho más erráticas, con ciclos de éxito que no siempre logran proyectarse. Esta volatilidad en las instituciones de menor escala sugiere que la capacidad de retener y financiar proyectos Fondecyt Regular en Ciencias Sociales es un atributo que se consolida con mayor fuerza en las dos instituciones líderes del sistema.
@@ -2119,37 +2169,46 @@ colores_set2 <- c("#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3",
                   "#a6d854", "#ffd92f", "#e5c494", "#b3b3b3")[seq_along(macrozonas)]
 names(colores_set2) <- macrozonas
 
-fig <- plot_ly()
-
-for (mz in macrozonas) {
-  d <- df_macro %>% filter(MACROZONA_MINCIENCIA == mz)
-  
-  fig <- fig %>%
-    add_trace(
-      data   = d,
-      x      = ~AGNO_FALLO,
-      y      = ~n,
-      type   = "scatter",
-      mode   = "lines+markers",
-      name   = mz,
-      line   = list(width = 2, color = colores_set2[[mz]]),
-      marker = list(size = 8, color = colores_set2[[mz]]),
-      hovertemplate = paste0(
-        "<b>", mz, "</b><br>",
-        "Año: %{x}<br>",
-        "Adjudicaciones: %{y}",
-        "<extra></extra>"
+if (knitr::is_latex_output()) {
+  ggplot(df_macro, aes(x = AGNO_FALLO, y = n, color = MACROZONA_MINCIENCIA)) +
+    geom_line(linewidth = 0.8) +
+    geom_point(size = 2) +
+    scale_color_manual(values = colores_set2) +
+    scale_x_continuous(breaks = unique(df_macro$AGNO_FALLO)) +
+    labs(
+      x       = NULL,
+      y       = "Adjudicaciones",
+      color   = NULL,
+      caption = "Fuente: ANID 2016-2025, elaboración propia"
+    ) +
+    tema_anid +
+    theme(
+      axis.text.x     = element_text(angle = 45, hjust = 1),
+      legend.position = "bottom",
+      plot.caption    = element_text(hjust = 0, size = 8, color = "gray40",
+                                     face = "italic", margin = margin(t = 10))
+    )
+} else {
+  fig <- plot_ly()
+  for (mz in macrozonas) {
+    d <- df_macro %>% filter(MACROZONA_MINCIENCIA == mz)
+    fig <- fig %>%
+      add_trace(
+        data = d, x = ~AGNO_FALLO, y = ~n,
+        type = "scatter", mode = "lines+markers", name = mz,
+        line = list(width = 2, color = colores_set2[[mz]]),
+        marker = list(size = 8, color = colores_set2[[mz]]),
+        hovertemplate = paste0("<b>", mz, "</b><br>Año: %{x}<br>Adjudicaciones: %{y}<extra></extra>")
       )
+  }
+  fig %>%
+    layout(
+      xaxis  = list(title = "", tickmode = "linear", dtick = 1),
+      yaxis  = list(title = "Adjudicaciones"),
+      legend = list(title = list(text = ""), orientation = "h", y = -0.2),
+      margin = list(b = 150, t = 50, l = 60, r = 60)
     )
 }
-
-fig %>%
-  layout(
-    xaxis  = list(title = "", tickmode = "linear", dtick = 1),
-    yaxis  = list(title = "Adjudicaciones"),
-    legend = list(title = list(text = ""), orientation = "h", y = -0.2),
-    margin = list(b = 150, t = 50, l = 60, r = 60)
-  )
 ```
 
 Finalmente, la evolución por macrozonas de la @fig-region-regular-2 reafirma que el crecimiento de las Ciencias Sociales continua siendo un fenómeno predominantemente metropolitano. Mientras la RM muestra una tendencia ascendente que rompe la barrera de las 100 adjudicaciones en 2025, las macrozonas Centro, Sur y Norte se mantienen en un rango estancado de entre 10 y 25 proyectos anuales. La brecha entre Santiago y el resto de las regiones no se ha reducido en la última década; por el contrario, la capital ha capturado la mayor parte del incremento en el presupuesto de adjudicación del área.

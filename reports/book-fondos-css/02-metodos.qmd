@@ -108,19 +108,13 @@ if (knitr::is_latex_output()) {
   kableExtra::kbl(bbdd, format = "latex", booktabs = TRUE, align = "l") %>%
     kableExtra::kable_styling(
       latex_options = c("striped", "hold_position", "scale_down"),
-      full_width = FALSE,
-      position = "center"
-    ) %>%
-    kableExtra::column_spec(1, width = "2.5cm") %>%
-    kableExtra::column_spec(2, width = "4.5cm") %>%
-    kableExtra::column_spec(3, width = "2cm") %>%
-    kableExtra::column_spec(4, width = "2.5cm") %>%
-    kableExtra::column_spec(5, width = "2cm")
+      full_width = TRUE
+    )
 } else {
   kableExtra::kbl(bbdd, format = "html", align = "l") %>%
     kableExtra::kable_styling(
       bootstrap_options = c("striped", "hover", "condensed"),
-      full_width = FALSE,
+      full_width = TRUE,
       position = "center"
     )
 }
@@ -186,26 +180,18 @@ codebook <- tibble::tibble(
 )
 
 if (knitr::is_latex_output()) {
-  codebook_latex <- codebook %>%
-    mutate(Variable = str_replace_all(Variable, "_", "\\_\\allowbreak{}"))
-
-  kableExtra::kbl(codebook_latex, format = "latex", booktabs = TRUE,
-                  align = "l", escape = FALSE) %>%
+  kableExtra::kbl(codebook, format = "latex", booktabs = TRUE,
+                  align = "l") %>%
     kableExtra::kable_styling(
       latex_options = c("striped", "hold_position", "scale_down"),
-      full_width = FALSE,
-      font_size = 9,
-      position = "center"
-    ) %>%
-    kableExtra::column_spec(1, width = "3.5cm") %>%
-    kableExtra::column_spec(2, width = "2cm") %>%
-    kableExtra::column_spec(3, width = "2.5cm") %>%
-    kableExtra::column_spec(4, width = "5.5cm")
+      full_width = TRUE,
+      font_size = 9
+    )
 } else {
   kableExtra::kbl(codebook, format = "html", align = "l") %>%
     kableExtra::kable_styling(
       bootstrap_options = c("striped", "hover", "condensed"),
-      full_width = FALSE,
+      full_width = TRUE,
       position = "center"
     )
 }
