@@ -36,6 +36,9 @@
 \usepackage{indentfirst}
 \usepackage{setspace}         % Control del interlineado del documento
 \setstretch{1.5}
+\usepackage{etoolbox}
+\AtBeginEnvironment{tabular}{\setstretch{1.0}}
+\AtBeginEnvironment{longtable}{\setstretch{1.0}}
 
 % ---------- Encabezados y pies (scrlayer-scrpage) ----------
 \usepackage[automark,headsepline]{scrlayer-scrpage}

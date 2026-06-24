@@ -757,10 +757,11 @@ if (knitr::is_latex_output()) {
       booktabs = TRUE
     ) %>%
     kable_styling(
-      latex_options = c("striped", "hold_position", "scale_down"),
-      font_size = 10,
-      full_width = TRUE
+      latex_options = c("striped", "hold_position"),
+      font_size = 10
     ) %>%
+    column_spec(1, width = "7cm") %>%
+    column_spec(2, width = "7cm") %>%
     row_spec(0, bold = TRUE) %>%
     footnote(
       general = c(
@@ -927,10 +928,11 @@ if (knitr::is_latex_output()) {
       booktabs = TRUE
     ) %>%
     kable_styling(
-      latex_options = c("striped", "hold_position", "scale_down"),
-      font_size = 10,
-      full_width = TRUE
+      latex_options = c("striped", "hold_position"),
+      font_size = 10
     ) %>%
+    column_spec(1, width = "7cm") %>%
+    column_spec(2, width = "7cm") %>%
     row_spec(0, bold = TRUE) %>%
     footnote(
       general = c(
