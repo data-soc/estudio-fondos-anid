@@ -421,7 +421,7 @@ Ciencias Sociales en Chile}
 \subtitle{Diagnóstico y análisis de concursos ANID}
 \author{René Canales Sellés \and Juan Carlos Castillo \and Gabriel
 Cortés}
-\date{23 de junio de 2026}
+\date{24 de junio de 2026}
 \begin{document}
 \frontmatter
 \maketitle
@@ -976,18 +976,18 @@ Tabla~\ref{tbl-clasificacion-publica-privada}).
 
 \centering{
 
-\begingroup\fontsize{9}{11}\selectfont
+\centering\begingroup\fontsize{9}{11}\selectfont
 
 \resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
-\begin{tabu} to \linewidth {>{\raggedright}X>{\raggedright}X>{\raggedright}X>{\raggedright}X>{\raggedright}X}
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{3.5cm}>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{2cm}>{\raggedright\arraybackslash}p{2cm}>{\raggedright\arraybackslash}p{2.5cm}}
 \toprule
 Base de datos & Origen & Periodo & Unidad de análisis & N° observaciones\\
 \midrule
 \cellcolor{gray!10}{base\_fondecyt\_completa} & \cellcolor{gray!10}{Merge postulaciones + adjudicaciones FONDECYT} & \cellcolor{gray!10}{2016–2025} & \cellcolor{gray!10}{Postulación FONDECYT (todas las áreas)} & \cellcolor{gray!10}{Por confirmar con tu base}\\
-base\_fondecyt\_sociales\_merge\_monto & Postulaciones + adjudicaciones FONDECYT Ciencias Sociales + reconstrucción de montos desde PDFs ANID & 2016–2025 & Postulación FONDECYT en Ciencias Sociales & 8.603 postulaciones\\
-\cellcolor{gray!10}{adjudicacion\_milenio\_limpia\_sociales} & \cellcolor{gray!10}{Adjudicaciones Milenio en Ciencias Sociales} & \cellcolor{gray!10}{2016, 2017, 2020, 2021, 2022} & \cellcolor{gray!10}{Adjudicación Núcleo/Instituto Milenio} & \cellcolor{gray!10}{59 adjudicaciones (26 en CS Sociales)}\\
+base\_fondecyt\_sociales\newline\_merge\_monto & Postulaciones + adjudicaciones FONDECYT Ciencias Sociales + reconstrucción de montos desde PDFs ANID & 2016–2025 & Postulación FONDECYT en Ciencias Sociales & 8.603 postulaciones\\
+\cellcolor{gray!10}{adjudicacion\_milenio\newline\_limpia\_sociales} & \cellcolor{gray!10}{Adjudicaciones Milenio en Ciencias Sociales} & \cellcolor{gray!10}{2016, 2017, 2020, 2021, 2022} & \cellcolor{gray!10}{Adjudicación Núcleo/Instituto Milenio} & \cellcolor{gray!10}{59 adjudicaciones (26 en CS Sociales)}\\
 \bottomrule
-\end{tabu}}
+\end{tabular}}
 \endgroup{}
 
 }
@@ -1002,29 +1002,29 @@ base\_fondecyt\_sociales\_merge\_monto & Postulaciones + adjudicaciones FONDECYT
 
 \centering{
 
-\begingroup\fontsize{9}{11}\selectfont
+\centering\begingroup\fontsize{9}{11}\selectfont
 
 \resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
-\begin{tabu} to \linewidth {>{\raggedright}X>{\raggedright}X>{\raggedright}X>{\raggedright}X}
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{3.5cm}>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{5.5cm}}
 \toprule
 Variable & Naturaleza & Disponibilidad & Descripción\\
 \midrule
-\cellcolor{gray!10}{ESTADO\_RESOLUCION\_CONCURSO} & \cellcolor{gray!10}{Categórica} & \cellcolor{gray!10}{Todas las postulaciones} & \cellcolor{gray!10}{Resultado del concurso: ADJUDICADO / NO ADJUDICADO}\\
+\cellcolor{gray!10}{ESTADO\_RESOLUCION\newline\_CONCURSO} & \cellcolor{gray!10}{Categórica} & \cellcolor{gray!10}{Todas las postulaciones} & \cellcolor{gray!10}{Resultado del concurso: ADJUDICADO / NO ADJUDICADO}\\
 SEXO & Categórica & Todas las postulaciones & Sexo del/la investigador/a principal: HOMBRE / MUJER / SIN INFORMACIÓN\\
 \cellcolor{gray!10}{REGION\_EJECUCION} & \cellcolor{gray!10}{Categórica} & \cellcolor{gray!10}{Solo adjudicadas} & \cellcolor{gray!10}{Región de ejecución del proyecto}\\
-MACROZONA\_MINCIENCIA & Categórica & Solo adjudicadas & Macrozona Minciencia de ejecución (Norte / Centro / RM / Centro Sur / Sur / Austral)\\
+MACROZONA\newline\_MINCIENCIA & Categórica & Solo adjudicadas & Macrozona Minciencia de ejecución (Norte / Centro / RM / Centro Sur / Sur / Austral)\\
 \cellcolor{gray!10}{INSTRUMENTO} & \cellcolor{gray!10}{Categórica} & \cellcolor{gray!10}{Todas las postulaciones} & \cellcolor{gray!10}{Instrumento FONDECYT: REGULAR / INICIACION}\\
 \addlinespace
 DISCIPLINA\_OECD & Categórica & Todas las postulaciones & Área disciplinar según clasificación OCDE (Ciencias Sociales, Humanidades, Ciencias Naturales, etc.)\\
 \cellcolor{gray!10}{GRUPO\_ESTUDIO} & \cellcolor{gray!10}{Categórica} & \cellcolor{gray!10}{Solo adjudicadas} & \cellcolor{gray!10}{Grupo de evaluación al que postuló el proyecto (clasificación ANID)}\\
-INSTITUCION\_PRINCIPAL & Categórica & Solo adjudicadas & Universidad o entidad patrocinante del proyecto\\
+INSTITUCION\newline\_PRINCIPAL & Categórica & Solo adjudicadas & Universidad o entidad patrocinante del proyecto\\
 \cellcolor{gray!10}{MONTO\_ADJUDICADO} & \cellcolor{gray!10}{Numérica continua} & \cellcolor{gray!10}{Solo adjudicadas} & \cellcolor{gray!10}{Monto en pesos chilenos efectivamente adjudicado al proyecto}\\
-MONTO\_PROM\_GRUPO\_ANIO (reconstruida) & Numérica continua & Por grupo-año-instrumento & Monto promedio adjudicado por grupo-año-instrumento, reconstruido desde PDFs ANID\\
+MONTO\_PROM\_GRUPO\_ANIO\newline (reconstruida) & Numérica continua & Por grupo-año-instrumento & Monto promedio adjudicado por grupo-año-instrumento, reconstruido desde PDFs ANID\\
 \addlinespace
-\cellcolor{gray!10}{MONTO\_SOLIC\_PROM\_GRUPO\_ANIO (creada)} & \cellcolor{gray!10}{Numérica continua} & \cellcolor{gray!10}{Por grupo-año-instrumento} & \cellcolor{gray!10}{Monto promedio solicitado por grupo-año-instrumento, calculado desde PDFs ANID}\\
+\cellcolor{gray!10}{MONTO\_SOLIC\_PROM\newline\_GRUPO\_ANIO (creada)} & \cellcolor{gray!10}{Numérica continua} & \cellcolor{gray!10}{Por grupo-año-instrumento} & \cellcolor{gray!10}{Monto promedio solicitado por grupo-año-instrumento, calculado desde PDFs ANID}\\
 AGNO\_FALLO & Numérica discreta & Todas las postulaciones & Año de resolución del concurso\\
 \bottomrule
-\end{tabu}}
+\end{tabular}}
 \endgroup{}
 
 }
@@ -1383,7 +1383,7 @@ estudio por género en adjudicaciones Fondecyt de Iniciación
 
 \end{figure}%
 
-\begin{tcolorbox}[enhanced jigsaw, titlerule=0mm, leftrule=.75mm, toprule=.15mm, coltitle=black, toptitle=1mm, colbacktitle=quarto-callout-tip-color!10!white, rightrule=.15mm, arc=.35mm, colframe=quarto-callout-tip-color-frame, left=2mm, colback=white, bottomtitle=1mm, bottomrule=.15mm, opacityback=0, opacitybacktitle=0.6, breakable, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Cómo leer el gráfico heatmap}]
+\begin{tcolorbox}[enhanced jigsaw, opacityback=0, bottomrule=.15mm, bottomtitle=1mm, colback=white, coltitle=black, colbacktitle=quarto-callout-tip-color!10!white, left=2mm, titlerule=0mm, toptitle=1mm, leftrule=.75mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Cómo leer el gráfico heatmap}, arc=.35mm, colframe=quarto-callout-tip-color-frame, toprule=.15mm, breakable, opacitybacktitle=0.6, rightrule=.15mm]
 
 Cada celda muestra el \textbf{porcentaje de adjudicaciones de un grupo
 de estudio que correspondió a hombres o mujeres en un año específico}.

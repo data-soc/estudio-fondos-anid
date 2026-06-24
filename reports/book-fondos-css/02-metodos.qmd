@@ -105,12 +105,23 @@ bbdd <- tibble::tibble(
 )
 
 if (knitr::is_latex_output()) {
-  kableExtra::kbl(bbdd, format = "latex", booktabs = TRUE, align = "l") %>%
+  bbdd_tex <- bbdd
+  bbdd_tex[["Base de datos"]] <- c(
+    "base\\_fondecyt\\_completa",
+    "base\\_fondecyt\\_sociales\\newline\\_merge\\_monto",
+    "adjudicacion\\_milenio\\newline\\_limpia\\_sociales"
+  )
+  kableExtra::kbl(bbdd_tex, format = "latex", booktabs = TRUE, align = "l",
+                  escape = FALSE) %>%
     kableExtra::kable_styling(
       latex_options = c("striped", "hold_position", "scale_down"),
-      full_width = TRUE,
       font_size = 9
-    )
+    ) %>%
+    kableExtra::column_spec(1, width = "3.5cm") %>%
+    kableExtra::column_spec(2, width = "4cm") %>%
+    kableExtra::column_spec(3, width = "2cm") %>%
+    kableExtra::column_spec(4, width = "2cm") %>%
+    kableExtra::column_spec(5, width = "2.5cm")
 } else {
   kableExtra::kbl(bbdd, format = "html", align = "l") %>%
     kableExtra::kable_styling(
@@ -181,13 +192,31 @@ codebook <- tibble::tibble(
 )
 
 if (knitr::is_latex_output()) {
-  kableExtra::kbl(codebook, format = "latex", booktabs = TRUE,
-                  align = "l") %>%
+  codebook_tex <- codebook
+  codebook_tex[["Variable"]] <- c(
+    "ESTADO\\_RESOLUCION\\newline\\_CONCURSO",
+    "SEXO",
+    "REGION\\_EJECUCION",
+    "MACROZONA\\newline\\_MINCIENCIA",
+    "INSTRUMENTO",
+    "DISCIPLINA\\_OECD",
+    "GRUPO\\_ESTUDIO",
+    "INSTITUCION\\newline\\_PRINCIPAL",
+    "MONTO\\_ADJUDICADO",
+    "MONTO\\_PROM\\_GRUPO\\_ANIO\\newline (reconstruida)",
+    "MONTO\\_SOLIC\\_PROM\\newline\\_GRUPO\\_ANIO (creada)",
+    "AGNO\\_FALLO"
+  )
+  kableExtra::kbl(codebook_tex, format = "latex", booktabs = TRUE, align = "l",
+                  escape = FALSE) %>%
     kableExtra::kable_styling(
       latex_options = c("striped", "hold_position", "scale_down"),
-      full_width = TRUE,
       font_size = 9
-    )
+    ) %>%
+    kableExtra::column_spec(1, width = "3.5cm") %>%
+    kableExtra::column_spec(2, width = "2.5cm") %>%
+    kableExtra::column_spec(3, width = "2.5cm") %>%
+    kableExtra::column_spec(4, width = "5.5cm")
 } else {
   kableExtra::kbl(codebook, format = "html", align = "l") %>%
     kableExtra::kable_styling(
