@@ -769,7 +769,8 @@ if (knitr::is_latex_output()) {
         "Listado de instituciones presentes en la base FONDECYT 2016-2025 para Ciencias Sociales. Excluye centros de investigación, fundaciones y museos."
       ),
       general_title = "Notas:",
-      footnote_as_chunk = FALSE
+      footnote_as_chunk = FALSE,
+      threeparttable = TRUE
     )
 } else {
   tabla_inst %>%
@@ -940,7 +941,8 @@ if (knitr::is_latex_output()) {
         "Listado de instituciones presentes en la base FONDECYT 2016-2025 para Ciencias Sociales. Excluye centros de investigación, fundaciones y museos."
       ),
       general_title = "Notas:",
-      footnote_as_chunk = FALSE
+      footnote_as_chunk = FALSE,
+      threeparttable = TRUE
     )
 } else {
   tabla_pubpriv %>%

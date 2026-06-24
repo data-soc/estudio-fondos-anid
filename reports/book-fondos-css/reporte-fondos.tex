@@ -1386,7 +1386,7 @@ estudio por género en adjudicaciones Fondecyt de Iniciación
 
 \end{figure}%
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Cómo leer el gráfico heatmap}, toprule=.15mm, leftrule=.75mm, breakable, opacityback=0, colbacktitle=quarto-callout-tip-color!10!white, coltitle=black, arc=.35mm, bottomrule=.15mm, toptitle=1mm, rightrule=.15mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, titlerule=0mm, colback=white, left=2mm, opacitybacktitle=0.6]
+\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0, opacitybacktitle=0.6, rightrule=.15mm, breakable, toprule=.15mm, coltitle=black, colframe=quarto-callout-tip-color-frame, toptitle=1mm, bottomtitle=1mm, titlerule=0mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Cómo leer el gráfico heatmap}, arc=.35mm, bottomrule=.15mm, colback=white, leftrule=.75mm, left=2mm]
 
 Cada celda muestra el \textbf{porcentaje de adjudicaciones de un grupo
 de estudio que correspondió a hombres o mujeres en un año específico}.
@@ -1627,6 +1627,7 @@ instituciones según pertenencia al Consejo de Rectores (CRUCH)}
 
 \centering\begingroup\fontsize{10}{12}\selectfont
 
+\begin{threeparttable}
 \begin{tabular}[t]{>{\raggedright\arraybackslash}p{7cm}>{\raggedright\arraybackslash}p{7cm}}
 \toprule
 \textbf{CRUCH (n = 30)} & \textbf{No CRUCH (n = 15)}\\
@@ -1667,10 +1668,13 @@ U. Metropolitana de Ciencias de la Educación & \\
 \cellcolor{gray!10}{U. Técnica Federico Santa Maria} & \cellcolor{gray!10}{}\\
 U. Tecnológica Metropolitana & \\
 \bottomrule
-\multicolumn{2}{l}{\rule{0pt}{1em}\textit{Notas:}}\\
-\multicolumn{2}{l}{\rule{0pt}{1em}U. Alberto Hurtado, U. Diego Portales y U. de los Andes ingresaron al CRUCH en 2018-2019; se clasifican como CRUCH para toda la serie 2016-2025.}\\
-\multicolumn{2}{l}{\rule{0pt}{1em}Listado de instituciones presentes en la base FONDECYT 2016-2025 para Ciencias Sociales. Excluye centros de investigación, fundaciones y museos.}\\
 \end{tabular}
+\begin{tablenotes}
+\item \textit{Notas:} 
+\item U. Alberto Hurtado, U. Diego Portales y U. de los Andes ingresaron al CRUCH en 2018-2019; se clasifican como CRUCH para toda la serie 2016-2025.
+\item Listado de instituciones presentes en la base FONDECYT 2016-2025 para Ciencias Sociales. Excluye centros de investigación, fundaciones y museos.
+\end{tablenotes}
+\end{threeparttable}
 \endgroup{}
 
 }
@@ -1747,6 +1751,7 @@ instituciones según naturaleza jurídica: estatales vs privadas}
 
 \centering\begingroup\fontsize{10}{12}\selectfont
 
+\begin{threeparttable}
 \begin{tabular}[t]{>{\raggedright\arraybackslash}p{7cm}>{\raggedright\arraybackslash}p{7cm}}
 \toprule
 \textbf{Públicas (n = 18)} & \textbf{Privadas (n = 27)}\\
@@ -1784,10 +1789,13 @@ U. Tecnológica Metropolitana & U. del Desarrollo\\
  & U. Técnica Federico Santa Maria\\
 \cellcolor{gray!10}{} & \cellcolor{gray!10}{U. Viña del Mar}\\
 \bottomrule
-\multicolumn{2}{l}{\rule{0pt}{1em}\textit{Notas:}}\\
-\multicolumn{2}{l}{\rule{0pt}{1em}Las 18 universidades estatales chilenas se clasifican como 'Públicas'. El resto (27 instituciones, incluyendo G9, privadas tradicionales recientemente incorporadas al CRUCH como UAH, UDP, U. de los Andes, y privadas no tradicionales) se clasifican como 'Privadas'.}\\
-\multicolumn{2}{l}{\rule{0pt}{1em}Listado de instituciones presentes en la base FONDECYT 2016-2025 para Ciencias Sociales. Excluye centros de investigación, fundaciones y museos.}\\
 \end{tabular}
+\begin{tablenotes}
+\item \textit{Notas:} 
+\item Las 18 universidades estatales chilenas se clasifican como 'Públicas'. El resto (27 instituciones, incluyendo G9, privadas tradicionales recientemente incorporadas al CRUCH como UAH, UDP, U. de los Andes, y privadas no tradicionales) se clasifican como 'Privadas'.
+\item Listado de instituciones presentes en la base FONDECYT 2016-2025 para Ciencias Sociales. Excluye centros de investigación, fundaciones y museos.
+\end{tablenotes}
+\end{threeparttable}
 \endgroup{}
 
 }
